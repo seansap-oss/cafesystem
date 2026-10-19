@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node server.js",
     "smoke": "node scripts/headless-smoke.js",
+    "test:flow": "node scripts/flow-test.js",
+    "test:acceptance": "node scripts/acceptance-phase13.js",
+    "test:socket": "node scripts/socket-ready-test.js",
     "download-images": "node scripts/download-images.js"
   },
   "keywords": ["restaurant", "pos", "kds", "ordering", "socket.io"],

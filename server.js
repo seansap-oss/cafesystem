@@ -18,8 +18,10 @@ const { Pdf, MARGIN, A4_W } = require('./lib/pdf');
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 const ROOT = __dirname;
-const DATA_DIR = path.join(ROOT, 'data');
-const UPLOAD_DIR = path.join(ROOT, 'public', 'uploads');
+// DATA_DIR / UPLOAD_DIR can be pointed at a mounted volume (e.g. Railway) so
+// orders, menu edits and settings survive redeploys. Defaults keep local dev unchanged.
+const DATA_DIR = process.env.DATA_DIR || path.join(ROOT, 'data');
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(ROOT, 'public', 'uploads');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 

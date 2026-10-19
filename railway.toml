@@ -1,0 +1,12 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "node server.js"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+# NOTE: To keep orders/menu/settings across redeploys, attach a Volume in the
+# Railway dashboard mounted at /data and set the variable:
+#   DATA_DIR=/data
+# Without a volume, Railway wipes the filesystem on every deploy/restart.
