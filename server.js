@@ -23,9 +23,14 @@ const UPLOAD_DIR = path.join(ROOT, 'public', 'uploads');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 
-fs.mkdirSync(DATA_DIR, { recursive: true });
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-fs.mkdirSync(BACKUP_DIR, { recursive: true });
+const IS_SERVERLESS = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+function safeMkdir(dir) {
+  try { fs.mkdirSync(dir, { recursive: true }); } catch (e) { /* read-only FS (serverless) */ }
+}
+safeMkdir(DATA_DIR);
+safeMkdir(UPLOAD_DIR);
+safeMkdir(BACKUP_DIR);
 
 // ---------------- Database (atomic JSON persistence) ----------------
 let db = null;
@@ -140,9 +145,14 @@ function loadDB() {
 }
 
 function saveNow() {
+  if (IS_SERVERLESS) return; // read-only filesystem on serverless
   const tmp = DB_FILE + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(db));
-  fs.renameSync(tmp, DB_FILE);
+  try {
+    fs.writeFileSync(tmp, JSON.stringify(db));
+    fs.renameSync(tmp, DB_FILE);
+  } catch (e) {
+    console.error('save failed:', e.message);
+  }
 }
 function save() {
   clearTimeout(saveTimer);
@@ -1256,14 +1266,19 @@ app.get('/api/audit', requireAuth(), (req, res) => {
 // ---------------- Backup / restore ----------------
 app.post('/api/backup', requireAuth(), (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
+  if (IS_SERVERLESS) return res.status(503).json({ error: 'Backups unavailable on serverless (read-only filesystem)' });
   const file = path.join(BACKUP_DIR, 'backup-' + new Date().toISOString().replace(/[:.]/g, '-') + '.json');
-  fs.copyFileSync(DB_FILE, file);
+  try { fs.copyFileSync(DB_FILE, file); } catch (e) { return res.status(500).json({ error: e.message }); }
   audit(req.user.username, 'backup', path.basename(file));
   res.json({ ok: true, file: path.basename(file) });
 });
 app.get('/api/backups', requireAuth(), (req, res) => {
   if (req.user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
-  res.json(fs.readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse().slice(0, 20));
+  try {
+    res.json(fs.readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse().slice(0, 20));
+  } catch (e) {
+    res.json([]);
+  }
 });
 
 // ---------------- Health / network info ----------------
@@ -1288,26 +1303,32 @@ app.use((err, req, res, next) => {
 });
 
 // ---------------- Start ----------------
-setInterval(() => { runScheduler().catch(e => console.error('scheduler:', e.message)); }, 60000);
-server.listen(PORT, HOST, () => {
-  const nets = os.networkInterfaces();
-  const ips = [];
-  Object.keys(nets).forEach(name => nets[name].forEach(n => { if (n.family === 'IPv4' && !n.internal) ips.push(n.address); }));
-  console.log('');
-  console.log('  👑 KARIM\'S RESTAURANT PLATFORM — running');
-  console.log('  ─────────────────────────────────────────');
-  console.log('  Local:    http://localhost:' + PORT + '/');
-  ips.forEach(ip => console.log('  Network:  http://' + ip + ':' + PORT + '/'));
-  console.log('');
-  console.log('  Customer  /            QR ordering');
-  console.log('  Admin     /admin       password: admin@135');
-  console.log('  POS       /pos         cashier@135 / manager@135');
-  console.log('  Kitchen   /kitchen     kitchen@135');
-  console.log('  Manager   /manager     manager@135');
-  console.log('  Delivery  /delivery    driver PIN 1111 / 2222');
-  console.log('  Finance   /finance     admin / manager');
-  console.log('');
-  console.log('  Data:     data/db.json (auto-saved)');
-  console.log('  Uploads:  public/uploads/');
-  console.log('');
-});
+if (IS_SERVERLESS) {
+  // Vercel / serverless: export the handler, never bind a port
+  module.exports = app;
+  console.log('serverless mode: exporting express handler');
+} else {
+  setInterval(() => { runScheduler().catch(e => console.error('scheduler:', e.message)); }, 60000);
+  server.listen(PORT, HOST, () => {
+    const nets = os.networkInterfaces();
+    const ips = [];
+    Object.keys(nets).forEach(name => nets[name].forEach(n => { if (n.family === 'IPv4' && !n.internal) ips.push(n.address); }));
+    console.log('');
+    console.log('  👑 KARIM\'S RESTAURANT PLATFORM — running');
+    console.log('  ─────────────────────────────────────────');
+    console.log('  Local:    http://localhost:' + PORT + '/');
+    ips.forEach(ip => console.log('  Network:  http://' + ip + ':' + PORT + '/'));
+    console.log('');
+    console.log('  Customer  /            QR ordering');
+    console.log('  Admin     /admin       password: admin@135');
+    console.log('  POS       /pos         cashier@135 / manager@135');
+    console.log('  Kitchen   /kitchen     kitchen@135');
+    console.log('  Manager   /manager     manager@135');
+    console.log('  Delivery  /delivery    driver PIN 1111 / 2222');
+    console.log('  Finance   /finance     admin / manager');
+    console.log('');
+    console.log('  Data:     data/db.json (auto-saved)');
+    console.log('  Uploads:  public/uploads/');
+    console.log('');
+  });
+}
