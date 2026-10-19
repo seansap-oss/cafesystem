@@ -482,7 +482,12 @@
     renderCart();
     K.connect(['all']);
     K.socket.on('order:updated', onLiveUpdate);
-    if (lastOrder) startTracking(lastOrder);
+    if (lastOrder) {
+      K.socket.emit('join', 'customer:' + lastOrder.id);
+      K.socket.on('order:ready', onOrderReady);
+      K.socket.on('order:stage', onOrderStage);
+      startTracking(lastOrder);
+    }
   }
 
   function renderCats() {
@@ -851,6 +856,18 @@
         lastOrder._paidShown = true;
         K.sound(); K.toast('Payment confirmed for ' + o.id + ' — kitchen has started!', 'ok');
       }
+    }
+  }
+
+  // Kitchen finished → pop up "order ready" on the customer's phone
+  function onOrderReady(r) {
+    if (!r || !lastOrder || r.id !== lastOrder.id) return;
+    renderTrack(r);
+    K.readyPopup({ id: r.id, message: r.message || 'Your order is ready for pickup. Please collect it at the counter.' });
+  }
+  function onOrderStage(s) {
+    if (lastOrder && s && s.id === lastOrder.id && $('#stepSuccess').classList.contains('on')) {
+      K.toast('Kitchen update: ' + (K.KITCHEN_LABEL[s.stage] || s.stage), 'ok');
     }
   }
 

@@ -39,6 +39,11 @@
   .tabbar { display: flex; gap: 6px; margin-bottom: 12px; }
   .tabbar button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 10px; font-weight: 800; font-size: 13px; color: var(--maroon-700); }
   .tabbar button.active { background: var(--maroon-700); color: #fff; border-color: var(--maroon-700); }
+  .kstages { display: flex; align-items: center; gap: 5px; }
+  .kdot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); display: inline-block; }
+  .kdot.done { background: var(--green); }
+  .kdot.now { background: var(--amber); box-shadow: 0 0 0 3px rgba(214,158,46,.3); }
+  .kstage-lbl { font-size: 11.5px; font-weight: 700; color: var(--muted); margin-left: 3px; }
   @media (max-width: 900px) { .pos-layout { grid-template-columns: 1fr; } .bill { position: static; } }
 </style>
 </head>
@@ -151,6 +156,9 @@
     K.connect(['pos', 'all']);
     K.socket.on('order:new', () => { loadPending(); loadLive(); });
     K.socket.on('order:updated', () => { loadPending(); loadLive(); });
+    // Kitchen stage changes refresh the three-stage tracker
+    K.socket.on('order:stage', () => loadLive());
+    K.socket.on('order:ready', r => { K.sound(); loadLive(); });
     setInterval(loadLive, 15000);
   }
 
@@ -358,6 +366,24 @@
     }
   };
 
+  // ---- three-stage kitchen tracker (display only — kitchen drives the stages) ----
+  const STAGES = [
+    { k: 'received', label: 'Received' },
+    { k: 'in_progress', label: 'Preparing' },
+    { k: 'completed', label: 'Ready' }
+  ];
+  function kitchenStages(o) {
+    const idx = STAGES.findIndex(s => s.k === o.kitchenStatus);
+    if (o.kitchenStatus === 'cancelled') return '<span class="badge badge-red">Cancelled</span>';
+    if (idx === -1) return '<span class="badge badge-grey">Not sent</span>';
+    const dots = STAGES.map((s, i) => {
+      const cls = i < idx ? 'done' : (i === idx ? 'now' : '');
+      return '<span class="kdot ' + cls + '" title="' + s.label + '"></span>';
+    }).join('');
+    return '<div class="kstages">' + dots +
+      '<span class="kstage-lbl">' + K.esc(STAGES[idx].label) + '</span></div>';
+  }
+
   // ---- live orders ----
   async function loadLive() {
     try {
@@ -365,12 +391,13 @@
       $('#liveTable').querySelector('tbody').innerHTML = orders.map(o => {
         const payBadge = o.payment.status === 'paid' ? 'badge-green' : (o.payment.status === 'awaiting_verification' ? 'badge-amber' : 'badge-grey');
         const kBadge = { pending: 'badge-grey', received: 'badge-blue', in_progress: 'badge-amber', completed: 'badge-green', cancelled: 'badge-red' }[o.kitchenStatus] || 'badge-grey';
+        const stages = kitchenStages(o);
         return '<tr><td><b>' + K.esc(o.id) + '</b><div class="sub" style="font-size:11px;color:var(--muted)">' + K.esc(o.customer.name || (o.table ? 'Table ' + o.table : '—')) + ' · ' + K.time(o.createdAt) + '</div></td>' +
           '<td>' + K.esc(K.TYPE_LABEL[o.type]) + (o.table ? ' T' + o.table : '') + '</td>' +
           '<td>' + o.items.reduce((s, i) => s + i.qty, 0) + '</td>' +
           '<td><b>' + K.money(o.total) + '</b></td>' +
           '<td><span class="badge ' + payBadge + '">' + K.esc(K.PAY_LABEL[o.payment.status] || o.payment.status) + '</span></td>' +
-          '<td><span class="badge ' + kBadge + '">' + K.esc(K.KITCHEN_LABEL[o.kitchenStatus] || o.kitchenStatus) + '</span></td>' +
+          '<td>' + stages + '</td>' +
           '<td>' + actionsHtml(o) + '</td></tr>';
       }).join('');
     } catch (e) { console.error(e); }

@@ -69,6 +69,59 @@
     setTimeout(function () { t.remove(); }, 4200);
   };
 
+  // ---------- "order ready" popup (customer-facing) ----------
+  // Full-screen modal + vibration + desktop notification + chime.
+  K.readyPopup = function (opts) {
+    opts = opts || {};
+    var msg = opts.message || 'Your order is ready!';
+    var oid = opts.id || '';
+    var seen = 'karim_ready_' + oid;
+    if (oid && sessionStorage.getItem(seen)) return; // only pop once per session
+    if (oid) { try { sessionStorage.setItem(seen, '1'); } catch (e) {} }
+
+    K.sound();
+    try { navigator.vibrate && navigator.vibrate([180, 90, 180, 90, 320]); } catch (e) {}
+    if (window.Notification && Notification.permission === 'granted') {
+      try { new Notification("Karim's — Order " + oid + " is ready", { body: msg, tag: 'ready_' + oid }); } catch (e) {}
+    }
+
+    var old = document.getElementById('readyPopup');
+    if (old) old.remove();
+    var el = document.createElement('div');
+    el.id = 'readyPopup';
+    el.setAttribute('style', [
+      'position:fixed', 'inset:0', 'z-index:99999', 'display:flex',
+      'align-items:center', 'justify-content:center', 'padding:20px',
+      'background:rgba(20,6,6,.86)', 'backdrop-filter:blur(3px)',
+      'animation:readyFade .25s ease'
+    ].join(';'));
+    el.innerHTML =
+      '<div style="background:linear-gradient(160deg,#FFFDF6,#FFF3D6);border:3px solid #CBAF4D;' +
+      'border-radius:22px;max-width:420px;width:100%;padding:30px 26px;text-align:center;' +
+      'box-shadow:0 24px 60px rgba(0,0,0,.5);animation:readyPop .45s cubic-bezier(.2,1.4,.4,1)">' +
+      '<div style="font-size:56px;line-height:1">🍽</div>' +
+      '<div style="font-family:var(--font);font-size:26px;color:#4A1013;margin-top:10px;letter-spacing:.02em">Order Ready!</div>' +
+      (oid ? '<div style="margin-top:6px;font-weight:800;color:#8A6A1F;letter-spacing:.12em">' + K.esc(oid) + '</div>' : '') +
+      '<div style="margin-top:14px;font-size:15.5px;color:#3B3030;line-height:1.5">' + K.esc(msg) + '</div>' +
+      '<button onclick="this.closest(\'#readyPopup\').remove()" ' +
+      'style="margin-top:22px;width:100%;padding:14px;border:none;border-radius:12px;cursor:pointer;' +
+      'background:#4A1013;color:#F3E5AB;font-weight:800;font-size:15px;letter-spacing:.04em">Got it</button>' +
+      '</div>';
+    document.body.appendChild(el);
+    var style = document.createElement('style');
+    style.textContent = '@keyframes readyPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}' +
+      '@keyframes readyFade{from{opacity:0}to{opacity:1}}';
+    document.head.appendChild(style);
+    el.addEventListener('click', function (e) { if (e.target === el) el.remove(); });
+  };
+
+  // Ask for notification permission quietly (must be from a user gesture)
+  K.askNotify = function () {
+    if (window.Notification && Notification.permission === 'default') {
+      try { Notification.requestPermission(); } catch (e) {}
+    }
+  };
+
   // ---------- utils ----------
   K.money = function (n) { return '₹' + Number(n || 0).toLocaleString('en-IN'); };
   K.time = function (ts) {

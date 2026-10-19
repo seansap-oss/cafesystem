@@ -793,8 +793,26 @@ app.post('/api/orders/:id/kitchen', requireAuth('orders.kitchen'), (req, res) =>
   save();
   audit(req.user.username, 'order.kitchen', o.id + ' → ' + next);
   broadcast('order:updated', orderPublic(o));
+  // Targeted events: customer's tracking page pops up when food is ready;
+  // POS/KDS get a lightweight "stage changed" ping to refresh their badges.
+  emit('customer:' + o.id, 'order:stage', { id: o.id, stage: next, kitchenStatus: next });
+  if (next === 'completed') {
+    const payload = {
+      id: o.id, type: o.type, table: o.table, total: o.total,
+      message: readyMessage(o), at: Date.now()
+    };
+    emit('customer:' + o.id, 'order:ready', payload);
+    broadcast('order:ready', payload);
+  }
   res.json(o);
 });
+
+// Customer-facing "your order is ready" wording per fulfilment type
+function readyMessage(o) {
+  if (o.type === 'dinein') return 'Your order is ready at table ' + (o.table || '—') + '. Please enjoy!';
+  if (o.type === 'delivery') return 'Your order is packed and ready. Your rider will reach you shortly.';
+  return 'Your order is ready for pickup. Please collect it at the counter.';
+}
 
 // Strike individual items in kitchen
 app.post('/api/orders/:id/check-item', requireAuth('orders.kitchen'), (req, res) => {

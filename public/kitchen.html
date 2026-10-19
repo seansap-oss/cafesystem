@@ -76,6 +76,7 @@
 <script>
 (function () {
   const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
   if (!K.requireRole(['admin','manager','kitchen','cashier'], '/kitchen')) return;
   $('#whoami').textContent = K.user.name;
   $('#btnLogout').onclick = async () => { await K.logout(); location.href = '/kitchen'; };
@@ -139,8 +140,7 @@
     if (o.kitchenStatus === 'received')
       return '<button class="btn btn-amber btn-block" data-start="' + o.id + '">🔥 Start Cooking</button>';
     if (o.kitchenStatus === 'in_progress')
-      return '<button class="btn btn-green btn-block" data-done="' + o.id + '">✓ Mark Ready</button>' +
-        '<button class="btn btn-outline btn-sm" data-start="' + o.id + '" style="display:none"></button>';
+      return '<button class="btn btn-green btn-block" data-done="' + o.id + '">✓ Mark Ready — notify customer</button>';
     if (o.kitchenStatus === 'completed')
       return '<span class="badge badge-green" style="padding:8px 14px">READY — ' + K.esc(K.FUL_LABEL[o.fulfillmentStatus] || o.fulfillmentStatus) + '</span>';
     return '';
@@ -154,7 +154,8 @@
         K.toast('Cooking started', 'ok');
       } else if (dn) {
         await K.api('/api/orders/' + dn.dataset.done + '/kitchen', { method: 'POST', body: { status: 'completed' } });
-        K.sound(); K.toast(dn.dataset.done + ' is READY', 'ok');
+        K.sound();
+        K.toast(dn.dataset.done + ' is READY — customer notified 🔔', 'ok');
       } else if (item) {
         const ticket = item.closest('[data-id]');
         await K.api('/api/orders/' + ticket.dataset.id + '/check-item', { method: 'POST', body: { index: +item.dataset.idx } });

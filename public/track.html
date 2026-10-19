@@ -61,10 +61,28 @@
   const $ = s => document.querySelector(s);
   const id = K.qs('id'), token = K.qs('token');
 
-  async function load() {
-    if (!id || !token) { $('#oid').textContent = 'Missing order'; return; }
+  async function fetchOrder() {
+    if (!id || !token) { $('#oid').textContent = 'Missing order'; return null; }
     const o = await K.api('/api/track/' + encodeURIComponent(id) + '?token=' + encodeURIComponent(token));
     render(o);
+    return o;
+  }
+
+  // If the page is opened after the kitchen already finished, show the popup once.
+  let readyShown = false;
+  async function load() {
+    const o = await fetchOrder();
+    if (o && o.kitchenStatus === 'completed' && !readyShown) {
+      readyShown = true;
+      K.readyPopup({ id: o.id, message: readyText(o) });
+    }
+    return o;
+  }
+
+  function readyText(o) {
+    if (o.type === 'dinein') return 'Your order is ready at table ' + (o.table || '—') + '. Please enjoy!';
+    if (o.type === 'delivery') return 'Your order is packed and ready. Your rider will reach you shortly.';
+    return 'Your order is ready for pickup. Please collect it at the counter.';
   }
 
   function render(o) {
@@ -127,8 +145,24 @@
   K.socket.on('order:updated', o => { if (o.id === id) load(); });
   K.socket.on('order:paid', p => { if (p.id === id) { K.sound(); load(); } });
 
+  // Kitchen pushed a stage change → refresh + pop up when food is ready
+  K.socket.on('order:stage', s => { if (s && s.id === id) load(); });
+  K.socket.on('order:ready', r => {
+    if (!r || r.id !== id) return;
+    load();
+    const phone = (window.__karimPhone || '');
+    K.readyPopup({
+      id: r.id,
+      message: r.message || 'Your order is ready for pickup. Please collect it at the counter.'
+    });
+  });
+
   load().catch(e => { $('#oid').textContent = 'Not found'; $('#statusLine').textContent = e.message; });
   setInterval(load, 8000);
+  document.addEventListener('click', function once() {
+    document.removeEventListener('click', once);
+    K.askNotify();
+  });
 })();
 </script>
 </body>
