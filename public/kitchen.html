@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's Kitchen Display</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  body { background: #1E1210; }
+  .kds-bar { background: linear-gradient(135deg, #120A08, #2A1410); color: #fff; display: flex; align-items: center; gap: 14px; padding: 12px 22px; position: sticky; top: 0; z-index: 50; border-bottom: 2px solid var(--gold-700); }
+  .kds-bar .brand { font-family: var(--font); font-size: 22px; letter-spacing: .14em; color: var(--gold-500); }
+  .kds-bar .brand small { display: block; font-family: var(--font-ui); font-size: 9px; letter-spacing: .3em; color: var(--gold-300); }
+  .kds-bar .spacer { flex: 1; }
+  .kds-bar .stat { background: rgba(255,255,255,.08); border: 1px solid rgba(243,229,171,.2); border-radius: 12px; padding: 6px 14px; font-size: 12.5px; }
+  .kds-bar .stat b { color: var(--gold-300); font-size: 17px; font-family: var(--font); }
+  .filters { display: flex; gap: 8px; padding: 14px 22px 0; }
+  .filters button { border: 1.5px solid rgba(243,229,171,.25); background: rgba(255,255,255,.05); color: var(--gold-300); border-radius: 999px; padding: 7px 16px; font-size: 12.5px; font-weight: 700; }
+  .filters button.active { background: var(--gold-500); color: var(--maroon-900); border-color: var(--gold-500); }
+  .kds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; padding: 18px 22px 40px; }
+  .ticket { background: #FFFDF8; border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 14px 34px rgba(0,0,0,.4); }
+  .ticket-head { padding: 12px 16px; color: #fff; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .ticket-head.received { background: var(--blue); }
+  .ticket-head.in_progress { background: var(--amber); }
+  .ticket-head.completed { background: var(--green); }
+  .ticket-head .idline { font-weight: 800; font-size: 16px; }
+  .ticket-head .sub { font-size: 11.5px; opacity: .95; margin-top: 2px; }
+  .ticket-body { padding: 10px 16px; flex: 1; }
+  .t-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); cursor: pointer; align-items: flex-start; }
+  .t-item:last-child { border-bottom: none; }
+  .t-item .qty { font-weight: 800; color: var(--maroon-700); min-width: 30px; font-family: var(--font); font-size: 17px; }
+  .t-item .nm { flex: 1; font-weight: 700; font-size: 14.5px; }
+  .t-item .mod { display: block; font-size: 11.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+  .t-item .mod.warn { color: var(--red); font-weight: 700; }
+  .t-item.checked { opacity: .38; }
+  .t-item.checked .nm { text-decoration: line-through; }
+  .t-note { background: #FFF3D6; border: 1px dashed var(--gold-700); color: #6B4A00; font-size: 12px; padding: 7px 10px; border-radius: 8px; margin: 8px 0; }
+  .ticket-foot { padding: 10px 16px 14px; display: flex; gap: 8px; }
+  .ticket.late { outline: 3px solid var(--red); outline-offset: -3px; animation: pulse 1.4s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 14px 34px rgba(0,0,0,.4); } 50% { box-shadow: 0 0 0 6px rgba(179,38,30,.35), 0 14px 34px rgba(0,0,0,.4); } }
+  .age-pill { background: rgba(0,0,0,.22); padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+  .age-pill.hot { background: var(--red); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: .55; } }
+  .kds-empty { text-align: center; color: #8A7560; padding: 80px 20px; font-family: var(--font); font-size: 24px; }
+  .conn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gold-300); }
+</style>
+</head>
+<body>
+<header class="kds-bar">
+  <div class="brand">KARIM'S<small>KITCHEN DISPLAY</small></div>
+  <a class="nav-pill" href="/pos">POS</a>
+  <a class="nav-pill" href="/kitchen">Kitchen</a>
+  <a class="nav-pill" href="/manager">Manager</a>
+  <div class="spacer"></div>
+  <div class="stat">Queue <b id="stQueue">0</b></div>
+  <div class="stat">Cooking <b id="stCook">0</b></div>
+  <div class="stat">Done <b id="stDone">0</b></div>
+  <div class="conn"><span class="dot on" id="connDot"></span><span id="connTxt">Live</span></div>
+  <div class="who" style="font-size:12.5px;color:#CDBBA0"><b id="whoami"></b>
+    <button class="btn btn-sm btn-outline" id="btnLogout" style="color:var(--gold-300);border-color:var(--gold-300);margin-left:8px">Logout</button>
+  </div>
+</header>
+
+<div class="filters" id="filters">
+  <button class="active" data-f="active">Active</button>
+  <button data-f="received">New</button>
+  <button data-f="in_progress">Cooking</button>
+  <button data-f="completed">Completed</button>
+  <button data-f="all">All today</button>
+</div>
+
+<div class="kds-grid" id="grid"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  if (!K.requireRole(['admin','manager','kitchen','cashier'], '/kitchen')) return;
+  $('#whoami').textContent = K.user.name;
+  $('#btnLogout').onclick = async () => { await K.logout(); location.href = '/kitchen'; };
+
+  let orders = [], filter = 'active', soundOn = true;
+
+  async function load() {
+    try { orders = await K.api('/api/orders?limit=120'); render(); }
+    catch (e) { console.error(e); }
+  }
+
+  function visible() {
+    if (filter === 'active') return orders.filter(o => ['received','in_progress'].includes(o.kitchenStatus));
+    if (filter === 'all') return orders;
+    return orders.filter(o => o.kitchenStatus === filter);
+  }
+
+  function render() {
+    const act = orders.filter(o => ['received','in_progress'].includes(o.kitchenStatus));
+    $('#stQueue').textContent = orders.filter(o => o.kitchenStatus === 'received').length;
+    $('#stCook').textContent = orders.filter(o => o.kitchenStatus === 'in_progress').length;
+    $('#stDone').textContent = orders.filter(o => o.kitchenStatus === 'completed').length;
+
+    const list = visible().slice(0, 40);
+    const grid = $('#grid');
+    if (!list.length) {
+      grid.innerHTML = '<div class="kds-empty" style="grid-column:1/-1">All quiet in the kitchen — no tickets.</div>';
+      return;
+    }
+    grid.innerHTML = list.map(o => {
+      const mins = Math.floor((Date.now() - o.createdAt) / 60000);
+      const late = mins >= 20 && ['received','in_progress'].includes(o.kitchenStatus);
+      const headerCls = o.kitchenStatus === 'in_progress' ? 'in_progress' : (o.kitchenStatus === 'completed' ? 'completed' : 'received');
+      const typeLabel = K.TYPE_LABEL[o.type] + (o.table ? ' · Table ' + o.table : '') + (o.type === 'delivery' ? ' · ' + K.esc(o.customer.name || '') : (o.type === 'pickup' ? ' · ' + K.esc(o.customer.name || '') : ''));
+      return '<div class="ticket' + (late ? ' late' : '') + '" data-id="' + o.id + '">' +
+        '<div class="ticket-head ' + headerCls + '">' +
+        '<div><div class="idline">' + K.esc(o.id) + '</div><div class="sub">' + typeLabel + ' · ' + K.time(o.createdAt) + '</div></div>' +
+        '<span class="age-pill' + (late ? ' hot' : '') + '">' + K.ago(o.createdAt) + '</span>' +
+        '</div>' +
+        '<div class="ticket-body">' +
+        o.items.map((it, idx) => {
+          const checked = (o.itemsChecked || []).includes(idx);
+          const mods = [];
+          if (it.spice && it.spice !== 'medium') mods.push(it.spice.toUpperCase());
+          if (it.butter && it.butter !== 'regular') mods.push(it.butter.toUpperCase() + ' BUTTER');
+          if (it.note) mods.push('“' + K.esc(it.note) + '”');
+          return '<div class="t-item' + (checked ? ' checked' : '') + '" data-idx="' + idx + '">' +
+            '<span class="qty">' + it.qty + '×</span>' +
+            '<span class="nm">' + K.esc(it.name) + ' <span style="color:var(--muted);font-weight:500;font-size:12px">(' + (it.portion === 'half' ? 'Half' : 'Full') + ')</span>' +
+            (mods.length ? '<span class="mod' + (it.note ? ' warn' : '') + '">' + mods.join(' · ') + '</span>' : '') +
+            '</span></div>';
+        }).join('') +
+        (o.notes ? '<div class="t-note">Order note: ' + K.esc(o.notes) + '</div>' : '') +
+        '</div>' +
+        '<div class="ticket-foot">' + footBtns(o) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function footBtns(o) {
+    if (o.kitchenStatus === 'received')
+      return '<button class="btn btn-amber btn-block" data-start="' + o.id + '">🔥 Start Cooking</button>';
+    if (o.kitchenStatus === 'in_progress')
+      return '<button class="btn btn-green btn-block" data-done="' + o.id + '">✓ Mark Ready</button>' +
+        '<button class="btn btn-outline btn-sm" data-start="' + o.id + '" style="display:none"></button>';
+    if (o.kitchenStatus === 'completed')
+      return '<span class="badge badge-green" style="padding:8px 14px">READY — ' + K.esc(K.FUL_LABEL[o.fulfillmentStatus] || o.fulfillmentStatus) + '</span>';
+    return '';
+  }
+
+  $('#grid').onclick = async e => {
+    const st = e.target.closest('[data-start]'), dn = e.target.closest('[data-done]'), item = e.target.closest('[data-idx]');
+    try {
+      if (st) {
+        await K.api('/api/orders/' + st.dataset.start + '/kitchen', { method: 'POST', body: { status: 'in_progress' } });
+        K.toast('Cooking started', 'ok');
+      } else if (dn) {
+        await K.api('/api/orders/' + dn.dataset.done + '/kitchen', { method: 'POST', body: { status: 'completed' } });
+        K.sound(); K.toast(dn.dataset.done + ' is READY', 'ok');
+      } else if (item) {
+        const ticket = item.closest('[data-id]');
+        await K.api('/api/orders/' + ticket.dataset.id + '/check-item', { method: 'POST', body: { index: +item.dataset.idx } });
+      }
+      load();
+    } catch (err) { K.toast(err.message, 'err'); }
+  };
+
+  $('#filters').onclick = e => {
+    const b = e.target.closest('[data-f]'); if (!b) return;
+    $$('#filters button').forEach(x => x.classList.toggle('active', x === b));
+    filter = b.dataset.f; render();
+  };
+
+  // sockets
+  K.connect(['kitchen', 'all']);
+  K.socket.on('connect', () => { $('#connDot').className = 'dot on'; $('#connTxt').textContent = 'Live'; });
+  K.socket.on('disconnect', () => { $('#connDot').className = 'dot off'; $('#connTxt').textContent = 'Reconnecting…'; });
+  K.socket.on('order:new-ticket', o => { K.sound(); K.toast('NEW TICKET ' + o.id, 'ok'); load(); });
+  K.socket.on('order:updated', () => load());
+  K.socket.on('order:paid', () => load());
+
+  load();
+  setInterval(() => { if (filter === 'active' || filter === 'all') render(); }, 30000);
+})();
+</script>
+</body>
+</html>

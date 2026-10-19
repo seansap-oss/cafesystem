@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Order — Karim's</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  .track-wrap { max-width: 640px; margin: 0 auto; padding: 30px 18px 80px; }
+  .track-hero { background: linear-gradient(135deg, var(--maroon-900), var(--maroon-700)); color: #fff; border-radius: var(--radius); padding: 26px; text-align: center; margin-bottom: 18px; }
+  .track-hero .oid { font-family: var(--font); font-size: 34px; color: var(--gold-500); letter-spacing: .06em; }
+  .track-hero .sub { font-size: 13px; opacity: .9; margin-top: 4px; }
+  .steps { display: flex; justify-content: space-between; position: relative; margin: 28px 6px 10px; }
+  .steps::before { content: ''; position: absolute; top: 17px; left: 6%; right: 6%; height: 3px; background: var(--line); }
+  .tstep { position: relative; text-align: center; flex: 1; }
+  .tstep .bub { width: 36px; height: 36px; border-radius: 50%; background: #fff; border: 3px solid var(--line); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; z-index: 1; }
+  .tstep.done .bub { background: var(--green); border-color: var(--green); color: #fff; }
+  .tstep.now .bub { background: var(--gold-500); border-color: var(--gold-500); color: var(--maroon-900); box-shadow: 0 0 0 5px rgba(212,175,55,.3); }
+  .tstep small { font-size: 10.5px; font-weight: 700; color: var(--muted); }
+  .tstep.done small, .tstep.now small { color: var(--maroon-800); }
+  .item-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+  .status-line { text-align: center; font-size: 15px; margin: 10px 0; color: var(--muted); }
+  .status-line b { color: var(--maroon-800); }
+  .confirm-note { border-radius: 12px; padding: 14px 18px; font-size: 14px; line-height: 1.5; }
+  .confirm-note.pending { background: #FFF8E6; border: 1.5px solid #E8C86A; color: #6B5312; }
+  .confirm-note.ok { background: #EAF7EE; border: 1.5px solid #56B870; color: #1D5A2E; }
+  .confirm-note.rej { background: #FCEEEE; border: 1.5px solid #D96A6A; color: #7A1F1F; }
+</style>
+</head>
+<body>
+<div class="track-wrap">
+  <div class="track-hero">
+    <div class="kicker" style="color:var(--gold-300)">ORDER TRACKER</div>
+    <div class="oid" id="oid">…</div>
+    <div class="sub" id="osub"></div>
+  </div>
+
+  <div class="confirm-note" id="confBanner" style="display:none;margin-bottom:16px"></div>
+
+  <div class="panel">
+    <div class="steps" id="steps"></div>
+    <div class="status-line" id="statusLine"></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <h3>Your order</h3>
+    <div id="items" style="margin-top:8px"></div>
+    <div class="totals" id="totals" style="margin-top:10px"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:22px">
+    <a class="btn btn-outline" href="/">← Back to menu</a>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const id = K.qs('id'), token = K.qs('token');
+
+  async function load() {
+    if (!id || !token) { $('#oid').textContent = 'Missing order'; return; }
+    const o = await K.api('/api/track/' + encodeURIComponent(id) + '?token=' + encodeURIComponent(token));
+    render(o);
+  }
+
+  function render(o) {
+    $('#oid').textContent = o.id;
+    $('#osub').textContent = (K.TYPE_LABEL[o.type] || o.type) + (o.table ? ' · Table ' + o.table : '') + ' · ' + K.money(o.total) + ' · placed ' + K.time(o.createdAt);
+
+    // confirmation banner (restaurant accept/reject) — distinct from payment states
+    const cb = $('#confBanner');
+    if (o.confirmationStatus === 'pending_confirmation') {
+      cb.style.display = '';
+      cb.className = 'confirm-note pending';
+      cb.innerHTML = '<b>Waiting for the restaurant to confirm</b><br>Your order has been received. The restaurant will accept it shortly — it enters the kitchen only after confirmation (and payment if required).';
+    } else if (o.confirmationStatus === 'confirmed') {
+      cb.style.display = '';
+      cb.className = 'confirm-note ok';
+      cb.innerHTML = '<b>Restaurant confirmed ✓</b>' + (o.paymentStatus === 'paid' ? ' Payment received — the kitchen has your ticket.' : ' Next: confirm your payment so cooking can begin.');
+    } else if (o.confirmationStatus === 'rejected') {
+      cb.style.display = '';
+      cb.className = 'confirm-note rej';
+      cb.innerHTML = '<b>Order not accepted</b><br>' + K.esc(o.confirmation && o.confirmation.notes ? o.confirmation.notes : 'The restaurant could not accept this order. Please call us or try again.');
+    } else cb.style.display = 'none';
+
+    let stage = 0;
+    if (o.confirmationStatus === 'confirmed') stage = Math.max(stage, 0);
+    if (o.paymentStatus === 'paid') stage = 1;
+    if (['received','in_progress'].includes(o.kitchenStatus)) stage = 2;
+    if (o.kitchenStatus === 'completed') stage = 3;
+    if (['delivered','served','collected'].includes(o.fulfillmentStatus)) stage = 4;
+    const steps = [['🛒','Placed'],['✓','Confirmed'],['₹','Paid'],['🔥','Cooking'],['🍽','Ready'],['✨','Done']];
+    $('#steps').innerHTML = steps.map((s, i) =>
+      '<div class="tstep ' + (i < stage ? 'done' : (i === stage ? 'now' : '')) + '"><div class="bub">' + s[0] + '</div><small>' + s[1] + '</small></div>').join('');
+
+    let line = '';
+    if (o.confirmationStatus === 'pending_confirmation') line = '<b>Waiting for restaurant confirmation.</b> This usually takes a minute during busy hours.';
+    else if (o.confirmationStatus === 'rejected') line = '<b>This order was not accepted by the restaurant.</b> Any payment already made will be refunded — please call us if needed.';
+    else if (o.paymentStatus === 'awaiting_verification') line = 'Order confirmed ✓ — waiting for staff to verify your ' + o.paymentMethod.toUpperCase() + ' payment. The kitchen starts right after.';
+    else if (o.paymentStatus === 'pending' && o.kitchenStatus === 'pending') line = 'Confirmed ✓ — please complete payment to start cooking.';
+    else if (o.kitchenStatus === 'received') line = 'Payment confirmed ✓ — the chefs have your ticket.';
+    else if (o.kitchenStatus === 'in_progress') line = 'Your food is <b>cooking now</b> 🔥';
+    else if (o.kitchenStatus === 'completed' && o.type === 'delivery') line = o.driverName ? 'Ready! Rider <b>' + K.esc(o.driverName) + '</b> is handling your delivery.' : 'Ready — waiting for a rider to be assigned.';
+    else if (o.kitchenStatus === 'completed') line = 'Your order is <b>ready</b>!';
+    else if (o.fulfillmentStatus === 'out_for_delivery') line = 'Out for delivery 🛵 — almost there!';
+    else if (o.fulfillmentStatus === 'delivered') line = 'Delivered. Enjoy your meal, and thank you for choosing Karim\'s!';
+    else if (o.fulfillmentStatus === 'served') line = 'Served to your table. Enjoy!';
+    else if (o.fulfillmentStatus === 'collected') line = 'Collected. Enjoy your meal!';
+    else if (o.kitchenStatus === 'cancelled') line = '<b>This order was cancelled.</b>';
+    $('#statusLine').innerHTML = line;
+
+    $('#items').innerHTML = o.items.map(i =>
+      '<div class="item-line"><span>' + i.qty + '× ' + K.esc(i.name) + ' <small style="color:var(--muted)">(' + (i.portion === 'half' ? 'Half' : 'Full') + ')</small></span></div>').join('');
+    $('#totals').innerHTML =
+      '<div class="trow"><span>Subtotal</span><span>' + K.money(o.subtotal) + '</span></div>' +
+      '<div class="trow"><span>GST</span><span>' + K.money(o.gst) + '</span></div>' +
+      (o.deliveryFee ? '<div class="trow"><span>Delivery</span><span>' + K.money(o.deliveryFee) + '</span></div>' : '') +
+      '<div class="trow grand"><span>Total</span><span>' + K.money(o.total) + '</span></div>';
+  }
+
+  // live updates — connect as customer and subscribe to this order room
+  K.connect(['customer:' + id]);
+  K.socket.on('order:updated', o => { if (o.id === id) load(); });
+  K.socket.on('order:paid', p => { if (p.id === id) { K.sound(); load(); } });
+
+  load().catch(e => { $('#oid').textContent = 'Not found'; $('#statusLine').textContent = e.message; });
+  setInterval(load, 8000);
+})();
+</script>
+</body>
+</html>

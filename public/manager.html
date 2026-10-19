@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's — Manager Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 22px 20px 60px; }
+  .sec { margin-top: 26px; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .sec-head h2 { font-size: 24px; }
+  .two-col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; align-items: start; }
+  .best-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+  .best-row .bar { height: 22px; background: linear-gradient(90deg, var(--maroon-700), var(--gold-500)); border-radius: 6px; min-width: 8px; }
+  .best-row .nm { flex: 1; font-weight: 700; font-size: 13.5px; }
+  .best-row .qty { font-family: var(--font); color: var(--maroon-700); font-size: 16px; }
+  .drv-card { border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #fff; }
+  .drv-card .nm { font-weight: 800; color: var(--maroon-800); }
+  .drv-card .ph { font-size: 12px; color: var(--muted); }
+  table.grid td .sub { font-size: 11px; color: var(--muted); }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">KARIM'S<small>MANAGER</small></div>
+  <a class="nav-pill" href="/pos">POS</a>
+  <a class="nav-pill" href="/kitchen">Kitchen</a>
+  <a class="nav-pill active" href="/manager">Manager</a>
+  <a class="nav-pill" href="/admin">Admin</a>
+  <a class="nav-pill" href="/delivery">Delivery</a>
+  <div class="spacer"></div>
+  <div class="who"><b id="whoami">…</b> <button class="btn btn-sm btn-outline" id="btnLogout" style="color:var(--gold-300);border-color:var(--gold-300)">Logout</button></div>
+</header>
+
+<div class="wrap">
+  <div class="kpi-gold" id="kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px"></div>
+
+  <div class="sec panel" id="confPanel" style="display:none;border-left:5px solid var(--amber)">
+    <div class="sec-head"><h2>Pending confirmations <span class="badge badge-amber" id="confCount">0</span></h2>
+    <a class="btn btn-sm btn-outline" href="/finance">Finance →</a></div>
+    <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">These online orders cannot enter the kitchen until confirmed. Payment confirmation alone is not enough when the policy requires restaurant confirmation.</p>
+    <div id="confList"></div>
+  </div>
+
+  <div class="sec two-col">
+    <div class="panel">
+      <div class="sec-head"><h2>Live floor</h2><button class="btn btn-sm btn-outline" id="btnRefresh">Refresh</button></div>
+      <table class="grid" id="ordersTable">
+        <thead><tr><th>Order</th><th>Type</th><th>Guest</th><th>Total</th><th>Payment</th><th>Kitchen</th><th>Actions</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Today's bestsellers</h3>
+        <div id="best" style="margin-top:8px"></div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Drivers on shift</h3>
+        <div id="drivers" style="margin-top:8px"></div>
+        <div id="assignBox" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  if (!K.requireRole(['admin','manager'], '/pos')) return;
+  $('#whoami').textContent = K.user.name;
+  $('#btnLogout').onclick = async () => { await K.logout(); location.href = '/pos'; };
+
+  let orders = [], drivers = [], report = null;
+
+  async function loadAll() {
+    [orders, drivers, report] = await Promise.all([
+      K.api('/api/orders?limit=100'),
+      K.api('/api/drivers').catch(() => []),
+      K.api('/api/reports/today')
+    ]);
+    renderKpis(); renderOrders(); renderBest(); renderDrivers();
+  }
+
+  function renderKpis() {
+    const r = report;
+    const kpis = [
+      ["Today's revenue", K.money(r.gross), 'gold'],
+      ['Orders', r.orderCount, ''],
+      ['Avg order', K.money(r.aov), ''],
+      ['Cash / UPI / Card', K.money(r.cash) + ' · ' + K.money(r.upi) + ' · ' + K.money(r.card), ''],
+      ['Awaiting payment', r.awaitingPayment, r.awaitingPayment ? 'gold' : ''],
+      ['In kitchen', r.inKitchen, ''],
+      ['Ready for runner', r.readyForRunner, ''],
+      ['Delivery pool', r.deliveryPool, r.deliveryPool ? 'gold' : ''],
+      ['Active tables', r.activeTables + '/' + r.tablesTotal, '']
+    ];
+    $('#kpis').innerHTML = kpis.map(k =>
+      '<div class="kpi ' + k[2] + '"><div class="lbl">' + k[0] + '</div><div class="val">' + k[1] + '</div></div>').join('');
+  }
+
+  function renderOrders() {
+    // confirmation queue
+    const conf = orders.filter(o => o.kitchenStatus !== 'cancelled' && o.confirmationStatus === 'pending_confirmation');
+    $('#confPanel').style.display = conf.length ? '' : 'none';
+    $('#confCount').textContent = conf.length;
+    $('#confList').innerHTML = conf.map(o =>
+      '<div class="drv-card" style="border-color:var(--amber);background:var(--amber-bg)"><div>' +
+      '<div class="nm">' + K.esc(o.id) + ' <span class="badge badge-grey">' + K.esc(K.TYPE_LABEL[o.type]) + (o.table ? ' T' + o.table : '') + '</span></div>' +
+      '<div class="ph">' + K.money(o.total) + ' · ' + K.esc(o.payment.method.toUpperCase()) + ' · ' + K.ago(o.createdAt) + ' ago · ' +
+      K.esc(o.customer.name || 'Walk-in') + (o.customer.phone ? ' · ' + K.esc(o.customer.phone) : '') + '</div>' +
+      '<div class="ph">' + o.items.map(i => i.qty + '× ' + K.esc(i.name)).join(', ') + '</div></div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">' +
+      '<button class="btn btn-sm btn-green" data-conf="' + o.id + '">Confirm</button>' +
+      (o.payment.status !== 'paid' ? '<button class="btn btn-sm btn-blue" data-pay="' + o.id + '" data-m="' + o.payment.method + '">Verify ₹</button>' : '') +
+      '<button class="btn btn-sm btn-outline" data-contacted="' + o.id + '">Contacted</button>' +
+      '<button class="btn btn-sm btn-red" data-reject="' + o.id + '">Reject</button></div></div>'
+    ).join('') || '<div style="font-size:13px;color:var(--muted)">No orders waiting for confirmation.</div>';
+
+    const tb = $('#ordersTable').querySelector('tbody');
+    const live = orders.filter(o => !['delivered','served','collected','cancelled'].includes(o.fulfillmentStatus));
+    if (!live.length) { tb.innerHTML = '<tr><td colspan="7" class="empty">No active orders right now</td></tr>'; return; }
+    tb.innerHTML = live.map(o => {
+      const payBadge = o.payment.status === 'paid' ? 'badge-green' : (o.payment.status === 'awaiting_verification' ? 'badge-amber' : 'badge-grey');
+      const kBadge = { pending: 'badge-grey', received: 'badge-blue', in_progress: 'badge-amber', completed: 'badge-green', cancelled: 'badge-red' }[o.kitchenStatus] || 'badge-grey';
+      let act = '';
+      if (o.confirmationStatus === 'pending_confirmation')
+        act += '<button class="btn btn-sm btn-green" data-conf="' + o.id + '">Confirm</button> ';
+      if (o.payment.status === 'awaiting_verification')
+        act += '<button class="btn btn-sm btn-green" data-pay="' + o.id + '" data-m="' + o.payment.method + '">Verify ₹</button> ';
+      if (o.type === 'delivery' && o.kitchenStatus === 'completed' && !o.delivery.driverId)
+        act += '<button class="btn btn-sm btn-blue" data-assign="' + o.id + '">Assign</button> ';
+      if (o.kitchenStatus === 'completed' && o.type !== 'delivery')
+        act += '<button class="btn btn-sm btn-blue" data-fulfil="' + o.id + '">Serve</button> ';
+      if (!['delivered','served','collected','cancelled'].includes(o.fulfillmentStatus))
+        act += '<button class="btn btn-sm btn-outline" data-cancel="' + o.id + '">Cancel</button>';
+      return '<tr><td><b>' + K.esc(o.id) + '</b><div class="sub">' + K.time(o.createdAt) + '</div></td>' +
+        '<td>' + K.esc(K.TYPE_LABEL[o.type]) + (o.table ? ' T' + o.table : '') + '</td>' +
+        '<td>' + K.esc(o.customer.name || '—') + '<div class="sub">' + K.esc(o.customer.phone || '') + '</div></td>' +
+        '<td><b>' + K.money(o.total) + '</b></td>' +
+        '<td><span class="badge ' + payBadge + '">' + K.esc(K.PAY_LABEL[o.payment.status]) + '</span>' +
+        (o.confirmationStatus === 'pending_confirmation' ? ' <span class="badge badge-amber">Unconfirmed</span>' : '') + '</td>' +
+        '<td><span class="badge ' + kBadge + '">' + K.esc(K.KITCHEN_LABEL[o.kitchenStatus]) + '</span></td>' +
+        '<td>' + (act || '—') + '</td></tr>';
+    }).join('');
+  }
+
+  function renderBest() {
+    const b = report.bestsellers || [];
+    if (!b.length) { $('#best').innerHTML = '<div class="empty" style="padding:20px">No sales yet today</div>'; return; }
+    const max = b[0].qty || 1;
+    $('#best').innerHTML = b.map(x =>
+      '<div class="best-row"><div class="bar" style="width:' + Math.max(10, Math.round(x.qty / max * 130)) + 'px"></div>' +
+      '<div class="nm">' + K.esc(x.name) + '</div><div class="qty">' + x.qty + '</div></div>').join('');
+  }
+
+  function renderDrivers() {
+    $('#drivers').innerHTML = drivers.map(d =>
+      '<div class="drv-card"><div><div class="nm">' + (d.active ? '<span class="dot on"></span> ' : '<span class="dot off"></span> ') + K.esc(d.name) + '</div>' +
+      '<div class="ph">' + K.esc(d.phone || '') + '</div></div>' +
+      '<button class="btn btn-sm ' + (d.active ? 'btn-outline' : 'btn-green') + '" data-toggledrv="' + d.id + '">' + (d.active ? 'Off duty' : 'On duty') + '</button></div>').join('')
+      || '<div class="empty" style="padding:16px">No drivers configured</div>';
+
+    const pool = orders.filter(o => o.type === 'delivery' && o.kitchenStatus === 'completed' && !o.delivery.driverId);
+    $('#assignBox').innerHTML = pool.length
+      ? '<h3 style="font-size:16px;margin-bottom:8px">Delivery pool (' + pool.length + ')</h3>' + pool.map(o =>
+        '<div style="border:1.5px solid var(--gold-500);background:#FFFBEF;border-radius:10px;padding:10px;margin-bottom:8px">' +
+        '<b>' + K.esc(o.id) + '</b> · ' + K.money(o.total) + ' · ' + K.esc(o.customer.name) + '<div style="font-size:11.5px;color:var(--muted)">' + K.esc(o.customer.address) + '</div>' +
+        '<select data-drvsel="' + o.id + '" style="margin-top:6px;width:100%;padding:6px;border:1.5px solid var(--line);border-radius:8px">' +
+        drivers.filter(d => d.active).map(d => '<option value="' + d.id + '">' + K.esc(d.name) + '</option>').join('') +
+        '</select><button class="btn btn-sm btn-blue btn-block" style="margin-top:6px" data-assignnow="' + o.id + '">Assign driver</button></div>').join('')
+      : '<div style="font-size:13px;color:var(--muted)">No deliveries waiting for a rider.</div>';
+  }
+
+  document.body.addEventListener('click', async e => {
+    const pay = e.target.closest('[data-pay]'), can = e.target.closest('[data-cancel]'),
+      ful = e.target.closest('[data-fulfil]'), tog = e.target.closest('[data-toggledrv]'),
+      anow = e.target.closest('[data-assignnow]'), asg = e.target.closest('[data-assign]'),
+      cf = e.target.closest('[data-conf]'), rj = e.target.closest('[data-reject]'), ct = e.target.closest('[data-contacted]');
+    try {
+      if (cf) {
+        await K.api('/api/orders/' + cf.dataset.conf + '/confirm', { method: 'POST', body: { notes: 'Manager confirmed' } });
+        K.toast(cf.dataset.conf + ' confirmed', 'ok');
+      }
+      if (rj) {
+        if (!confirm('Reject order ' + rj.dataset.reject + '? The customer sees it as rejected and must reorder.')) return;
+        await K.api('/api/orders/' + rj.dataset.reject + '/reject', { method: 'POST', body: { reason: 'Rejected by manager' } });
+        K.toast('Rejected', 'ok');
+      }
+      if (ct) {
+        await K.api('/api/orders/' + ct.dataset.contacted + '/contacted', { method: 'POST', body: {} });
+        K.toast('Marked as contacted', 'ok');
+      }
+      if (pay) {
+        if (!confirm('Confirm ' + pay.dataset.m.toUpperCase() + ' payment for ' + pay.dataset.pay + '?')) return;
+        await K.api('/api/orders/' + pay.dataset.pay + '/confirm-payment', { method: 'POST', body: { method: pay.dataset.m, note: 'Manager verified' } });
+        K.toast('Payment verified — kitchen released', 'ok'); K.sound();
+      }
+      if (can) {
+        if (!confirm('Cancel order ' + can.dataset.cancel + '? This cannot be undone.')) return;
+        await K.api('/api/orders/' + can.dataset.cancel + '/cancel', { method: 'POST', body: { reason: 'Manager cancelled' } });
+        K.toast('Order cancelled', 'ok');
+      }
+      if (ful) {
+        await K.api('/api/orders/' + ful.dataset.fulfil + '/fulfil', { method: 'POST', body: {} });
+        K.toast('Marked served', 'ok');
+      }
+      if (tog) {
+        const d = drivers.find(x => x.id === tog.dataset.toggledrv);
+        await K.api('/api/drivers/' + d.id, { method: 'PUT', body: { active: !d.active } });
+        loadAll();
+      }
+      if (asg) {
+        const sel = document.querySelector('[data-drvsel="' + asg.dataset.assign + '"]');
+        if (!sel || !sel.value) return K.toast('Pick a driver', 'err');
+        await K.api('/api/orders/' + asg.dataset.assign + '/assign-driver', { method: 'POST', body: { driverId: sel.value } });
+        K.toast('Driver assigned', 'ok');
+      }
+      if (anow) {
+        const sel = document.querySelector('[data-drvsel="' + anow.dataset.assignnow + '"]');
+        await K.api('/api/orders/' + anow.dataset.assignnow + '/assign-driver', { method: 'POST', body: { driverId: sel.value } });
+        K.toast('Driver assigned', 'ok');
+      }
+      loadAll();
+    } catch (err) { K.toast(err.message, 'err'); }
+  });
+
+  $('#btnRefresh').onclick = loadAll;
+  K.connect(['manager', 'all']);
+  K.socket.on('order:new', () => loadAll());
+  K.socket.on('order:updated', () => loadAll());
+  K.socket.on('order:paid', () => { K.sound(); loadAll(); });
+  loadAll().catch(e => K.toast(e.message, 'err'));
+  setInterval(loadAll, 20000);
+})();
+</script>
+</body>
+</html>

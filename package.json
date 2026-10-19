@@ -1,0 +1,20 @@
+{
+  "name": "karims-restaurant-platform",
+  "version": "2.0.0",
+  "description": "Karim's Imphal — LAN-first restaurant ordering platform (customer QR menu, POS, kitchen display, manager dashboard, delivery app, admin panel)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "smoke": "node scripts/headless-smoke.js",
+    "download-images": "node scripts/download-images.js"
+  },
+  "keywords": ["restaurant", "pos", "kds", "ordering", "socket.io"],
+  "author": "Karim's Imphal",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.3.0",
+    "multer": "^2.4.0",
+    "socket.io": "^4.8.4"
+  }
+}

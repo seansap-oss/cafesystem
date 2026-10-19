@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4A080F">
+<meta name="description" content="Karim's Imphal — Royal Mughlai Cuisine since 1913. Scan. Savor. Surrender.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Karim's Imphal — Royal Mughlai Cuisine • Estd 1913</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        karim: { 50:'#FAF7F2', 100:'#F5EFEB', 200:'#EBD9D0', 300:'#D4A89A', 400:'#B87060', 500:'#8A1420', 600:'#6B0F1A', 700:'#4A080F', 800:'#3A060C', 900:'#2A0408', 950:'#1A0205' },
+        mughal: { 50:'#FDFBF0', 100:'#F3E5AB', 200:'#E8D48A', 300:'#DECA7A', 400:'#D4AF37', 500:'#C4A030', 600:'#AA820A', 700:'#8A6A08', 800:'#6A5206', 900:'#4A3A04' },
+        cream: { 50:'#FAF7F2', 100:'#F5EFEB', 200:'#EDE5DF' }
+      },
+      fontFamily: {
+        cinzel: ['Cinzel','serif'],
+        playfair: ['"Playfair Display"','serif'],
+        inter: ['Inter','sans-serif']
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Inter',sans-serif; background:#FAF7F2; overflow-x:hidden; }
+  .royal-gradient { background: linear-gradient(135deg,#4A080F 0%,#6B0F1A 40%,#8A1420 100%); }
+  .gold-gradient { background: linear-gradient(135deg,#AA820A 0%,#D4AF37 50%,#F3E5AB 100%); }
+  .gold-text { background:linear-gradient(135deg,#D4AF37,#F3E5AB,#D4AF37); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .card-hover { transition: all .3s cubic-bezier(.4,0,.2,1); }
+  .card-hover:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(74,8,15,.18); }
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:#D4AF37; border-radius:99px; }
+  .shake { animation:shake .5s cubic-bezier(.36,.07,.19,.97) both; }
+  @keyframes shake { 10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-7px)} 40%,60%{transform:translateX(7px)} }
+  .pulse-urgent { animation:pulseUrgent 1s ease-in-out infinite; }
+  @keyframes pulseUrgent { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.7)} 50%{box-shadow:0 0 0 8px rgba(239,68,68,0)} }
+  .pulse-amber { animation:pulseAmber 1.5s ease-in-out infinite; }
+  @keyframes pulseAmber { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.5)} 50%{box-shadow:0 0 0 6px rgba(245,158,11,0)} }
+  .slide-in-right { animation:slideInRight .35s cubic-bezier(.4,0,.2,1); }
+  @keyframes slideInRight { from{transform:translateX(100%)} to{transform:translateX(0)} }
+  .slide-in-up { animation:slideInUp .35s cubic-bezier(.4,0,.2,1); }
+  @keyframes slideInUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  .fade-in { animation:fadeIn .3s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .bounce-in { animation:bounceIn .4s cubic-bezier(.68,-.55,.27,1.55); }
+  @keyframes bounceIn { 0%{transform:scale(.3);opacity:0} 50%{transform:scale(1.05)} 70%{transform:scale(.9)} 100%{transform:scale(1);opacity:1} }
+  .kds-dark { background:#1c1917; }
+  .ticket-card { transition:all .3s; }
+  .ornate-border { border:2px solid; border-image:linear-gradient(135deg,#D4AF37,#AA820A,#D4AF37) 1; }
+  .category-pill.active { background:linear-gradient(135deg,#4A080F,#8A1420); color:#D4AF37; border-color:#D4AF37; }
+  .diet-veg { border-left:4px solid #16a34a; }
+  .diet-nonveg { border-left:4px solid #dc2626; }
+  input[type=range] { accent-color:#D4AF37; }
+  .receipt-80 { width:80mm; font-family:'Courier New',monospace; font-size:11px; line-height:1.4; color:#000; }
+  @media print {
+    body * { visibility:hidden !important; }
+    #printArea, #printArea * { visibility:visible !important; }
+    #printArea { position:fixed !important; left:0 !important; top:0 !important; width:80mm !important; margin:0 !important; padding:4mm !important; background:#fff !important; z-index:99999 !important; }
+    .no-print { display:none !important; }
+  }
+  .table-cell { transition:all .2s; cursor:pointer; }
+  .table-cell:hover { transform:scale(1.05); }
+  .view { display:none; }
+  .view.active { display:block; }
+  .kanban-col { min-height:calc(100vh - 140px); }
+  .strike-item { text-decoration:line-through; opacity:.5; }
+  .secret-hold { user-select:none; -webkit-user-select:none; cursor:pointer; position:relative; display:inline-block; }
+  .secret-hold .hold-progress { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); width:0; height:3px; background:linear-gradient(90deg,#D4AF37,#F3E5AB); border-radius:99px; transition:width .1s linear; }
+  .toast-enter { animation:toastIn .4s cubic-bezier(.68,-.55,.27,1.55); }
+  @keyframes toastIn { from{transform:translateY(-100%) scale(.8);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
+  .hero-pattern { background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+  .scrollbar-thin::-webkit-scrollbar { width:4px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background:#8A1420; border-radius:99px; }
+  .flavor-tag { font-size:10px; padding:2px 8px; border-radius:99px; font-weight:600; }
+  .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ==================== TOAST CONTAINER ==================== -->
+<div id="toastContainer" class="fixed top-4 right-4 z-[9999] space-y-2 pointer-events-none"></div>
+
+<!-- ==================== AUTH MODAL ==================== -->
+<div id="authModal" class="fixed inset-0 z-[9000] hidden items-center justify-center bg-black/70 backdrop-blur-sm">
+  <div id="authCard" class="royal-gradient rounded-2xl p-8 w-96 max-w-[92vw] border-2 border-mughal-400/40 shadow-2xl fade-in">
+    <div class="text-center mb-6">
+      <div class="w-16 h-16 mx-auto mb-3 rounded-full gold-gradient flex items-center justify-center"><span class="text-2xl">👑</span></div>
+      <h2 class="font-cinzel text-xl font-bold gold-text">STAFF ACCESS</h2>
+      <p class="text-mughal-100/60 text-xs mt-1 font-inter">Authorized personnel only — Karim's Management</p>
+    </div>
+    <form id="authForm" class="space-y-4">
+      <div>
+        <label class="block text-mughal-100/80 text-xs font-semibold mb-1 font-inter uppercase tracking-wider">Staff Password</label>
+        <input type="password" id="authPassword" placeholder="Enter master password" class="w-full bg-karim-800/60 border border-mughal-400/30 rounded-lg px-4 py-3 text-mughal-100 placeholder-mughal-100/30 focus:border-mughal-400 focus:ring-1 focus:ring-mughal-400 outline-none font-inter" autocomplete="off">
+      </div>
+      <p id="authError" class="text-red-400 text-xs font-inter hidden">✕ Invalid password. Access denied.</p>
+      <button type="submit" class="w-full gold-gradient text-karim-700 font-bold py-3 rounded-lg font-cinzel tracking-wider hover:brightness-110 transition">AUTHENTICATE</button>
+      <button type="button" onclick="closeAuth()" class="w-full text-mughal-100/40 text-xs font-inter py-1 hover:text-mughal-100/70 transition">← Back to Restaurant</button>
+    </form>
+    <div id="staffQuickSwitch" class="mt-4 pt-4 border-t border-mughal-400/20 hidden">
+      <p class="text-mughal-100/50 text-[10px] font-inter uppercase tracking-widest mb-2 text-center">Quick Switch</p>
+      <div class="flex gap-2">
+        <button onclick="location.hash='#manager'" class="flex-1 bg-mughal-400/10 border border-mughal-400/30 rounded-lg py-2 text-mughal-100 text-xs font-inter hover:bg-mughal-400/20 transition">Manager</button>
+        <button onclick="location.hash='#kds'" class="flex-1 bg-mughal-400/10 border border-mughal-400/30 rounded-lg py-2 text-mughal-100 text-xs font-inter hover:bg-mughal-400/20 transition">Kitchen</button>
+        <button onclick="location.hash='#admin'" class="flex-1 bg-mughal-400/10 border border-mughal-400/30 rounded-lg py-2 text-mughal-100 text-xs font-inter hover:bg-mughal-400/20 transition">Admin</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VIEW: CUSTOMER ==================== -->
+<div id="view-customer" class="view active">
+  <header class="royal-gradient sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center shadow-lg shrink-0"><span class="text-lg">👑</span></div>
+        <div>
+          <h1 class="font-cinzel text-mughal-400 font-bold text-sm sm:text-base leading-tight">KARIM'S</h1>
+          <p class="text-mughal-100/60 text-[9px] sm:text-[10px] font-inter tracking-widest uppercase">Estd 1913 • Royal Mughlai</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="showTableSwitch()" id="tablePill" class="flex items-center gap-1.5 bg-mughal-400/15 border border-mughal-400/30 rounded-full px-3 py-1.5 text-mughal-100 text-xs font-inter hover:bg-mughal-400/25 transition">
+          <span>🍽️</span><span id="tablePillText">Table —</span>
+        </button>
+        <button onclick="location.hash='#heritage'" class="hidden sm:flex items-center gap-1 bg-mughal-400/10 border border-mughal-400/20 rounded-full px-3 py-1.5 text-mughal-100/80 text-xs font-inter hover:bg-mughal-400/20 transition">
+          <span>📜</span> Heritage
+        </button>
+        <button onclick="openCart()" class="relative flex items-center gap-1.5 bg-mughal-400 text-karim-700 rounded-full px-4 py-1.5 text-xs font-bold font-inter hover:brightness-110 transition shadow">
+          <span>🛒</span>
+          <span id="cartCount" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center hidden">0</span>
+          <span class="hidden sm:inline">Cart</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="royal-gradient hero-pattern relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 py-12 sm:py-16 text-center relative z-10">
+      <div class="mb-4 inline-flex items-center gap-2 bg-mughal-400/10 border border-mughal-400/30 rounded-full px-4 py-1.5">
+        <span class="w-1.5 h-1.5 bg-mughal-400 rounded-full animate-pulse"></span>
+        <span class="text-mughal-100/80 text-xs font-inter tracking-wider">NOW SERVING • SINCE THE COURT OF JAHANGIR</span>
+      </div>
+      <h2 class="font-playfair text-4xl sm:text-6xl font-bold text-white mb-3">Royal Mughlai <span class="gold-text">Cuisine</span></h2>
+      <p class="font-playfair italic text-mughal-100/70 text-base sm:text-lg max-w-xl mx-auto mb-6">Four centuries of culinary royalty, perfected over charcoal flames and sealed handis — now at your table.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        <span class="bg-mughal-400/15 border border-mughal-400/25 rounded-full px-4 py-1.5 text-mughal-100/70 text-xs font-inter">🔥 Charcoal Tandoor</span>
+        <span class="bg-mughal-400/15 border border-mughal-400/25 rounded-full px-4 py-1.5 text-mughal-100/70 text-xs font-inter">🍖 Handi Dum</span>
+        <span class="bg-mughal-400/15 border border-mughal-400/25 rounded-full px-4 py-1.5 text-mughal-100/70 text-xs font-inter">👑 Secret 1913 Recipes</span>
+      </div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-b from-transparent to-cream-50"></div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 pt-6">
+    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+      <div class="relative flex-1">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-karim-500/40">🔍</span>
+        <input type="text" id="menuSearch" oninput="renderMenu()" placeholder="Search dishes — biryani, kebab, paneer..." class="w-full bg-white border-2 border-karim-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-inter focus:border-mughal-400 outline-none transition">
+      </div>
+      <div class="flex gap-2">
+        <button onclick="toggleDiet('all')" id="diet-all" class="diet-btn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-karim-700 text-mughal-400 border-karim-700">All</button>
+        <button onclick="toggleDiet('veg')" id="diet-veg" class="diet-btn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-white text-green-700 border-green-300 hover:border-green-500">🟢 Veg</button>
+        <button onclick="toggleDiet('nonveg')" id="diet-nonveg" class="diet-btn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-white text-red-700 border-red-300 hover:border-red-500">🔴 Non-Veg</button>
+      </div>
+    </div>
+    <div id="categoryPills" class="flex gap-2 overflow-x-auto pb-3 scrollbar-thin -mx-1 px-1"></div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 pb-24">
+    <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    <div id="menuEmpty" class="hidden text-center py-20">
+      <span class="text-6xl mb-4 block">🍽️</span>
+      <p class="font-playfair text-xl text-karim-500/60 italic">No dishes match your search</p>
+    </div>
+  </section>
+
+  <footer class="royal-gradient py-8 text-center relative">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-full gold-gradient flex items-center justify-center"><span class="text-sm">👑</span></div>
+        <span class="font-cinzel text-mughal-400 font-bold">KARIM'S</span>
+      </div>
+      <p class="font-playfair italic text-mughal-100/50 text-sm mb-1">"Secret of Good Mood • Taste of Karim's Food"</p>
+      <p class="text-mughal-100/30 text-xs font-inter">Jama Masjid, Delhi • Est. 1913 — Now in Imphal</p>
+      <div class="mt-4 flex items-center justify-center gap-1 text-mughal-100/25 text-[11px] font-inter relative">
+        <span>©</span><span id="copyrightHold" class="secret-hold px-1">1913-2026</span><span>Karim Hotel Private Limited. All rights reserved.</span>
+        <div class="hold-progress" id="holdProgress"></div>
+      </div>
+      <div class="mt-3 flex justify-center gap-4 text-mughal-100/40 text-xs">
+        <button onclick="location.hash='#heritage'" class="hover:text-mughal-400 transition font-inter">📜 Our Heritage</button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ==================== VIEW: HERITAGE ==================== -->
+<div id="view-heritage" class="view">
+  <header class="royal-gradient sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full gold-gradient flex items-center justify-center"><span class="text-lg">👑</span></div>
+        <div><h1 class="font-cinzel text-mughal-400 font-bold text-sm">KARIM'S</h1><p class="text-mughal-100/60 text-[9px] font-inter tracking-widest uppercase">Heritage & Story</p></div>
+      </div>
+      <button onclick="location.hash=''" class="bg-mughal-400 text-karim-700 rounded-full px-4 py-1.5 text-xs font-bold font-inter">← Menu</button>
+    </div>
+  </header>
+  <div class="max-w-3xl mx-auto px-4 py-10">
+    <div class="text-center mb-10">
+      <div class="w-20 h-20 mx-auto mb-4 rounded-full gold-gradient flex items-center justify-center shadow-xl"><span class="text-4xl">👑</span></div>
+      <h2 class="font-playfair text-4xl font-bold text-karim-700 mb-2">The Karim's Legacy</h2>
+      <p class="font-cinzel text-mughal-600 tracking-widest text-sm">ESTABLISHED 1913 • JAMA MASJID, DELHI</p>
+    </div>
+    <div class="space-y-8">
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-karim-100">
+        <h3 class="font-cinzel text-karim-600 font-bold mb-3 flex items-center gap-2"><span class="text-xl">🏛️</span> THE ORIGIN</h3>
+        <p class="text-karim-500/80 leading-relaxed font-inter text-sm">In the shadow of Delhi's majestic Jama Masjid, in the year 1913, Haji Karimuddin — a master chef whose ancestors had served in the royal Mughal kitchens of Emperor Jahangir — opened a modest restaurant. He carried with him the closely guarded secrets of the imperial dastarkhwan: the precise art of dum pukht, the alchemy of hand-ground masalas perfected over generations, and the patience of slow charcoal tandoor cooking.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-karim-100">
+        <h3 class="font-cinzel text-karim-600 font-bold mb-3 flex items-center gap-2"><span class="text-xl">🔥</span> THE ROYAL KITCHEN</h3>
+        <p class="text-karim-500/80 leading-relaxed font-inter text-sm">The Mughal emperors were among history's greatest gastronomes. Emperor Jahangir himself was known to dine on 72 dishes at a single feast. The royal khansamas — court chefs — guarded their recipes with their lives, passing them down orally from father to son. Haji Karimuddin was among the last descendants of this illustrious lineage, and he chose to share these treasures with the world while preserving every secret.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-karim-100">
+        <h3 class="font-cinzel text-karim-600 font-bold mb-3 flex items-center gap-2"><span class="text-xl">⭐</span> THE CENTURY OF FLAVOUR</h3>
+        <p class="text-karim-500/80 leading-relaxed font-inter text-sm">Over a century later, Karim's remains faithful to the original 1913 recipes. Our kebabs are still marinated for hours in hand-ground spice pastes. Our biryanis are still sealed under dough and cooked over slow charcoal. Our nihari still simmers overnight. Every dish that leaves our kitchen carries the soul of the Mughal empire and the dedication of four generations.</p>
+      </div>
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-karim-100">
+        <h3 class="font-cinzel text-karim-600 font-bold mb-3 flex items-center gap-2"><span class="text-xl">🍽️</span> ARRIVAL IN IMPHAL</h3>
+        <p class="text-karim-500/80 leading-relaxed font-inter text-sm">Now, the legendary flavours of 1913 arrive in the heart of Manipur. Karim's Imphal brings you the same regal hospitality, the same hand-ground masalas, the same charcoal-fired perfection — adapted with love for the discerning palates of the Northeast. Every meal here is a journey through time, a communion with history, a celebration of culinary artistry that has survived and thrived for over a hundred years.</p>
+      </div>
+      <div class="royal-gradient rounded-2xl p-8 text-center">
+        <p class="font-playfair italic text-mughal-100/80 text-lg leading-relaxed">"We do not merely cook food.<br>We preserve a legacy. We serve history.<br>Welcome to Karim's — where every bite is royalty."</p>
+        <p class="font-cinzel text-mughal-400 mt-4 tracking-widest text-sm">— THE KARIM FAMILY, SINCE 1913</p>
+      </div>
+    </div>
+    <div class="text-center mt-8">
+      <button onclick="location.hash=''" class="gold-gradient text-karim-700 font-bold font-cinzel px-8 py-3 rounded-xl tracking-wider hover:brightness-110 transition">← RETURN TO MENU</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VIEW: MANAGER ==================== -->
+<div id="view-manager" class="view">
+  <header class="royal-gradient sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full gold-gradient flex items-center justify-center"><span class="text-base">👑</span></div>
+        <div><h1 class="font-cinzel text-mughal-400 font-bold text-sm">MANAGER DESK</h1><p class="text-mughal-100/50 text-[9px] font-inter tracking-widest">KARIM'S IMPHAL • OPERATIONS</p></div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex bg-karim-800/60 rounded-lg border border-mughal-400/20 overflow-hidden">
+          <button onclick="flipDisplay(1)" id="flipD1" class="px-3 py-1.5 text-[11px] font-inter font-semibold bg-mughal-400 text-karim-700 transition">Display 1 • Finance</button>
+          <button onclick="flipDisplay(2)" id="flipD2" class="px-3 py-1.5 text-[11px] font-inter font-semibold text-mughal-100/60 transition">Display 2 • Kitchen</button>
+        </div>
+        <button onclick="popOutDisplay2()" class="bg-mughal-400/15 border border-mughal-400/30 rounded-lg px-3 py-1.5 text-mughal-100 text-[11px] font-inter hover:bg-mughal-400/25 transition" title="Pop out Display 2 on second monitor">🖥️ Pop Out Dual Screen</button>
+        <button onclick="location.hash='#kds'" class="bg-mughal-400/15 border border-mughal-400/30 rounded-lg px-3 py-1.5 text-mughal-100 text-[11px] font-inter hover:bg-mughal-400/25 transition">🍳 KDS</button>
+        <button onclick="location.hash='#admin'" class="bg-mughal-400/15 border border-mughal-400/30 rounded-lg px-3 py-1.5 text-mughal-100 text-[11px] font-inter hover:bg-mughal-400/25 transition">⚙️ Admin</button>
+        <button onclick="logoutStaff()" class="bg-red-500/20 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px] font-inter hover:bg-red-500/30 transition">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="pendingApprovalBanner" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2.5 text-center font-inter text-sm font-bold cursor-pointer" onclick="scrollToApprovals()">
+    ⚠️ <span id="pendingCount">0</span> ORDER(S) AWAITING PAYMENT APPROVAL — Click to review
+  </div>
+
+  <!-- Display 1: Finance & POS -->
+  <div id="display1" class="max-w-7xl mx-auto px-4 py-5">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-karim-100">
+        <p class="text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1">Today's Gross Sales</p>
+        <p id="kpiSales" class="font-cinzel text-xl font-bold text-karim-700">₹0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-karim-100">
+        <p class="text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1">Cash Register</p>
+        <p id="kpiCash" class="font-cinzel text-xl font-bold text-green-700">₹0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-karim-100">
+        <p class="text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1">UPI Digital</p>
+        <p id="kpiUPI" class="font-cinzel text-xl font-bold text-blue-700">₹0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-karim-100">
+        <p class="text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1">Active Tables</p>
+        <p id="kpiTables" class="font-cinzel text-xl font-bold text-karim-700">0 / 12</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-karim-100">
+        <p class="text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1">AOV / Orders</p>
+        <p id="kpiAOV" class="font-cinzel text-xl font-bold text-karim-700">₹0</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <div id="approvalsSection" class="bg-white rounded-2xl shadow-sm border border-karim-100 overflow-hidden">
+        <div class="royal-gradient px-5 py-3 flex items-center justify-between">
+          <h3 class="font-cinzel text-mughal-400 font-bold text-sm">⏳ PENDING PAYMENT APPROVAL</h3>
+          <span id="approvalsBadge" class="bg-red-500 text-white text-[10px] font-bold rounded-full px-2 py-0.5 hidden">0</span>
+        </div>
+        <div id="approvalsList" class="max-h-80 overflow-y-auto divide-y divide-karim-100">
+          <p class="text-center text-karim-300 py-8 font-inter text-sm">No pending approvals ✓</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-karim-100 overflow-hidden">
+        <div class="royal-gradient px-5 py-3 flex items-center justify-between">
+          <h3 class="font-cinzel text-mughal-400 font-bold text-sm">🪑 TABLE FLOOR MAP</h3>
+          <div class="flex gap-3 text-[10px] font-inter">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-400"></span>Vacant</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>Dining</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>Bill Due</span>
+          </div>
+        </div>
+        <div id="tableGrid" class="grid grid-cols-4 gap-2 p-4"></div>
+      </div>
+    </div>
+
+    <div id="tableLedger" class="hidden mt-6 bg-white rounded-2xl shadow-sm border border-karim-100 overflow-hidden">
+      <div class="royal-gradient px-5 py-3 flex items-center justify-between">
+        <h3 id="ledgerTitle" class="font-cinzel text-mughal-400 font-bold text-sm">TABLE LEDGER</h3>
+        <button onclick="closeLedger()" class="text-mughal-100/60 hover:text-mughal-100 text-lg font-bold">✕</button>
+      </div>
+      <div id="ledgerContent" class="p-5"></div>
+    </div>
+  </div>
+
+  <!-- Display 2: KDS Mirror -->
+  <div id="display2" class="hidden kds-dark min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-5">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <h2 class="font-cinzel text-mughal-400 font-bold text-lg">🍳 KITCHEN MIRROR & PROGRESS TRACKER</h2>
+        <div id="runnerAlerts" class="flex gap-2 flex-wrap"></div>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <h3 class="text-amber-400 font-cinzel text-sm font-bold mb-3 flex items-center gap-2">📥 RECEIVE <span id="mirrorRecvCount" class="bg-amber-500/20 text-amber-300 text-[10px] rounded-full px-2 py-0.5">0</span></h3>
+          <div id="mirrorReceive" class="space-y-3"></div>
+        </div>
+        <div>
+          <h3 class="text-blue-400 font-cinzel text-sm font-bold mb-3 flex items-center gap-2">🔥 PROGRESS <span id="mirrorProgCount" class="bg-blue-500/20 text-blue-300 text-[10px] rounded-full px-2 py-0.5">0</span></h3>
+          <div id="mirrorProgress" class="space-y-3"></div>
+        </div>
+        <div>
+          <h3 class="text-green-400 font-cinzel text-sm font-bold mb-3 flex items-center gap-2">✅ COMPLETED <span id="mirrorCompCount" class="bg-green-500/20 text-green-300 text-[10px] rounded-full px-2 py-0.5">0</span></h3>
+          <div id="mirrorCompleted" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VIEW: KDS ==================== -->
+<div id="view-kds" class="view kds-dark min-h-screen">
+  <header class="bg-stone-800 border-b border-stone-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full gold-gradient flex items-center justify-center"><span class="text-base">👑</span></div>
+        <div><h1 class="font-cinzel text-mughal-400 font-bold text-sm">KITCHEN DISPLAY</h1><p class="text-stone-400 text-[9px] font-inter tracking-widest">3-STAGE PRODUCTION LINE</p></div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span id="kdsClock" class="text-stone-300 font-inter text-sm font-mono bg-stone-800 px-3 py-1.5 rounded-lg border border-stone-700"></span>
+        <button onclick="location.hash='#manager'" class="bg-stone-700 border border-stone-600 rounded-lg px-3 py-1.5 text-stone-200 text-[11px] font-inter hover:bg-stone-600 transition">🖥️ Manager</button>
+        <button onclick="location.hash='#admin'" class="bg-stone-700 border border-stone-600 rounded-lg px-3 py-1.5 text-stone-200 text-[11px] font-inter hover:bg-stone-600 transition">⚙️ Admin</button>
+        <button onclick="logoutStaff()" class="bg-red-900/40 border border-red-800/50 rounded-lg px-3 py-1.5 text-red-300 text-[11px] font-inter hover:bg-red-900/60 transition">Logout</button>
+      </div>
+    </div>
+  </header>
+  <div class="max-w-7xl mx-auto px-4 py-5">
+    <div class="grid grid-cols-3 gap-4">
+      <div class="kanban-col">
+        <h3 class="text-amber-400 font-cinzel text-sm font-bold mb-3 flex items-center gap-2 border-b border-amber-500/30 pb-2">📥 RECEIVE <span id="kdsRecvCount" class="bg-amber-500/20 text-amber-300 text-[10px] rounded-full px-2 py-0.5">0</span></h3>
+        <div id="kdsReceive" class="space-y-3 overflow-y-auto" style="max-height:calc(100vh - 160px)"></div>
+      </div>
+      <div class="kanban-col">
+        <h3 class="text-blue-400 font-cinzel text-sm font-bold mb-3 flex items-center gap-2 border-b border-blue-500/30 pb-2">🔥 PROGRESS <span id="kdsProgCount" class="bg-blue-500/20 text-blue-300 text-[10px] rounded-full px-2 py-0.5">0</span></h3>
+        <div id="kdsProgress" class="space-y-3 overflow-y-auto" style="max-height:calc(100vh - 160px)"></div>
+      </div>
+      <div class="kanban-col">
+        <h3 class="text-green-400 font-cinzel text-sm font-bold mb-3 flex items-center gap-2 border-b border-green-500/30 pb-2">✅ COMPLETED <span id="kdsCompCount" class="bg-green-500/20 text-green-300 text-[10px] rounded-full px-2 py-0.5">0</span></h3>
+        <div id="kdsCompleted" class="space-y-3 overflow-y-auto" style="max-height:calc(100vh - 160px)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VIEW: ADMIN ==================== -->
+<div id="view-admin" class="view">
+  <header class="royal-gradient sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full gold-gradient flex items-center justify-center"><span class="text-base">👑</span></div>
+        <div><h1 class="font-cinzel text-mughal-400 font-bold text-sm">ADMIN PANEL</h1><p class="text-mughal-100/50 text-[9px] font-inter tracking-widest">MENU • QR • CONFIGURATION</p></div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="location.hash='#manager'" class="bg-mughal-400/15 border border-mughal-400/30 rounded-lg px-3 py-1.5 text-mughal-100 text-[11px] font-inter hover:bg-mughal-400/25 transition">🖥️ Manager</button>
+        <button onclick="location.hash='#kds'" class="bg-mughal-400/15 border border-mughal-400/30 rounded-lg px-3 py-1.5 text-mughal-100 text-[11px] font-inter hover:bg-mughal-400/25 transition">🍳 KDS</button>
+        <button onclick="logoutStaff()" class="bg-red-500/20 border border-red-500/30 rounded-lg px-3 py-1.5 text-red-300 text-[11px] font-inter hover:bg-red-500/30 transition">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 py-5">
+    <div class="flex gap-2 mb-6 flex-wrap">
+      <button onclick="adminTab('menu')" id="atab-menu" class="atabtn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-karim-700 text-mughal-400 border-karim-700">📋 Menu Management</button>
+      <button onclick="adminTab('qr')" id="atab-qr" class="atabtn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-white text-karim-500 border-karim-200 hover:border-mughal-400">📱 QR Standees</button>
+    </div>
+
+    <div id="admin-menu-tab">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <select id="adminCatFilter" onchange="renderAdminMenu()" class="bg-white border-2 border-karim-200 rounded-xl px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"><option value="all">All Categories</option></select>
+        <input type="text" id="adminSearch" oninput="renderAdminMenu()" placeholder="Search dishes..." class="bg-white border-2 border-karim-200 rounded-xl px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none flex-1 min-w-[200px]">
+        <button onclick="openDishCreator()" class="gold-gradient text-karim-700 font-bold font-cinzel px-5 py-2.5 rounded-xl text-xs tracking-wider hover:brightness-110 transition">+ New Dish</button>
+        <button onclick="resetMenu()" class="bg-red-50 border-2 border-red-200 text-red-600 font-semibold px-4 py-2.5 rounded-xl text-xs font-inter hover:bg-red-100 transition">Reset to 118</button>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border border-karim-100 overflow-x-auto">
+        <table class="w-full text-sm font-inter">
+          <thead class="bg-karim-50 sticky top-0">
+            <tr class="text-left text-[10px] uppercase tracking-wider text-karim-400">
+              <th class="px-3 py-3">Dish</th><th class="px-3 py-3">Category</th><th class="px-3 py-3">Half ₹</th><th class="px-3 py-3">Full ₹</th><th class="px-3 py-3">Veg</th><th class="px-3 py-3">Stock</th><th class="px-3 py-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminMenuBody" class="divide-y divide-karim-100"></tbody>
+        </table>
+      </div>
+      <p class="text-karim-300 text-xs font-inter mt-2" id="adminMenuCount"></p>
+    </div>
+
+    <div id="admin-qr-tab" class="hidden">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <p class="text-karim-500/70 font-inter text-sm">Generate print-ready QR standees for Tables 1–12. Point guests to <code class="bg-karim-100 px-1.5 py-0.5 rounded text-karim-600 text-xs">https://karims.imphal/order?table=N</code></p>
+        <button onclick="printStandees()" class="gold-gradient text-karim-700 font-bold font-cinzel px-5 py-2.5 rounded-xl text-xs tracking-wider hover:brightness-110 transition">🖨️ Print All Standees</button>
+      </div>
+      <div id="standeeGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TABLE SWITCH MODAL ==================== -->
+<div id="tableSwitchModal" class="fixed inset-0 z-[8000] hidden items-center justify-center bg-black/70 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl p-6 w-96 max-w-[92vw] shadow-2xl fade-in">
+    <h3 class="font-cinzel text-karim-700 font-bold text-lg mb-1 text-center">Select Your Table</h3>
+    <p class="text-karim-400 text-xs font-inter text-center mb-4">Choose your dine-in table number</p>
+    <div id="tablePickGrid" class="grid grid-cols-4 gap-2 mb-4"></div>
+    <button onclick="closeTableSwitch()" class="w-full text-karim-300 text-xs font-inter py-2 hover:text-karim-500 transition">Cancel</button>
+  </div>
+</div>
+
+<!-- ==================== CART DRAWER ==================== -->
+<div id="cartOverlay" class="fixed inset-0 z-[7000] hidden bg-black/50 backdrop-blur-sm" onclick="closeCart()"></div>
+<div id="cartDrawer" class="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-cream-50 z-[7001] shadow-2xl hidden flex-col slide-in-right">
+  <div class="royal-gradient px-5 py-4 flex items-center justify-between shrink-0">
+    <div>
+      <h3 class="font-cinzel text-mughal-400 font-bold text-base">YOUR ORDER</h3>
+      <p id="cartTableLabel" class="text-mughal-100/50 text-[10px] font-inter">Table —</p>
+    </div>
+    <button onclick="closeCart()" class="text-mughal-100/60 hover:text-mughal-100 text-2xl font-bold">✕</button>
+  </div>
+  <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+  <div class="border-t border-karim-200 bg-white p-4 space-y-3 shrink-0">
+    <div id="cartSummary" class="space-y-1.5"></div>
+    <div id="checkoutSteps" class="space-y-3">
+      <div>
+        <label class="block text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1.5">Payment Method</label>
+        <div class="flex gap-2">
+          <button onclick="setPayMethod('upi')" id="pay-upi" class="flex-1 py-2.5 rounded-xl border-2 text-xs font-bold font-inter transition bg-blue-50 border-blue-400 text-blue-700">📱 UPI</button>
+          <button onclick="setPayMethod('cash')" id="pay-cash" class="flex-1 py-2.5 rounded-xl border-2 text-xs font-bold font-inter transition bg-white border-karim-200 text-karim-500">💵 Cash at Counter</button>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1.5">Special Instructions (optional)</label>
+        <input type="text" id="orderNotes" placeholder="Less spicy, no onion..." class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none">
+      </div>
+      <button onclick="placeOrder()" class="w-full gold-gradient text-karim-700 font-bold font-cinzel py-3.5 rounded-xl tracking-wider hover:brightness-110 transition shadow-lg text-sm">PLACE ORDER — <span id="payBtnTotal">₹0</span></button>
+      <p class="text-[10px] text-karim-300 font-inter text-center">Orders are verified by the manager before reaching the kitchen</p>
+    </div>
+    <div id="upiPanel" class="hidden space-y-3 text-center">
+      <div class="bg-white border-2 border-mughal-400/30 rounded-xl p-4 inline-block">
+        <div id="upiQRCode" class="mx-auto mb-2"></div>
+        <p class="font-cinzel text-karim-700 text-sm font-bold" id="upiAmount">₹0</p>
+        <p class="text-karim-400 text-[10px] font-inter mt-1">Scan with any UPI app</p>
+        <p class="text-[9px] text-karim-300 font-inter mt-1">karims@upi</p>
+      </div>
+      <p class="text-amber-600 text-xs font-inter font-semibold">⏳ Waiting for manager verification...</p>
+      <button onclick="closeCart()" class="w-full text-karim-300 text-xs font-inter py-2">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CUSTOMIZER MODAL ==================== -->
+<div id="customizerModal" class="fixed inset-0 z-[8000] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl fade-in max-h-[90vh] flex flex-col">
+    <div id="custHeader" class="royal-gradient rounded-t-2xl px-5 py-4">
+      <h3 id="custTitle" class="font-cinzel text-mughal-400 font-bold text-base">Customize</h3>
+      <p id="custDesc" class="text-mughal-100/50 text-xs font-inter mt-0.5"></p>
+    </div>
+    <div class="p-5 space-y-4 overflow-y-auto flex-1">
+      <div id="portionRow">
+        <label class="block text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-2">Portion</label>
+        <div class="flex gap-2">
+          <button onclick="setPortion('half')" id="portion-half" class="flex-1 py-2.5 rounded-xl border-2 text-xs font-bold font-inter transition bg-white border-karim-200 text-karim-500">Half</button>
+          <button onclick="setPortion('full')" id="portion-full" class="flex-1 py-2.5 rounded-xl border-2 text-xs font-bold font-inter transition bg-karim-700 text-mughal-400 border-karim-700">Full</button>
+        </div>
+      </div>
+      <div id="spiceRow">
+        <label class="block text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-2">Spice Level</label>
+        <div class="flex gap-2">
+          <button onclick="setSpice('mild')" id="spice-mild" class="flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold font-inter transition bg-white border-karim-200 text-karim-500">🌶️ Mild</button>
+          <button onclick="setSpice('medium')" id="spice-medium" class="flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold font-inter transition bg-karim-700 text-mughal-400 border-karim-700">🌶️🌶️ Med</button>
+          <button onclick="setSpice('hot')" id="spice-hot" class="flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold font-inter transition bg-white border-karim-200 text-karim-500">🌶️🌶️🌶️ Hot</button>
+        </div>
+      </div>
+      <div id="butterRow">
+        <label class="block text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-2">Butter / Cream Preference</label>
+        <div class="flex gap-2">
+          <button onclick="setButter('regular')" id="butter-regular" class="flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold font-inter transition bg-karim-700 text-mughal-400 border-karim-700">Regular</button>
+          <button onclick="setButter('extra')" id="butter-extra" class="flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold font-inter transition bg-white border-karim-200 text-karim-500">Extra Butter</button>
+          <button onclick="setButter('low')" id="butter-low" class="flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold font-inter transition bg-white border-karim-200 text-karim-500">Low Oil</button>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-inter text-karim-400 uppercase tracking-wider mb-1.5">Item Note</label>
+        <input type="text" id="custNote" placeholder="No coriander, extra gravy..." class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none">
+      </div>
+      <div class="flex items-center justify-between bg-cream-100 rounded-xl p-3">
+        <div class="flex items-center gap-3">
+          <button onclick="adjustQty(-1)" class="w-9 h-9 rounded-lg bg-white border-2 border-karim-200 font-bold text-karim-600 hover:border-mughal-400 transition">−</button>
+          <span id="custQty" class="font-cinzel text-lg font-bold text-karim-700 w-8 text-center">1</span>
+          <button onclick="adjustQty(1)" class="w-9 h-9 rounded-lg bg-white border-2 border-karim-200 font-bold text-karim-600 hover:border-mughal-400 transition">+</button>
+        </div>
+        <p id="custPrice" class="font-cinzel text-xl font-bold text-karim-700">₹0</p>
+      </div>
+    </div>
+    <div class="p-5 pt-0">
+      <button onclick="confirmAddToCart()" class="w-full gold-gradient text-karim-700 font-bold font-cinzel py-3 rounded-xl tracking-wider hover:brightness-110 transition text-sm shadow-lg">ADD TO CART</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ORDER TRACKER MODAL ==================== -->
+<div id="trackerModal" class="fixed inset-0 z-[8000] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl fade-in">
+    <div class="royal-gradient rounded-t-2xl px-5 py-4 flex items-center justify-between">
+      <div>
+        <h3 class="font-cinzel text-mughal-400 font-bold text-base">ORDER TRACKER</h3>
+        <p id="trackerOrderId" class="text-mughal-100/50 text-xs font-inter font-mono"></p>
+      </div>
+      <button onclick="closeTracker()" class="text-mughal-100/60 hover:text-mughal-100 text-2xl font-bold">✕</button>
+    </div>
+    <div id="trackerContent" class="p-5"></div>
+  </div>
+</div>
+
+<!-- ==================== DISH CREATOR MODAL ==================== -->
+<div id="dishCreatorModal" class="fixed inset-0 z-[8000] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl fade-in max-h-[90vh] flex flex-col">
+    <div class="royal-gradient rounded-t-2xl px-5 py-4 flex items-center justify-between">
+      <h3 class="font-cinzel text-mughal-400 font-bold text-base">CREATE NEW DISH</h3>
+      <button onclick="closeDishCreator()" class="text-mughal-100/60 hover:text-mughal-100 text-2xl font-bold">✕</button>
+    </div>
+    <div class="p-5 space-y-3 overflow-y-auto flex-1">
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Dish Name *</label><input id="newDishName" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"></div>
+        <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Category *</label><select id="newDishCat" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"></select></div>
+      </div>
+      <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Description</label><input id="newDishDesc" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none" placeholder="A royal delicacy from the Mughal kitchens..."></div>
+      <div class="grid grid-cols-3 gap-3">
+        <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Half ₹</label><input id="newDishHalf" type="number" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"></div>
+        <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Full ₹</label><input id="newDishFull" type="number" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"></div>
+        <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Veg?</label><select id="newDishVeg" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"><option value="true">🟢 Veg</option><option value="false">🔴 Non-Veg</option></select></div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Photo (preset key or upload)</label>
+        <div class="flex gap-2 items-center">
+          <select id="newDishImg" class="bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter flex-1 focus:border-mughal-400 outline-none">
+            <option value="">Auto (category emoji)</option>
+            <option value="tandoor">🔥 Tandoor Grill</option><option value="curry">🍲 Royal Curry</option><option value="biryani">🍚 Biryani Pot</option>
+            <option value="roll">🌯 Roll Wrap</option><option value="bread">🫓 Fresh Bread</option><option value="rice">🍚 Rice Bowl</option>
+            <option value="side">🥗 Side Plate</option><option value="dessert">🍮 Dessert</option><option value="drink">🥤 Beverage</option>
+          </select>
+          <label class="bg-karim-100 border border-karim-200 rounded-lg px-3 py-2 text-xs font-inter text-karim-500 cursor-pointer hover:bg-karim-200 transition shrink-0">📁 Upload<input type="file" accept="image/*" class="hidden" onchange="handleNewDishUpload(event)"></label>
+        </div>
+        <img id="newDishPreview" class="hidden mt-2 w-20 h-20 object-cover rounded-lg border-2 border-mughal-400/30">
+      </div>
+      <div><label class="block text-[10px] font-inter text-karim-400 uppercase mb-1">Badge</label><select id="newDishBadge" class="w-full bg-cream-100 border border-karim-200 rounded-lg px-3 py-2 text-sm font-inter focus:border-mughal-400 outline-none"><option value="">None</option><option value="bestseller">⭐ Bestseller</option><option value="chef-special">👑 Chef's Special</option><option value="new">✨ New</option><option value="spicy">🌶️ Spicy</option></select></div>
+    </div>
+    <div class="p-5 pt-0 flex gap-3">
+      <button onclick="closeDishCreator()" class="flex-1 bg-karim-100 text-karim-500 font-semibold py-3 rounded-xl text-sm font-inter">Cancel</button>
+      <button onclick="createDish()" class="flex-1 gold-gradient text-karim-700 font-bold font-cinzel py-3 rounded-xl text-sm tracking-wider">CREATE DISH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RECEIPT MODAL ==================== -->
+<div id="receiptModal" class="fixed inset-0 z-[8500] hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl fade-in max-h-[90vh] flex flex-col">
+    <div class="royal-gradient rounded-t-2xl px-5 py-3 flex items-center justify-between no-print">
+      <h3 class="font-cinzel text-mughal-400 font-bold text-sm">THERMAL RECEIPT</h3>
+      <button onclick="closeReceipt()" class="text-mughal-100/60 hover:text-mughal-100 text-2xl font-bold">✕</button>
+    </div>
+    <div id="printArea" class="p-4 overflow-y-auto flex-1">
+      <div class="receipt-80 mx-auto bg-white" id="receiptBody"></div>
+    </div>
+    <div class="p-4 pt-0 flex gap-2 no-print">
+      <button onclick="window.print()" class="flex-1 gold-gradient text-karim-700 font-bold font-cinzel py-2.5 rounded-xl text-xs tracking-wider">🖨️ PRINT</button>
+      <button onclick="closeReceipt()" class="flex-1 bg-karim-100 text-karim-500 font-semibold py-2.5 rounded-xl text-xs font-inter">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== STANDEE PREVIEW MODAL ==================== -->
+<div id="standeeModal" class="fixed inset-0 z-[8500] hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+  <div class="bg-white rounded-2xl w-full max-w-xs shadow-2xl fade-in">
+    <div class="royal-gradient rounded-t-2xl px-5 py-3 flex items-center justify-between no-print">
+      <h3 id="standeeModalTitle" class="font-cinzel text-mughal-400 font-bold text-sm">TABLE STANDEE</h3>
+      <button onclick="closeStandee()" class="text-mughal-100/60 hover:text-mughal-100 text-2xl font-bold">✕</button>
+    </div>
+    <div class="p-4"><div id="standeePreview" class="mx-auto"></div></div>
+    <div class="p-4 pt-0 no-print"><button onclick="window.print()" class="w-full gold-gradient text-karim-700 font-bold font-cinzel py-2.5 rounded-xl text-xs tracking-wider">🖨️ PRINT THIS STANDEE</button></div>
+  </div>
+</div>
+
+<div id="standeePrintArea" class="hidden"></div>
+
+<script>
+// ============================================================
+// STATE & DATA
+// ============================================================
+const STAFF_PASSWORD = 'admin@135';
+const CATEGORIES = ['Shaan e Tandoor','Shahi Dastarkhwan','Biryani','Rolls','Roti & Naan','Rice','Sides & Add-Ons','Meetha / Dessert','Drinks & Mocktails'];
+const CAT_EMOJI = { 'Shaan e Tandoor':'🔥','Shahi Dastarkhwan':'🍲','Biryani':'🍚','Rolls':'🌯','Roti & Naan':'🫓','Rice':'🍚','Sides & Add-Ons':'🥗','Meetha / Dessert':'🍮','Drinks & Mocktails':'🥤' };
+const CAT_IMG_KEY = { 'Shaan e Tandoor':'tandoor','Shahi Dastarkhwan':'curry','Biryani':'biryani','Rolls':'roll','Roti & Naan':'bread','Rice':'rice','Sides & Add-Ons':'side','Meetha / Dessert':'dessert','Drinks & Mocktails':'drink' };
+const IMG_KEY_EMOJI = { tandoor:'🔥', curry:'🍲', biryani:'🍚', roll:'🌯', bread:'🫓', rice:'🍚', side:'🥗', dessert:'🍮', drink:'🥤' };
+const IMG_GRADIENT = { tandoor:'from-orange-500 to-red-600', curry:'from-amber-600 to-red-700', biryani:'from-yellow-500 to-orange-600', roll:'from-lime-500 to-green-600', bread:'from-amber-400 to-orange-500', rice:'from-yellow-400 to-amber-500', side:'from-green-400 to-emerald-600', dessert:'from-pink-400 to-rose-500', drink:'from-blue-400 to-cyan-500' };
+
+let _mid = 0;
+function d(name, cat, half, full, veg, desc, badge) {
+  _mid++;
+  return { id:'m' + _mid, name, cat, half, full, veg, desc, badge:badge||'', inStock:true, imgKey:CAT_IMG_KEY[cat]||'curry', customImg:'' };
+}
+
+const DEFAULT_MENU = [
+  // ---- SHAAN-E-TANDOOR (20) ----
+  d('Tandoori Chicken Burra','Shaan e Tandoor',650,1200,false,'Whole chicken marinated 24 hours in royal spice paste, charred over clay tandoor.','chef-special'),
+  d('Afghani Chicken Burra','Shaan e Tandoor',680,1250,false,'Creamy white marinade of cashew, cream & green cardamom, slow-roasted.','bestseller'),
+  d('Tangdi Kebab','Shaan e Tandoor',480,900,false,'Succulent chicken drumsticks in yogurt-cream marinade, charcoal grilled.'),
+  d('Chicken Tikka','Shaan e Tandoor',420,800,false,'Boneless chicken chunks in spiced yogurt, skewered and tandoor-fired.','bestseller'),
+  d('Murgh Malai Tikka','Shaan e Tandoor',480,900,false,'Silken chicken malai bites with cheese, cream & white pepper.'),
+  d('Hariali Chicken Tikka','Shaan e Tandoor',450,850,false,'Vibrant green marinade of mint, coriander & spinach.'),
+  d('Mutton Burra','Shaan e Tandoor',780,1450,false,'Prime mutton chops in aromatic spice rub, slow charcoal-roasted.','chef-special'),
+  d('Mutton Boti Kebab','Shaan e Tandoor',620,1150,false,'Tender mutton cubes in yogurt-ginger marinade, flame-seared.'),
+  d('Mutton Galouti Kebab','Shaan e Tandoor',680,1280,false,'Legendary melt-in-mouth kebabs of the Nawabs — 21 spices, minced mutton.','chef-special'),
+  d('Mutton Seekh Kebab','Shaan e Tandoor',550,1050,false,'Hand-minced mutton on iron skewers, basted with desi ghee.'),
+  d('Bhetki Fish Tikka','Shaan e Tandoor',520,980,false,'Bengal bass fillets in mustard-curd marinade, tandoor-charred.'),
+  d('Achari Fish Tikka','Shaan e Tandoor',540,1000,false,'Fish tikka with a tangy North Indian pickling spice blend.'),
+  d('Malai Paneer Tikka','Shaan e Tandoor',380,720,true,'Fresh paneer in cream-cashew marinade, grilled with peppers & onion.'),
+  d('Tandoori Aloo','Shaan e Tandoor',280,520,true,'Baby potatoes stuffed with khoya-nut mixture, tandoor-roasted.'),
+  d('Royal Kebab Platter','Shaan e Tandoor',1250,2200,false,'Grand assortment of 8 royal kebabs with mint chutney & onion rings.','chef-special'),
+  d('Chicken Malai Boti','Shaan e Tandoor',500,950,false,'Soft chicken boti in cream & cardamom marinade, charcoal-finished.'),
+  d('Mutton Malai Tikka','Shaan e Tandoor',680,1280,false,'Mutton in luxurious cream-cheese marinade, slow-grilled.'),
+  d('Prawn Tikka','Shaan e Tandoor',620,1180,false,'Jumbo prawns in ajwain-curd marinade, charred to perfection.'),
+  d('Mushroom Tikka','Shaan e Tandoor',350,680,true,'Button mushrooms in spiced yogurt, skewered & tandoor-fired.'),
+  d('Paneer Achari Tikka','Shaan e Tandoor',390,740,true,'Paneer with pungent achari masala, grilled on skewers.'),
+  // ---- SHAHI DASTARKHWAN (25) ----
+  d("Chicken Jahangiri",'Shahi Dastarkhwan',580,1080,false,"Emperor Jahangiri's signature — slow-cooked chicken in saffron-cream gravy.",'chef-special'),
+  d('Karahi Chicken','Shahi Dastarkhwan',540,1020,false,'Wok-fired chicken with tomatoes, ginger julienne & green chillies.'),
+  d('Handi Chicken','Shahi Dastarkhwan',560,1050,false,'Clay-pot chicken with whole spices, sealed & slow-dum cooked.','bestseller'),
+  d('Chicken Qorma','Shahi Dastarkhwan',550,1040,false,'Royal Mughal qorma — browned onion, yogurt & aromatic spices.'),
+  d('Chicken Stew','Shahi Dastarkhwan',480,920,false,'Gentle bone-in stew with whole garam masala & root vegetables.'),
+  d('Butter Chicken','Shahi Dastarkhwan',580,1100,false,'The world-famous murgh makhani — tomato-butter-cream velvety gravy.','bestseller'),
+  d('Chicken Rezzala','Shahi Dastarkhwan',560,1060,false,'Kashmiri-style white gravy with kewra, cashew & mild spices.'),
+  d('Murgh Mussallam','Shahi Dastarkhwan',980,1850,false,'Whole chicken stuffed with keema, eggs & nuts — the Mughal centrepiece.','chef-special'),
+  d('Mutton Jahangiri','Shahi Dastarkhwan',720,1380,false,'Regal mutton in saffron-almond gravy with rose petals.'),
+  d('Mutton Bhuna','Shahi Dastarkhwan',680,1280,false,'Slow-braised mutton with caramelised onions & toasted spices.'),
+  d('Mutton Badam Pasanda','Shahi Dastarkhwan',780,1480,false,'Flattened mutton in almond-saffron gravy — a Shahi speciality.'),
+  d('Mutton Qorma','Shahi Dastarkhwan',700,1350,false,'Slow-cooked mutton in brown onion-yoghurt gravy with mace.'),
+  d('Mutton Nihari','Shahi Dastarkhwan',650,1250,false,'Overnight-simmered shank stew with wheat flour & warming spices.','bestseller'),
+  d('Mutton Chaap','Shahi Dastarkhwan',720,1380,false,'Tender mutton chops in thick masala, pan-seared then simmered.'),
+  d('Mutton Stew','Shahi Dastarkhwan',640,1220,false,'Wholesome mutton stew with root vegetables & whole spices.'),
+  d('Mutton Nargisi Kofta','Shahi Dastarkhwan',780,1480,false,'Egg-stuffed mutton koftas in rich onion-tomato gravy — a royal classic.'),
+  d('Paneer Tikka Masala','Shahi Dastarkhwan',420,800,true,'Tandoor-charred paneer in spiced onion-tomato masala.'),
+  d('Paneer Makhani','Shahi Dastarkhwan',440,830,true,'Paneer cubes in silky tomato-butter-cream sauce.','bestseller'),
+  d('Malai Kofta','Shahi Dastarkhwan',420,800,true,'Paneer-potato koftas in cashew-cream white gravy.'),
+  d('Dal Makhani','Shahi Dastarkhwan',320,600,true,'Black lentils simmered 12 hours with butter & cream.','bestseller'),
+  d('Dal Tadka','Shahi Dastarkhwan',260,480,true,'Yellow lentils tempered with ghee, garlic & red chilli.'),
+  d('Mutton Rogan Josh','Shahi Dastarkhwan',750,1420,false,'Kashmiri signature — deep crimson gravy with ratanjot & fennel.'),
+  d('Chicken Do Pyaza','Shahi Dastarkhwan',520,980,false,'Chicken with double onions — charred & fresh — for layered sweetness.'),
+  d('Kadhai Paneer','Shahi Dastarkhwan',430,820,true,'Paneer with bell peppers in kadhai masala & crushed coriander seeds.'),
+  d('Shahi Paneer','Shahi Dastarkhwan',450,850,true,'Royal white gravy of cashew, cream & mild spices with soft paneer.'),
+  // ---- BIRYANI (10) ----
+  d('Chicken Biryani','Biryani',380,720,false,'Dum-cooked basmati with marinated chicken, saffron & fried onions.','bestseller'),
+  d('Mutton Biryani','Biryani',480,920,false,'Lucknowi-style dum biryani with tender mutton & royal spices.','bestseller'),
+  d('Special Boneless Chicken Biryani','Biryani',450,850,false,'Boneless chicken biryani with kewra, saffron & rose water.'),
+  d('Special Boneless Mutton Biryani','Biryani',550,1050,false,'Deboned mutton biryani layered with aromatic rice & khoya.','chef-special'),
+  d('Egg Biryani','Biryani',320,600,false,'Fragrant biryani with spiced boiled eggs & fried onions.'),
+  d('Special Raan Biryani','Biryani',1250,2200,false,'Whole slow-roasted lamb leg on a throne of royal biryani.','chef-special'),
+  d('Mutton Boti Biryani','Biryani',520,980,false,'Bone-in mutton boti biryani with whole spices & mint.'),
+  d('Vegetable Biryani','Biryani',280,520,true,'Seasonal vegetables layered with saffron rice & ghee.'),
+  d('Prawn Biryani','Biryani',580,1100,false,'Coastal-style prawn biryani with coconut & curry leaves.'),
+  d('Hyderabadi Dum Biryani','Biryani',420,800,false,'Kacchi-style raw-meat dum biryani sealed with dough.','spicy'),
+  // ---- ROLLS (8) ----
+  d('Karim Roll','Rolls',180,340,false,'The signature — seekh kebab, chutney & onion in a flaky rumali wrap.','bestseller'),
+  d('Chicken Seekh Roll','Rolls',160,300,false,'Chicken seekh with green chutney & crunchy onions.'),
+  d('Mutton Shami Kebab Roll','Rolls',180,340,false,'Silken shami kebab wrapped with mint chutney & egg wash.'),
+  d('Chicken Tikka Roll','Rolls',170,320,false,'Smoky chicken tikka pieces in a soft paratha wrap.'),
+  d('Fish Tikka Roll','Rolls',190,360,false,'Bhetki tikka with tartar-style sauce in a rumali roll.'),
+  d('Paneer Tikka Roll','Rolls',140,260,true,'Grilled paneer tikka with peppers in a soft wrap.'),
+  d('Mutton Tikka Roll','Rolls',200,380,false,'Charcoal mutton tikka with onions & mint mayo.'),
+  d('Egg Roll','Rolls',100,180,false,'Classic Kolkata-style egg roll with potato & sauces.'),
+  // ---- ROTI & NAAN (12) ----
+  d("Karim's Special Khamiri Roti",'Roti & Naan',60,110,true,'The 1913 signature — leavened overnight, tandoor-puffed.','chef-special'),
+  d('Tandoori Roti','Roti & Naan',40,75,true,'Classic whole-wheat tandoori roti.'),
+  d('Rumali Roti','Roti & Naan',50,90,true,'Hand-stretched paper-thin roti, folded like a handkerchief.'),
+  d('Plain Naan','Roti & Naan',55,100,true,'Soft refined-flour naan from the clay tandoor.'),
+  d('Butter Naan','Roti & Naan',70,130,true,'Naan brushed with melted butter straight from the tandoor.','bestseller'),
+  d('Garlic Naan','Roti & Naan',85,155,true,'Naan studded with garlic & coriander.'),
+  d('Keema Naan','Roti & Naan',140,260,false,'Stuffed with spiced minced mutton & herbs.'),
+  d('Tandoori Lacchha Paratha','Roti & Naan',80,150,true,'Flaky multi-layered paratha with ghee.'),
+  d('Sheermal','Roti & Naan',90,170,true,'Saffron-milk bread from the royal Lucknow kitchen.'),
+  d('Paneer Stuffed Naan','Roti & Naan',120,220,true,'Naan stuffed with spiced paneer & herbs.'),
+  d('Peshwari Naan','Roti & Naan',110,200,true,'Sweet naan stuffed with coconut, raisins & nuts.'),
+  d('Missi Roti','Roti & Naan',65,120,true,'Rustic gram-flour roti with ajwain & spices.'),
+  // ---- RICE (6) ----
+  d('Steamed Basmati Rice','Rice',150,280,true,'Aged long-grain basmati, perfectly steamed.'),
+  d('Jeera Rice','Rice',180,340,true,'Basmati tempered with cumin & ghee.'),
+  d('Peas Pulao','Rice',200,380,true,'Fragrant pulao with fresh green peas & whole spices.'),
+  d('Veg Pulao','Rice',190,360,true,'Seasonal vegetable pulao with saffron notes.'),
+  d('Kashmiri Pulao','Rice',240,450,true,'Royal pulao with dry fruits, saffron & pomegranate.'),
+  d('Curd Rice','Rice',160,300,true,'Cooling South Indian curd rice with tempering.'),
+  // ---- SIDES & ADD-ONS (12) ----
+  d('Green Salad','Sides & Add-Ons',120,220,true,'Fresh garden greens with lemon dressing.'),
+  d('Onion Salad','Sides & Add-Ons',80,150,true,'Sliced onions with lemon, chaat masala & green chilli.'),
+  d('Plain Raita','Sides & Add-Ons',90,170,true,'Cooling whisked yogurt with roasted cumin.'),
+  d('Mixed Veg Raita','Sides & Add-Ons',110,200,true,'Yogurt with boondi, cucumber & tomatoes.'),
+  d('Extra Potato','Sides & Add-Ons',60,110,true,'Extra boiled/aloo masala on the side.'),
+  d('Extra Boiled Egg','Sides & Add-Ons',40,75,true,'One extra boiled egg.'),
+  d('Packaged Mineral Water','Sides & Add-Ons',40,75,true,'Sealed mineral water bottle 500ml.'),
+  d('Green Chutney','Sides & Add-Ons',40,75,true,'House-made mint-coriander chutney.'),
+  d('Mint Raita','Sides & Add-Ons',100,180,true,'Yogurt blended with fresh mint.'),
+  d('Boondi Raita','Sides & Add-Ons',100,180,true,'Crisp boondi soaked in spiced yogurt.'),
+  d('Roasted Papad','Sides & Add-Ons',30,55,true,'Roasted urad dal papad.'),
+  d('Masala Papad','Sides & Add-Ons',50,95,true,'Papad topped with onion, tomato & chaat masala.'),
+  // ---- MEETHA / DESSERT (10) ----
+  d('Kesar Phirni (Kulhad)','Meetha / Dessert',180,340,true,'Creamy saffron rice pudding in earthen kulhad.','bestseller'),
+  d('Gulab Jamun with Ice Cream','Meetha / Dessert',200,380,true,'Warm gulab jamun with vanilla ice cream.'),
+  d('Premium Ice Cream Scoops','Meetha / Dessert',120,220,true,'Two scoops of premium ice cream.'),
+  d('Ras Malai','Meetha / Dessert',220,420,true,'Soft paneer discs in saffron-cardamom milk.'),
+  d('Shahi Tukda','Meetha / Dessert',250,470,true,'Fried bread in rabri with nuts — a Mughal dessert.','chef-special'),
+  d('Kulfi Falooda','Meetha / Dessert',240,450,true,'Traditional kulfi with vermicelli & rose syrup.'),
+  d('Gajar Ka Halwa','Meetha / Dessert',200,380,true,'Slow-cooked carrot pudding with khoya & nuts.'),
+  d('Moong Dal Halwa','Meetha / Dessert',220,420,true,'Rich gram-flour halwa with ghee & dry fruits.'),
+  d('Rasmalai (2 pcs)','Meetha / Dessert',160,300,true,'Two pieces of soft rasmalai in chilled milk.'),
+  d('Kesar Kulfi','Meetha / Dessert',150,280,true,'Dense saffron kulfi, hand-churned the old way.'),
+  // ---- DRINKS & MOCKTAILS (15) ----
+  d('Thick Sweet Lassi','Drinks & Mocktails',120,220,true,'Hand-churned mathura-style thick lassi with malai.','bestseller'),
+  d('Virgin Mojito','Drinks & Mocktails',180,340,true,'Mint, lime & soda over crushed ice.'),
+  d('Blue Lagoon','Drinks & Mocktails',170,320,true,'Blue curacao syrup with lemonade & ice.'),
+  d('Lemon Iced Tea','Drinks & Mocktails',140,260,true,'Chilled brewed tea with lemon & mint.'),
+  d('Cold Coffee with Ice Cream','Drinks & Mocktails',200,380,true,'Blended cold coffee topped with a scoop.'),
+  d('Chocolate Shake','Drinks & Mocktails',190,360,true,'Thick chocolate milkshake with cream.'),
+  d('Blueberry Shake','Drinks & Mocktails',200,380,true,'Creamy blueberry shake with real fruit.'),
+  d('Fresh Lime Soda','Drinks & Mocktails',100,180,true,'Fresh lime with soda — sweet, salt or mixed.'),
+  d('Masala Chaas','Drinks & Mocktails',90,170,true,'Spiced buttermilk with roasted cumin & curry leaves.'),
+  d('Mango Lassi','Drinks & Mocktails',140,260,true,'Seasonal mango blended with thick yogurt.'),
+  d('Sweet Lassi','Drinks & Mocktails',110,200,true,'Classic sweet lassi with a rose-water hint.'),
+  d('Filter Coffee','Drinks & Mocktails',80,150,true,'South Indian filter coffee, strong & frothy.'),
+  d('Masala Chai','Drinks & Mocktails',60,110,true,'Spiced tea with ginger, cardamom & milk.'),
+  d('Soft Drink','Drinks & Mocktails',60,110,true,'Choice of Coke, Sprite, or Thums Up.'),
+  d('Fresh Lime Water','Drinks & Mocktails',70,130,true,'Simple fresh lime water — sweet or salty.')
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  menu: [], orders: [], cart: [], table: 0,
+  payMethod: 'upi', session: false, orderCounter: 1000,
+  activeCategory: 'all', dietFilter: 'all', displayFlip: 1
+};
+
+function saveState() {
+  try {
+    localStorage.setItem('karim_menu_data', JSON.stringify(state.menu));
+    localStorage.setItem('karim_orders_data', JSON.stringify(state.orders));
+    localStorage.setItem('karim_cart_data', JSON.stringify({ cart: state.cart, table: state.table, counter: state.orderCounter }));
+  } catch(e) { console.warn('Storage full', e); }
+}
+function loadState() {
+  try {
+    const m = localStorage.getItem('karim_menu_data');
+    const o = localStorage.getItem('karim_orders_data');
+    const c = localStorage.getItem('karim_cart_data');
+    state.menu = m ? JSON.parse(m) : JSON.parse(JSON.stringify(DEFAULT_MENU));
+    state.orders = o ? JSON.parse(o) : [];
+    if (c) { const cd = JSON.parse(c); state.cart = cd.cart || []; state.table = cd.table || 0; state.orderCounter = cd.counter || 1000; }
+    state.session = sessionStorage.getItem('karim_staff_session') === '1';
+  } catch(e) { state.menu = JSON.parse(JSON.stringify(DEFAULT_MENU)); state.orders = []; }
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg, type) {
+  type = type || 'success';
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  const colors = { success:'bg-green-600', error:'bg-red-600', info:'bg-blue-600', warn:'bg-amber-600' };
+  const icons = { success:'✓', error:'✕', info:'ℹ', warn:'⚠' };
+  t.className = 'toast-enter ' + (colors[type]||colors.success) + ' text-white px-4 py-3 rounded-xl shadow-2xl font-inter text-sm font-semibold flex items-center gap-2 pointer-events-auto max-w-xs';
+  t.innerHTML = '<span class="text-lg">' + (icons[type]||'✓') + '</span><span>' + msg + '</span>';
+  c.appendChild(t);
+  setTimeout(function() { t.style.transition='all .3s'; t.style.opacity='0'; t.style.transform='translateY(-20px)'; setTimeout(function(){ t.remove(); },300); }, 3500);
+}
+
+// ============================================================
+// AUDIO CHIME (Web Audio API — 587.33Hz → 880Hz)
+// ============================================================
+let audioCtx = null;
+function playChime() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const playNote = function(freq, startTime, duration) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    };
+    const now = audioCtx.currentTime;
+    playNote(587.33, now, 0.3);
+    playNote(880, now + 0.2, 0.4);
+  } catch(e) { console.warn('Audio failed', e); }
+}
+
+
+// ============================================================
+// ROUTING
+// ============================================================
+const STAFF_ROUTES = ['admin','manager','pos','kds','manager-display2'];
+function route() {
+  const hash = location.hash.replace('#','') || '';
+  const parts = hash.split('?');
+  const routeName = parts[0];
+  if (routeName === 'order') {
+    const params = new URLSearchParams(parts[1] || '');
+    const t = parseInt(params.get('table'));
+    if (t >= 1 && t <= 12) { state.table = t; saveState(); updateTablePill(); }
+  }
+  const isStaff = STAFF_ROUTES.indexOf(routeName) !== -1;
+  if (isStaff && !state.session) { showAuth(); return; }
+  closeAuth();
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  let viewId = routeName;
+  if (routeName === 'pos') viewId = 'manager';
+  if (routeName === 'manager-display2') { viewId = 'manager'; state.displayFlip = 2; }
+  if (routeName === 'order') viewId = 'customer';
+  if (['customer','heritage','manager','kds','admin'].indexOf(viewId) === -1) viewId = 'customer';
+  const view = document.getElementById('view-' + viewId);
+  if (view) view.classList.add('active');
+  if (viewId === 'manager') { if (routeName==='manager-display2'){ flipDisplay(2); } else { flipDisplay(state.displayFlip); } renderManager(); }
+  if (viewId === 'kds') renderKDS();
+  if (viewId === 'admin') { renderAdminMenu(); renderStandees(); }
+  if (viewId === 'customer') renderMenu();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange', route);
+
+// ============================================================
+// AUTH
+// ============================================================
+function showAuth() {
+  const m = document.getElementById('authModal');
+  m.classList.remove('hidden'); m.classList.add('flex');
+  document.getElementById('authError').classList.add('hidden');
+  document.getElementById('authPassword').value = '';
+  document.getElementById('staffQuickSwitch').classList.toggle('hidden', !state.session);
+  setTimeout(function(){ document.getElementById('authPassword').focus(); }, 100);
+}
+function closeAuth() {
+  const m = document.getElementById('authModal');
+  m.classList.add('hidden'); m.classList.remove('flex');
+}
+document.getElementById('authForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const pw = document.getElementById('authPassword').value;
+  if (pw === STAFF_PASSWORD) {
+    state.session = true;
+    sessionStorage.setItem('karim_staff_session', '1');
+    closeAuth();
+    toast('Authenticated — Welcome, Staff!');
+    const hash = location.hash.replace('#','');
+    if (STAFF_ROUTES.indexOf(hash) === -1) location.hash = '#manager';
+    else route();
+  } else {
+    const err = document.getElementById('authError');
+    err.classList.remove('hidden');
+    const card = document.getElementById('authCard');
+    card.classList.add('shake');
+    setTimeout(function(){ card.classList.remove('shake'); }, 500);
+    document.getElementById('authPassword').value = '';
+  }
+});
+function logoutStaff() {
+  state.session = false;
+  sessionStorage.removeItem('karim_staff_session');
+  location.hash = '';
+  toast('Logged out of staff session.', 'info');
+}
+
+// ============================================================
+// SECRET 5-SECOND HOLD ON ©
+// ============================================================
+let holdTimer = null, holdStart = 0, holdRAF = null;
+function startHold(e) {
+  e.preventDefault();
+  holdStart = Date.now();
+  const prog = document.getElementById('holdProgress');
+  const tick = function() {
+    const elapsed = Date.now() - holdStart;
+    const pct = Math.min(elapsed / 5000, 1);
+    prog.style.width = (pct * 70) + 'px';
+    if (pct < 1) holdRAF = requestAnimationFrame(tick);
+  };
+  tick();
+  holdTimer = setTimeout(function() {
+    endHoldUI();
+    showAuth();
+    toast('🔐 Secret staff access activated.', 'warn');
+  }, 5000);
+}
+function endHold() {
+  if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  if (holdRAF) { cancelAnimationFrame(holdRAF); holdRAF = null; }
+  endHoldUI();
+}
+function endHoldUI() {
+  const p = document.getElementById('holdProgress');
+  if (p) p.style.width = '0';
+}
+(function(){
+  const chEl = document.getElementById('copyrightHold');
+  chEl.addEventListener('mousedown', startHold);
+  chEl.addEventListener('touchstart', startHold, { passive:false });
+  document.addEventListener('mouseup', endHold);
+  document.addEventListener('touchend', endHold);
+  chEl.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+})();
+
+// ============================================================
+// CUSTOMER: TABLE
+// ============================================================
+function updateTablePill() {
+  document.getElementById('tablePillText').textContent = state.table ? 'Table ' + state.table + ' (Dine-In)' : 'Select Table';
+  document.getElementById('cartTableLabel').textContent = state.table ? 'Table ' + state.table + ' — Dine-In' : 'No table selected';
+}
+function showTableSwitch() { document.getElementById('tableSwitchModal').classList.remove('hidden'); document.getElementById('tableSwitchModal').classList.add('flex'); }
+function closeTableSwitch() { document.getElementById('tableSwitchModal').classList.add('hidden'); document.getElementById('tableSwitchModal').classList.remove('flex'); }
+function setTable(n) { state.table = n; saveState(); updateTablePill(); closeTableSwitch(); toast('Table ' + n + ' selected. Enjoy your meal!'); }
+(function(){
+  let html = '';
+  for (let i = 1; i <= 12; i++) {
+    html += '<button onclick="setTable(' + i + ')" class="py-3 rounded-xl border-2 border-karim-200 font-cinzel font-bold text-karim-600 hover:border-mughal-400 hover:bg-mughal-100/30 transition text-sm">' + i + '</button>';
+  }
+  document.getElementById('tablePickGrid').innerHTML = html;
+})();
+
+// ============================================================
+// CUSTOMER: MENU RENDERING
+// ============================================================
+function toggleDiet(diet) {
+  state.dietFilter = diet;
+  document.querySelectorAll('.diet-btn').forEach(function(b){ b.className = 'diet-btn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-white border-karim-200'; });
+  const btn = document.getElementById('diet-' + diet);
+  if (diet === 'all') btn.className = 'diet-btn active px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-karim-700 text-mughal-400 border-karim-700';
+  if (diet === 'veg') btn.className = 'diet-btn active px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-green-50 text-green-700 border-green-500';
+  if (diet === 'nonveg') btn.className = 'diet-btn active px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition bg-red-50 text-red-700 border-red-500';
+  renderMenu();
+}
+function setCategory(cat) { state.activeCategory = cat; renderMenu(); }
+function getBadgeHTML(badge) {
+  if (!badge) return '';
+  const map = { bestseller:'⭐ Bestseller', 'chef-special':"👑 Chef's Special", 'new':'✨ New', spicy:'🌶️ Spicy' };
+  const colors = { bestseller:'bg-amber-100 text-amber-700', 'chef-special':'bg-mughal-100 text-mughal-700', 'new':'bg-blue-100 text-blue-700', spicy:'bg-red-100 text-red-700' };
+  return '<span class="flavor-tag ' + (colors[badge]||'bg-gray-100 text-gray-600') + '">' + (map[badge]||badge) + '</span>';
+}
+function renderMenu() {
+  // category pills
+  const pel = document.getElementById('categoryPills');
+  let ph = '<button onclick="setCategory(\'all\')" class="category-pill shrink-0 px-4 py-2 rounded-full border-2 text-xs font-semibold font-inter transition whitespace-nowrap ' + (state.activeCategory==='all'?'active bg-karim-700 text-mughal-400 border-karim-700':'bg-white text-karim-500 border-karim-200 hover:border-mughal-400') + '">✨ All</button>';
+  CATEGORIES.forEach(function(cat){
+    ph += '<button onclick="setCategory(\'' + cat + '\')" class="category-pill shrink-0 px-4 py-2 rounded-full border-2 text-xs font-semibold font-inter transition whitespace-nowrap ' + (state.activeCategory===cat?'active bg-karim-700 text-mughal-400 border-karim-700':'bg-white text-karim-500 border-karim-200 hover:border-mughal-400') + '">' + CAT_EMOJI[cat] + ' ' + cat + '</button>';
+  });
+  pel.innerHTML = ph;
+
+  const search = (document.getElementById('menuSearch') ? document.getElementById('menuSearch').value : '').toLowerCase();
+  let items = state.menu.filter(function(m){ return m.inStock; });
+  if (state.activeCategory !== 'all') items = items.filter(function(m){ return m.cat === state.activeCategory; });
+  if (state.dietFilter === 'veg') items = items.filter(function(m){ return m.veg; });
+  if (state.dietFilter === 'nonveg') items = items.filter(function(m){ return !m.veg; });
+  if (search) items = items.filter(function(m){ return m.name.toLowerCase().indexOf(search) !== -1 || m.desc.toLowerCase().indexOf(search) !== -1; });
+
+  const grid = document.getElementById('menuGrid');
+  const empty = document.getElementById('menuEmpty');
+  if (items.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  grid.innerHTML = items.map(function(m){
+    const imgHtml = m.customImg
+      ? '<img src="' + m.customImg + '" alt="' + m.name + '" class="w-full h-44 object-cover">'
+      : '<div class="w-full h-44 bg-gradient-to-br ' + (IMG_GRADIENT[m.imgKey]||'from-amber-500 to-orange-600') + ' flex items-center justify-center"><span class="text-6xl opacity-80">' + (IMG_KEY_EMOJI[m.imgKey]||CAT_EMOJI[m.cat]) + '</span></div>';
+    const halfHtml = m.half ? '<span class="font-cinzel text-sm font-bold text-karim-600">₹' + m.half + ' <span class="text-[9px] text-karim-300 font-inter font-normal">Half</span></span>' : '';
+    const fullHtml = m.full ? '<span class="font-cinzel text-lg font-bold text-karim-700">₹' + m.full + ' <span class="text-[9px] text-karim-300 font-inter font-normal">Full</span></span>' : '';
+    return '<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-karim-100 card-hover ' + (m.veg?'diet-veg':'diet-nonveg') + '">' +
+      '<div class="relative">' + imgHtml +
+        '<div class="absolute top-2 right-2 flex gap-1">' + getBadgeHTML(m.badge) + '</div>' +
+        '<div class="absolute top-2 left-2"><span class="w-5 h-5 ' + (m.veg?'bg-green-100':'bg-red-100') + ' rounded-sm flex items-center justify-center text-[10px]">' + (m.veg?'🟢':'🔴') + '</span></div>' +
+      '</div>' +
+      '<div class="p-4">' +
+        '<h3 class="font-playfair font-bold text-karim-700 text-base leading-tight mb-1">' + m.name + '</h3>' +
+        '<p class="text-karim-400/70 text-xs font-inter leading-relaxed mb-3 line-clamp-2">' + m.desc + '</p>' +
+        '<div class="flex items-center justify-between">' +
+          '<div class="flex items-baseline gap-2">' + halfHtml + fullHtml + '</div>' +
+          '<button onclick="openCustomizer(\'' + m.id + '\')" class="gold-gradient text-karim-700 font-bold font-inter text-xs px-4 py-2 rounded-lg hover:brightness-110 transition shadow-sm">+ ADD</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ============================================================
+// CUSTOMIZER
+// ============================================================
+let custDish = null, custPortion = 'full', custSpice = 'medium', custButter = 'regular', custQty = 1;
+function setSelGroup(prefix, val, opts) {
+  opts.forEach(function(o){
+    const el = document.getElementById(prefix + '-' + o);
+    if (!el) return;
+    el.className = (prefix === 'portion' ? 'flex-1 py-2.5 rounded-xl border-2 text-xs font-bold' : 'flex-1 py-2 rounded-lg border-2 text-[11px] font-semibold') +
+      ' font-inter transition ' + (o === val ? 'bg-karim-700 text-mughal-400 border-karim-700' : 'bg-white border-karim-200 text-karim-500');
+  });
+}
+function openCustomizer(id) {
+  custDish = state.menu.find(function(m){ return m.id === id; });
+  if (!custDish) return;
+  custPortion = (custDish.half && custDish.full) ? 'full' : (custDish.half ? 'half' : 'full');
+  custSpice = 'medium'; custButter = 'regular'; custQty = 1;
+  document.getElementById('custTitle').textContent = custDish.name;
+  document.getElementById('custDesc').textContent = custDish.desc;
+  document.getElementById('custNote').value = '';
+  document.getElementById('custQty').textContent = '1';
+  document.getElementById('portionRow').style.display = (custDish.half && custDish.full) ? '' : 'none';
+  setSelGroup('portion', custPortion, ['half','full']);
+  setSelGroup('spice', custSpice, ['mild','medium','hot']);
+  setSelGroup('butter', custButter, ['regular','extra','low']);
+  updateCustPrice();
+  document.getElementById('customizerModal').classList.remove('hidden');
+  document.getElementById('customizerModal').classList.add('flex');
+}
+function closeCustomizer() { document.getElementById('customizerModal').classList.add('hidden'); document.getElementById('customizerModal').classList.remove('flex'); }
+function setPortion(p) { custPortion = p; setSelGroup('portion', p, ['half','full']); updateCustPrice(); }
+function setSpice(s) { custSpice = s; setSelGroup('spice', s, ['mild','medium','hot']); }
+function setButter(b) { custButter = b; setSelGroup('butter', b, ['regular','extra','low']); }
+function adjustQty(n) { custQty = Math.max(1, Math.min(20, custQty + n)); document.getElementById('custQty').textContent = custQty; updateCustPrice(); }
+function updateCustPrice() {
+  if (!custDish) return;
+  const unit = custPortion === 'half' ? custDish.half : custDish.full;
+  document.getElementById('custPrice').textContent = '₹' + (unit * custQty);
+}
+function confirmAddToCart() {
+  if (!custDish) return;
+  const unit = custPortion === 'half' ? custDish.half : custDish.full;
+  const note = document.getElementById('custNote').value.trim();
+  const existing = state.cart.find(function(c){ return c.dishId === custDish.id && c.portion === custPortion && c.spice === custSpice && c.butter === custButter && c.note === note; });
+  if (existing) { existing.qty += custQty; }
+  else {
+    state.cart.push({
+      cartId: 'c' + Date.now() + Math.random().toString(36).substr(2,4),
+      dishId: custDish.id, name: custDish.name, portion: custPortion, spice: custSpice,
+      butter: custButter, note: note, qty: custQty, price: unit, veg: custDish.veg
+    });
+  }
+  saveState(); updateCartBadge(); closeCustomizer();
+  toast(custDish.name + ' added to cart!');
+}
+
+
+// ============================================================
+// CART
+// ============================================================
+function updateCartBadge() {
+  const count = state.cart.reduce(function(s,c){ return s + c.qty; }, 0);
+  const el = document.getElementById('cartCount');
+  el.textContent = count;
+  el.classList.toggle('hidden', count === 0);
+}
+function openCart() {
+  renderCart();
+  document.getElementById('cartOverlay').classList.remove('hidden');
+  const drawer = document.getElementById('cartDrawer');
+  drawer.classList.remove('hidden'); drawer.classList.add('flex');
+}
+function closeCart() {
+  document.getElementById('cartOverlay').classList.add('hidden');
+  const drawer = document.getElementById('cartDrawer');
+  drawer.classList.add('hidden'); drawer.classList.remove('flex');
+  document.getElementById('upiPanel').classList.add('hidden');
+  document.getElementById('checkoutSteps').classList.remove('hidden');
+}
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  const sum = document.getElementById('cartSummary');
+  if (state.cart.length === 0) {
+    el.innerHTML = '<div class="text-center py-16"><span class="text-5xl mb-3 block">🛒</span><p class="font-playfair text-karim-300 italic">Your cart is empty</p><p class="text-karim-200 text-xs font-inter mt-1">Browse our royal menu and add dishes</p></div>';
+    sum.innerHTML = '';
+    document.getElementById('payBtnTotal').textContent = '₹0';
+    return;
+  }
+  el.innerHTML = state.cart.map(function(c){
+    const butterLabel = c.butter === 'extra' ? 'Extra Butter' : c.butter === 'low' ? 'Low Oil' : 'Regular';
+    return '<div class="bg-white rounded-xl p-3 shadow-sm border border-karim-100 ' + (c.veg?'diet-veg':'diet-nonveg') + '">' +
+      '<div class="flex justify-between items-start">' +
+        '<div class="flex-1">' +
+          '<p class="font-playfair font-bold text-karim-700 text-sm">' + c.name + '</p>' +
+          '<p class="text-karim-400 text-[10px] font-inter mt-0.5">' + (c.portion === 'half' ? 'Half' : 'Full') + ' • ' + c.spice + ' spice • ' + butterLabel + '</p>' +
+          (c.note ? '<p class="text-amber-600 text-[10px] font-inter italic mt-0.5">"' + c.note + '"</p>' : '') +
+        '</div>' +
+        '<button onclick="removeFromCart(\'' + c.cartId + '\')" class="text-karim-300 hover:text-red-500 text-lg leading-none ml-2">✕</button>' +
+      '</div>' +
+      '<div class="flex items-center justify-between mt-2">' +
+        '<div class="flex items-center gap-2">' +
+          '<button onclick="cartQty(\'' + c.cartId + '\',-1)" class="w-7 h-7 rounded-lg bg-cream-100 border border-karim-200 font-bold text-karim-500 text-sm flex items-center justify-center">−</button>' +
+          '<span class="font-cinzel font-bold text-karim-700 text-sm w-5 text-center">' + c.qty + '</span>' +
+          '<button onclick="cartQty(\'' + c.cartId + '\',1)" class="w-7 h-7 rounded-lg bg-cream-100 border border-karim-200 font-bold text-karim-500 text-sm flex items-center justify-center">+</button>' +
+        '</div>' +
+        '<span class="font-cinzel font-bold text-karim-700">₹' + (c.price * c.qty) + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  const subtotal = state.cart.reduce(function(s,c){ return s + c.price * c.qty; }, 0);
+  const gst = Math.round(subtotal * 0.05);
+  const total = subtotal + gst;
+  sum.innerHTML =
+    '<div class="flex justify-between text-xs font-inter text-karim-400"><span>Subtotal</span><span>₹' + subtotal + '</span></div>' +
+    '<div class="flex justify-between text-xs font-inter text-karim-400"><span>GST (5%)</span><span>₹' + gst + '</span></div>' +
+    '<div class="flex justify-between font-cinzel font-bold text-karim-700 text-base pt-1 border-t border-karim-200"><span>Total</span><span>₹' + total + '</span></div>';
+  document.getElementById('payBtnTotal').textContent = '₹' + total;
+}
+function removeFromCart(cartId) { state.cart = state.cart.filter(function(c){ return c.cartId !== cartId; }); saveState(); updateCartBadge(); renderCart(); }
+function cartQty(cartId, n) {
+  const c = state.cart.find(function(x){ return x.cartId === cartId; });
+  if (!c) return;
+  c.qty += n;
+  if (c.qty <= 0) state.cart = state.cart.filter(function(x){ return x.cartId !== cartId; });
+  saveState(); updateCartBadge(); renderCart();
+}
+function setPayMethod(m) {
+  state.payMethod = m;
+  document.getElementById('pay-upi').className = 'flex-1 py-2.5 rounded-xl border-2 text-xs font-bold font-inter transition ' + (m==='upi'?'bg-blue-50 border-blue-400 text-blue-700':'bg-white border-karim-200 text-karim-500');
+  document.getElementById('pay-cash').className = 'flex-1 py-2.5 rounded-xl border-2 text-xs font-bold font-inter transition ' + (m==='cash'?'bg-green-50 border-green-400 text-green-700':'bg-white border-karim-200 text-karim-500');
+}
+
+// ============================================================
+// ORDER STATE MACHINE: Checkout → Pending Approval → KDS
+// ============================================================
+function placeOrder() {
+  if (state.cart.length === 0) { toast('Your cart is empty!', 'error'); return; }
+  if (!state.table) { toast('Please select your table first.', 'warn'); showTableSwitch(); return; }
+  const subtotal = state.cart.reduce(function(s,c){ return s + c.price * c.qty; }, 0);
+  const gst = Math.round(subtotal * 0.05);
+  const total = subtotal + gst;
+  state.orderCounter++;
+  const orderId = 'KRM-' + state.orderCounter;
+  const order = {
+    id: orderId, table: state.table,
+    items: JSON.parse(JSON.stringify(state.cart)),
+    subtotal: subtotal, gst: gst, total: total,
+    payMethod: state.payMethod,
+    payStatus: 'Pending Verification',
+    paymentApproved: false,
+    status: 'Pending Approval',
+    notes: document.getElementById('orderNotes').value.trim(),
+    createdAt: Date.now(),
+    approvedAt: null, startedAt: null, completedAt: null, servedAt: null,
+    itemsChecked: []
+  };
+  state.orders.unshift(order);
+  saveState();
+  if (state.payMethod === 'upi') {
+    document.getElementById('checkoutSteps').classList.add('hidden');
+    const panel = document.getElementById('upiPanel');
+    panel.classList.remove('hidden');
+    document.getElementById('upiAmount').textContent = '₹' + total;
+    const qrEl = document.getElementById('upiQRCode');
+    qrEl.innerHTML = '';
+    const upiUrl = 'upi://pay?pa=karims.imphal@upi&pn=Karim%27s%20Imphal&am=' + total + '.00&cu=INR&tn=Order%20' + orderId;
+    if (typeof QRCode !== 'undefined') new QRCode(qrEl, { text: upiUrl, width: 160, height: 160, colorDark: '#2A0408', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  }
+  state.cart = [];
+  document.getElementById('orderNotes').value = '';
+  saveState(); updateCartBadge();
+  toast('Order ' + orderId + ' submitted! Awaiting manager approval.');
+  startOrderPolling(orderId);
+}
+function startOrderPolling(orderId) {
+  const interval = setInterval(function() {
+    loadState();
+    const order = state.orders.find(function(o){ return o.id === orderId; });
+    if (!order) { clearInterval(interval); return; }
+    if (order.paymentApproved) {
+      clearInterval(interval);
+      toast('✅ Payment Approved! Order confirmed and sent to kitchen.', 'success');
+      playChime();
+      openTracker(orderId);
+    }
+  }, 2500);
+}
+
+// ============================================================
+// ORDER TRACKER
+// ============================================================
+let trackerInterval = null;
+function openTracker(orderId) {
+  const order = state.orders.find(function(o){ return o.id === orderId; });
+  if (!order) return;
+  document.getElementById('trackerOrderId').textContent = order.id + ' • Table ' + order.table;
+  renderTracker(order);
+  document.getElementById('trackerModal').classList.remove('hidden');
+  document.getElementById('trackerModal').classList.add('flex');
+  if (trackerInterval) clearInterval(trackerInterval);
+  trackerInterval = setInterval(function() {
+    loadState();
+    const o = state.orders.find(function(x){ return x.id === orderId; });
+    if (o) renderTracker(o);
+  }, 3000);
+}
+function closeTracker() {
+  document.getElementById('trackerModal').classList.add('hidden');
+  document.getElementById('trackerModal').classList.remove('flex');
+  if (trackerInterval) { clearInterval(trackerInterval); trackerInterval = null; }
+}
+function renderTracker(order) {
+  const steps = [
+    { label: 'Order Placed', icon: '📝', done: true, sub: 'Your order has been received' },
+    { label: 'Manager Approval', icon: '🛡️', done: order.paymentApproved, sub: order.paymentApproved ? 'Payment verified by manager' : 'Awaiting payment verification...' },
+    { label: 'In the Kitchen', icon: '🔥', done: order.status === 'Progress' || order.status === 'Completed' || order.status === 'Served',
+      sub: order.status === 'Receive' ? 'Queued with the chef' : order.status === 'Progress' ? 'Active preparation over charcoal' : order.status === 'Completed' ? 'Ready for runner' : order.status === 'Served' ? 'Served to your table' : 'Waiting for kitchen' },
+    { label: 'Ready / Served', icon: '🍽️', done: order.status === 'Served',
+      sub: order.status === 'Served' ? 'Enjoy your meal!' : order.status === 'Completed' ? 'Runner dispatched!' : 'Preparing with love...' }
+  ];
+  let html = '<div class="space-y-4">';
+  steps.forEach(function(s, i){
+    html += '<div class="flex items-start gap-3">' +
+      '<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ' + (s.done ? 'bg-green-100 text-green-600' : 'bg-karim-50 text-karim-300') + '">' + (s.done ? '✓' : s.icon) + '</div>' +
+      '<div class="flex-1 pt-1">' +
+        '<p class="font-inter font-bold text-sm ' + (s.done ? 'text-karim-700' : 'text-karim-300') + '">' + s.label + '</p>' +
+        '<p class="text-xs font-inter ' + (s.done ? 'text-karim-400' : 'text-karim-200') + '">' + s.sub + '</p>' +
+      '</div></div>';
+    if (i < steps.length - 1) html += '<div class="ml-5 border-l-2 ' + (steps[i+1].done ? 'border-green-300' : 'border-karim-100') + ' h-4"></div>';
+  });
+  html += '</div>';
+  html += '<div class="mt-4 pt-4 border-t border-karim-100 space-y-1 text-xs font-inter">' +
+    '<div class="flex justify-between text-karim-400"><span>Payment</span><span>' + order.payMethod.toUpperCase() + ' — ' + order.payStatus + '</span></div>' +
+    '<div class="flex justify-between text-karim-400"><span>Items</span><span>' + order.items.reduce(function(s,i){ return s+i.qty; },0) + '</span></div>' +
+    '<div class="flex justify-between font-cinzel font-bold text-karim-700 text-sm"><span>Total</span><span>₹' + order.total + '</span></div>' +
+  '</div>';
+  document.getElementById('trackerContent').innerHTML = html;
+}
+
+
+// ============================================================
+// MANAGER DESK
+// ============================================================
+function flipDisplay(n) {
+  state.displayFlip = n;
+  document.getElementById('display1').classList.toggle('hidden', n !== 1);
+  document.getElementById('display2').classList.toggle('hidden', n !== 2);
+  const b1 = document.getElementById('flipD1'), b2 = document.getElementById('flipD2');
+  b1.className = 'px-3 py-1.5 text-[11px] font-inter font-semibold transition ' + (n===1?'bg-mughal-400 text-karim-700':'text-mughal-100/60');
+  b2.className = 'px-3 py-1.5 text-[11px] font-inter font-semibold transition ' + (n===2?'bg-mughal-400 text-karim-700':'text-mughal-100/60');
+  if (n === 2) renderKDSMirror();
+}
+function popOutDisplay2() {
+  window.open(location.pathname + '#manager-display2', '_blank', 'width=1280,height=800');
+  toast('Display 2 opened in a new window. Drag it to your second monitor.', 'info');
+}
+function scrollToApprovals() { const el = document.getElementById('approvalsSection'); if (el) el.scrollIntoView({ behavior:'smooth' }); }
+
+function renderManager() {
+  loadState();
+  const todayOrders = state.orders.filter(function(o){ return o.paymentApproved; });
+  const grossSales = todayOrders.reduce(function(s,o){ return s + o.total; }, 0);
+  const cashSales = todayOrders.filter(function(o){ return o.payMethod === 'cash'; }).reduce(function(s,o){ return s + o.total; }, 0);
+  const upiSales = todayOrders.filter(function(o){ return o.payMethod === 'upi'; }).reduce(function(s,o){ return s + o.total; }, 0);
+  const activeTables = new Set(todayOrders.filter(function(o){ return o.status !== 'Served'; }).map(function(o){ return o.table; })).size;
+  const aov = todayOrders.length ? Math.round(grossSales / todayOrders.length) : 0;
+  document.getElementById('kpiSales').textContent = '₹' + grossSales.toLocaleString('en-IN');
+  document.getElementById('kpiCash').textContent = '₹' + cashSales.toLocaleString('en-IN');
+  document.getElementById('kpiUPI').textContent = '₹' + upiSales.toLocaleString('en-IN');
+  document.getElementById('kpiTables').textContent = activeTables + ' / 12';
+  document.getElementById('kpiAOV').textContent = '₹' + aov + ' (' + todayOrders.length + ')';
+
+  // Pending approvals
+  const pending = state.orders.filter(function(o){ return !o.paymentApproved; });
+  const banner = document.getElementById('pendingApprovalBanner');
+  const badge = document.getElementById('approvalsBadge');
+  banner.classList.toggle('hidden', pending.length === 0);
+  badge.classList.toggle('hidden', pending.length === 0);
+  if (pending.length > 0) {
+    document.getElementById('pendingCount').textContent = pending.length;
+    badge.textContent = pending.length;
+  }
+  const al = document.getElementById('approvalsList');
+  if (pending.length === 0) {
+    al.innerHTML = '<p class="text-center text-karim-300 py-8 font-inter text-sm">No pending approvals ✓</p>';
+  } else {
+    al.innerHTML = pending.map(function(o){
+      return '<div class="p-4 ' + (o.payMethod==='upi'?'bg-blue-50/50':'bg-amber-50/50') + '">' +
+        '<div class="flex items-start justify-between">' +
+          '<div>' +
+            '<p class="font-cinzel font-bold text-karim-700 text-sm">' + o.id + '</p>' +
+            '<p class="text-karim-400 text-xs font-inter">Table ' + o.table + ' • ' + o.payMethod.toUpperCase() + ' • ' + new Date(o.createdAt).toLocaleTimeString() + '</p>' +
+            '<p class="text-karim-500 text-xs font-inter mt-1">' + o.items.map(function(i){ return i.qty + '× ' + i.name; }).join(', ') + '</p>' +
+            (o.notes ? '<p class="text-amber-600 text-[10px] font-inter italic mt-1">"' + o.notes + '"</p>' : '') +
+          '</div>' +
+          '<div class="text-right shrink-0 ml-3"><p class="font-cinzel text-lg font-bold text-karim-700">₹' + o.total + '</p></div>' +
+        '</div>' +
+        '<div class="flex gap-2 mt-3">' +
+          '<button onclick="approveOrder(\'' + o.id + '\')" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg text-xs font-inter transition">✓ Approve & Send to KDS</button>' +
+          '<button onclick="rejectOrder(\'' + o.id + '\')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded-lg text-xs font-inter transition">✕ Reject</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+  renderTableMap();
+  if (state.displayFlip === 2) renderKDSMirror();
+}
+
+function approveOrder(orderId) {
+  loadState();
+  const order = state.orders.find(function(o){ return o.id === orderId; });
+  if (!order || order.paymentApproved) return;
+  order.paymentApproved = true;
+  order.status = 'Receive';
+  order.payStatus = 'Paid (Verified by Manager)';
+  order.approvedAt = Date.now();
+  saveState();
+  playChime();
+  toast('Payment Approved! Order dispatched to Kitchen.', 'success');
+  renderManager();
+}
+function rejectOrder(orderId) {
+  loadState();
+  const idx = state.orders.findIndex(function(o){ return o.id === orderId; });
+  if (idx === -1) return;
+  if (!confirm('Void order ' + orderId + '? This cannot be undone.')) return;
+  state.orders.splice(idx, 1);
+  saveState();
+  toast('Order rejected and voided.', 'error');
+  renderManager();
+}
+
+function renderTableMap() {
+  const grid = document.getElementById('tableGrid');
+  let html = '';
+  for (let i = 1; i <= 12; i++) {
+    const tableOrders = state.orders.filter(function(o){ return o.table === i && o.paymentApproved; });
+    const activeOrders = tableOrders.filter(function(o){ return o.status !== 'Served'; });
+    const hasBillDue = activeOrders.some(function(o){ return o.status === 'Completed'; });
+    let color = 'bg-green-100 border-green-300 text-green-700', label = 'Vacant';
+    if (activeOrders.length > 0) {
+      if (hasBillDue) { color = 'bg-red-100 border-red-300 text-red-700'; label = 'Bill Due'; }
+      else { color = 'bg-amber-100 border-amber-300 text-amber-700'; label = 'Dining'; }
+    }
+    html += '<div onclick="openLedger(' + i + ')" class="table-cell ' + color + ' border-2 rounded-xl p-2.5 text-center">' +
+      '<p class="font-cinzel font-bold text-sm">' + i + '</p>' +
+      '<p class="text-[9px] font-inter mt-0.5">' + label + '</p>' +
+      (activeOrders.length ? '<p class="text-[8px] font-inter mt-0.5">₹' + activeOrders.reduce(function(s,o){ return s+o.total; },0) + '</p>' : '') +
+    '</div>';
+  }
+  grid.innerHTML = html;
+}
+function closeLedger() { document.getElementById('tableLedger').classList.add('hidden'); }
+function openLedger(tableNum) {
+  loadState();
+  const orders = state.orders.filter(function(o){ return o.table === tableNum && o.paymentApproved; });
+  const active = orders.filter(function(o){ return o.status !== 'Served'; });
+  document.getElementById('ledgerTitle').textContent = 'TABLE ' + tableNum + ' — LEDGER';
+  const el = document.getElementById('ledgerContent');
+  document.getElementById('tableLedger').classList.remove('hidden');
+  if (orders.length === 0) {
+    el.innerHTML = '<p class="text-center text-karim-300 py-6 font-inter text-sm">No orders for this table yet.</p>';
+    return;
+  }
+  const totalActive = active.reduce(function(s,o){ return s + o.total; }, 0);
+  let html = '';
+  if (active.length > 0) {
+    html += '<div class="mb-4 p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between">' +
+      '<span class="font-inter text-sm font-semibold text-amber-700">Active Bill (' + active.length + ' order' + (active.length>1?'s':'') + ')</span>' +
+      '<span class="font-cinzel text-xl font-bold text-amber-700">₹' + totalActive + '</span></div>' +
+      '<div class="flex gap-2 mb-4 flex-wrap">' +
+      '<button onclick="settleBill(' + tableNum + ',\'cash\')" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-xs font-inter transition">💵 Settle Cash</button>' +
+      '<button onclick="settleBill(' + tableNum + ',\'upi\')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-xs font-inter transition">📱 Settle UPI</button>' +
+      '<button onclick="settleBill(' + tableNum + ',\'card\')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-xs font-inter transition">💳 Settle Card</button>' +
+      '<button onclick="printBill(' + tableNum + ')" class="bg-karim-700 hover:bg-karim-800 text-mughal-400 font-bold py-2 px-4 rounded-lg text-xs font-inter transition">🖨️ Print Receipt</button>' +
+      '</div>';
+  } else {
+    html += '<div class="mb-4 p-3 bg-green-50 rounded-xl border border-green-200 flex items-center justify-between">' +
+      '<span class="font-inter text-sm font-semibold text-green-700">All bills settled ✓</span>' +
+      '<button onclick="printBill(' + tableNum + ')" class="bg-karim-700 hover:bg-karim-800 text-mughal-400 font-bold py-2 px-4 rounded-lg text-xs font-inter transition">🖨️ Reprint Receipt</button></div>';
+  }
+  orders.forEach(function(o){
+    html += '<div class="border border-karim-100 rounded-xl p-3 mb-2">' +
+      '<div class="flex justify-between items-center mb-2">' +
+        '<span class="font-cinzel font-bold text-karim-700 text-sm">' + o.id + '</span>' +
+        '<span class="text-[10px] font-inter px-2 py-0.5 rounded-full ' + (o.status==='Served'?'bg-green-100 text-green-700':'bg-amber-100 text-amber-700') + '">' + o.status + '</span>' +
+      '</div>';
+    o.items.forEach(function(it){
+      html += '<div class="flex justify-between text-xs font-inter text-karim-500 py-0.5"><span>' + it.qty + '× ' + it.name + ' (' + it.portion + ')</span><span>₹' + (it.price * it.qty) + '</span></div>';
+    });
+    html += '<div class="flex justify-between text-xs font-inter font-bold text-karim-700 border-t border-karim-100 mt-1 pt-1"><span>Total (incl GST)</span><span>₹' + o.total + '</span></div></div>';
+  });
+  el.innerHTML = html;
+}
+function requestBill(tableNum) { toast('Bill requested for Table ' + tableNum + '.', 'info'); }
+function settleBill(tableNum, method) {
+  loadState();
+  state.orders.forEach(function(o){
+    if (o.table === tableNum && o.paymentApproved && o.status !== 'Served') {
+      o.status = 'Served';
+      o.servedAt = Date.now();
+      o.payStatus = 'Settled via ' + method.toUpperCase();
+      o.settleMethod = method;
+    }
+  });
+  saveState();
+  toast('Table ' + tableNum + ' settled via ' + method.toUpperCase() + '.', 'success');
+  renderManager();
+  openLedger(tableNum);
+}
+
+// ============================================================
+// RECEIPT (80mm thermal)
+// ============================================================
+function printBill(tableNum) {
+  loadState();
+  const orders = state.orders.filter(function(o){ return o.table === tableNum && o.paymentApproved; });
+  if (orders.length === 0) { toast('No orders to print.', 'error'); return; }
+  const subtotal = orders.reduce(function(s,o){ return s + o.subtotal; }, 0);
+  const gst = orders.reduce(function(s,o){ return s + o.gst; }, 0);
+  const total = orders.reduce(function(s,o){ return s + o.total; }, 0);
+  const now = new Date();
+  let html =
+    '<div style="text-align:center">' +
+    '<div style="font-size:16px;font-weight:bold;letter-spacing:2px">KARIM\'S</div>' +
+    '<div style="font-size:9px">Royal Mughlai Cuisine • Estd 1913</div>' +
+    '<div style="font-size:9px">Jama Masjid, Delhi • Imphal Branch</div>' +
+    '<div style="font-size:9px">GSTIN: 14AABCK1234M1Z5</div>' +
+    '<div style="border-top:1px dashed #000;margin:4px 0"></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:10px"><span>Invoice: INV-' + now.getTime().toString().slice(-8) + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:10px"><span>Table: ' + tableNum + '</span><span>' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString() + '</span></div>' +
+    '<div style="border-top:1px dashed #000;margin:4px 0"></div>' +
+    '</div>';
+  orders.forEach(function(o){
+    html += '<div style="font-size:10px;font-weight:bold;margin-top:3px">Order ' + o.id + ' (' + o.payMethod.toUpperCase() + ')</div>';
+    o.items.forEach(function(it){
+      html += '<div style="display:flex;justify-content:space-between;font-size:10px">' +
+        '<span>' + it.qty + 'x ' + it.name + '</span>' +
+        '<span>' + (it.price * it.qty) + '</span></div>' +
+        '<div style="font-size:8px;color:#555;margin-left:8px">' + it.portion + ' | ' + it.spice + ' spice | ' + it.butter + '</div>';
+    });
+  });
+  html +=
+    '<div style="border-top:1px dashed #000;margin:4px 0"></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px"><span>Subtotal</span><span>₹' + subtotal + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:11px"><span>GST @5%</span><span>₹' + gst + '</span></div>' +
+    '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:bold"><span>TOTAL</span><span>₹' + total + '</span></div>' +
+    '<div style="border-top:1px dashed #000;margin:4px 0"></div>' +
+    '<div style="text-align:center;font-size:9px;margin-top:4px">Secret of Good Mood<br>Taste of Karim\'s Food</div>' +
+    '<div style="text-align:center;font-size:9px;margin-top:4px">Thank you for dining with us!<br>Visit Again — 1913</div>';
+  document.getElementById('receiptBody').innerHTML = html;
+  document.getElementById('receiptModal').classList.remove('hidden');
+  document.getElementById('receiptModal').classList.add('flex');
+}
+function closeReceipt() { document.getElementById('receiptModal').classList.add('hidden'); document.getElementById('receiptModal').classList.remove('flex'); }
+
+// ============================================================
+// KDS: 3-STAGE PIPELINE
+// ============================================================
+function ageMinutes(ts) { return (Date.now() - ts) / 60000; }
+function urgencyClass(mins) {
+  if (mins > 15) return 'border-red-500 pulse-urgent bg-red-950/40';
+  if (mins >= 8) return 'border-amber-500/70 bg-amber-950/30';
+  return 'border-stone-600 bg-stone-800';
+}
+function urgencyBadge(mins) {
+  if (mins > 15) return '<span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">URGENT</span>';
+  if (mins >= 8) return '<span class="bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">DELAYED</span>';
+  return '<span class="bg-green-700 text-green-200 text-[10px] font-bold px-2 py-0.5 rounded-full">ON TIME</span>';
+}
+function fmtElapsed(mins) {
+  const m = Math.floor(mins), s = Math.floor((mins - m) * 60);
+  return m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+}
+
+function renderKDS() {
+  loadState();
+  const visible = state.orders.filter(function(o){ return o.paymentApproved && o.status !== 'Served'; });
+  const recv = visible.filter(function(o){ return o.status === 'Receive'; });
+  const prog = visible.filter(function(o){ return o.status === 'Progress'; });
+  const comp = visible.filter(function(o){ return o.status === 'Completed'; });
+  document.getElementById('kdsRecvCount').textContent = recv.length;
+  document.getElementById('kdsProgCount').textContent = prog.length;
+  document.getElementById('kdsCompCount').textContent = comp.length;
+  document.getElementById('kdsReceive').innerHTML = recv.map(kdsReceiveCard).join('') || emptyCol('No new tickets');
+  document.getElementById('kdsProgress').innerHTML = prog.map(kdsProgressCard).join('') || emptyCol('Nothing cooking');
+  document.getElementById('kdsCompleted').innerHTML = comp.map(kdsCompletedCard).join('') || emptyCol('Nothing ready');
+}
+function emptyCol(msg) {
+  return '<div class="text-center py-10 text-stone-600 font-inter text-sm">' + msg + '</div>';
+}
+function kdsReceiveCard(o) {
+  const mins = ageMinutes(o.createdAt);
+  return '<div class="ticket-card rounded-xl border-2 p-3 ' + urgencyClass(mins) + '">' +
+    '<div class="flex items-center justify-between mb-2">' +
+      '<span class="font-cinzel font-bold text-mughal-400 text-sm">T' + o.table + ' • ' + o.id + '</span>' +
+      urgencyBadge(mins) +
+    '</div>' +
+    '<p class="text-stone-400 text-[10px] font-mono mb-2">⏱ ' + fmtElapsed(mins) + ' elapsed</p>' +
+    o.items.map(function(it, idx){
+      const checked = o.itemsChecked.indexOf(idx) !== -1;
+      return '<label class="flex items-start gap-2 py-1 cursor-pointer group">' +
+        '<input type="checkbox" ' + (checked?'checked':'') + ' onchange="toggleKDSItem(\'' + o.id + '\',' + idx + ')" class="mt-0.5 accent-amber-500">' +
+        '<span class="text-stone-200 text-xs font-inter ' + (checked?'strike-item':'') + '">' + it.qty + '× ' + it.name + ' (' + it.portion + ')</span>' +
+      '</label>' +
+      (it.spice !== 'medium' || it.note ? '<p class="text-amber-400 text-[10px] font-inter ml-5">' + (it.spice !== 'medium' ? '🌶 ' + it.spice : '') + (it.note ? ' 📝 ' + it.note : '') + '</p>' : '');
+    }).join('') +
+    (o.notes ? '<p class="text-orange-300 text-[10px] font-inter mt-1 border-t border-stone-700 pt-1">📝 ' + o.notes + '</p>' : '') +
+    '<button onclick="kdsAdvance(\'' + o.id + '\')" class="w-full mt-3 bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded-lg text-xs font-inter transition">Start Cooking →</button>' +
+  '</div>';
+}
+function kdsProgressCard(o) {
+  const mins = ageMinutes(o.createdAt);
+  return '<div class="ticket-card rounded-xl border-2 p-3 ' + urgencyClass(mins) + '">' +
+    '<div class="flex items-center justify-between mb-2">' +
+      '<span class="font-cinzel font-bold text-blue-400 text-sm">T' + o.table + ' • ' + o.id + '</span>' +
+      urgencyBadge(mins) +
+    '</div>' +
+    '<p class="text-stone-400 text-[10px] font-mono mb-2">⏱ ' + fmtElapsed(mins) + ' elapsed</p>' +
+    o.items.map(function(it, idx){
+      const checked = o.itemsChecked.indexOf(idx) !== -1;
+      return '<p class="text-stone-200 text-xs font-inter py-0.5 ' + (checked?'strike-item':'') + '">' + it.qty + '× ' + it.name + '</p>';
+    }).join('') +
+    (o.notes ? '<p class="text-orange-300 text-[10px] font-inter mt-1 border-t border-stone-700 pt-1">📝 ' + o.notes + '</p>' : '') +
+    '<button onclick="kdsAdvance(\'' + o.id + '\')" class="w-full mt-3 bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-lg text-xs font-inter transition">Mark Completed ✓</button>' +
+  '</div>';
+}
+function kdsCompletedCard(o) {
+  const mins = ageMinutes(o.createdAt);
+  return '<div class="ticket-card rounded-xl border-2 p-3 border-green-500 bg-green-950/30">' +
+    '<div class="flex items-center justify-between mb-2">' +
+      '<span class="font-cinzel font-bold text-green-400 text-sm">T' + o.table + ' • ' + o.id + '</span>' +
+      '<span class="bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">READY</span>' +
+    '</div>' +
+    '<p class="text-stone-400 text-[10px] font-mono mb-2">⏱ ' + fmtElapsed(mins) + ' elapsed</p>' +
+    o.items.map(function(it){
+      return '<p class="text-stone-200 text-xs font-inter py-0.5">' + it.qty + '× ' + it.name + '</p>';
+    }).join('') +
+    '<button onclick="kdsAdvance(\'' + o.id + '\')" class="w-full mt-3 bg-stone-600 hover:bg-stone-500 text-white font-bold py-2 rounded-lg text-xs font-inter transition">Served / Clear</button>' +
+  '</div>';
+}
+function toggleKDSItem(orderId, idx) {
+  loadState();
+  const o = state.orders.find(function(x){ return x.id === orderId; });
+  if (!o) return;
+  const pos = o.itemsChecked.indexOf(idx);
+  if (pos === -1) o.itemsChecked.push(idx); else o.itemsChecked.splice(pos, 1);
+  saveState();
+  renderKDS();
+}
+function kdsAdvance(orderId) {
+  loadState();
+  const o = state.orders.find(function(x){ return x.id === orderId; });
+  if (!o) return;
+  if (o.status === 'Receive') {
+    o.status = 'Progress'; o.startedAt = Date.now();
+    toast('Ticket ' + o.id + ' moved to Progress.', 'info');
+  } else if (o.status === 'Progress') {
+    o.status = 'Completed'; o.completedAt = Date.now();
+    toast('Ticket ' + o.id + ' ready for runner!', 'success');
+    playChime();
+  } else if (o.status === 'Completed') {
+    o.status = 'Served'; o.servedAt = Date.now();
+    toast('Ticket ' + o.id + ' served & cleared.', 'success');
+  }
+  saveState();
+  renderKDS();
+}
+
+// ============================================================
+// KDS MIRROR (Manager Display 2)
+// ============================================================
+function renderKDSMirror() {
+  loadState();
+  const visible = state.orders.filter(function(o){ return o.paymentApproved && o.status !== 'Served'; });
+  const recv = visible.filter(function(o){ return o.status === 'Receive'; });
+  const prog = visible.filter(function(o){ return o.status === 'Progress'; });
+  const comp = visible.filter(function(o){ return o.status === 'Completed'; });
+  document.getElementById('mirrorRecvCount').textContent = recv.length;
+  document.getElementById('mirrorProgCount').textContent = prog.length;
+  document.getElementById('mirrorCompCount').textContent = comp.length;
+  document.getElementById('mirrorReceive').innerHTML = recv.map(mirrorCard).join('') || emptyCol('No new tickets');
+  document.getElementById('mirrorProgress').innerHTML = prog.map(mirrorCard).join('') || emptyCol('Nothing cooking');
+  document.getElementById('mirrorCompleted').innerHTML = comp.map(mirrorCard).join('') || emptyCol('Nothing ready');
+  // Runner alerts
+  document.getElementById('runnerAlerts').innerHTML = comp.map(function(o){
+    return '<span class="bg-green-600 text-white text-xs font-bold font-inter px-3 py-1.5 rounded-full animate-pulse">🏃 Runner → Table ' + o.table + ' (' + o.id + ')</span>';
+  }).join('');
+}
+function mirrorCard(o) {
+  const mins = ageMinutes(o.createdAt);
+  const border = mins > 15 ? 'border-red-500' : mins >= 8 ? 'border-amber-500/70' : 'border-stone-600';
+  const labelColor = o.status === 'Completed' ? 'text-green-400' : o.status === 'Progress' ? 'text-blue-400' : 'text-amber-400';
+  return '<div class="rounded-xl border-2 ' + border + ' bg-stone-800 p-3">' +
+    '<div class="flex items-center justify-between mb-1">' +
+      '<span class="font-cinzel font-bold ' + labelColor + ' text-sm">T' + o.table + ' • ' + o.id + '</span>' +
+      '<span class="text-stone-400 text-[10px] font-mono">' + fmtElapsed(mins) + '</span>' +
+    '</div>' +
+    o.items.map(function(it){
+      return '<p class="text-stone-300 text-xs font-inter">' + it.qty + '× ' + it.name + '</p>';
+    }).join('') +
+  '</div>';
+}
+
+
+// ============================================================
+// ADMIN: MENU MANAGEMENT
+// ============================================================
+function adminTab(tab) {
+  document.getElementById('admin-menu-tab').classList.toggle('hidden', tab !== 'menu');
+  document.getElementById('admin-qr-tab').classList.toggle('hidden', tab !== 'qr');
+  const bm = document.getElementById('atab-menu'), bq = document.getElementById('atab-qr');
+  bm.className = 'atabtn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition ' + (tab==='menu'?'bg-karim-700 text-mughal-400 border-karim-700':'bg-white text-karim-500 border-karim-200 hover:border-mughal-400');
+  bq.className = 'atabtn px-4 py-2.5 rounded-xl border-2 text-xs font-semibold font-inter transition ' + (tab==='qr'?'bg-karim-700 text-mughal-400 border-karim-700':'bg-white text-karim-500 border-karim-200 hover:border-mughal-400');
+  if (tab === 'qr') renderStandees();
+}
+function renderAdminMenu() {
+  loadState();
+  const sel = document.getElementById('adminCatFilter');
+  if (sel.options.length <= 1) {
+    CATEGORIES.forEach(function(c){
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+  }
+  const cat = sel.value;
+  const search = (document.getElementById('adminSearch').value || '').toLowerCase();
+  let items = state.menu.slice();
+  if (cat !== 'all') items = items.filter(function(m){ return m.cat === cat; });
+  if (search) items = items.filter(function(m){ return m.name.toLowerCase().indexOf(search) !== -1; });
+  document.getElementById('adminMenuBody').innerHTML = items.map(function(m){
+    return '<tr class="hover:bg-karim-50/50">' +
+      '<td class="px-3 py-2">' +
+        '<input value="' + m.name.replace(/"/g,'&quot;') + '" onchange="editDish(\'' + m.id + '\',\'name\',this.value)" class="w-full bg-transparent font-semibold text-karim-700 text-xs border-b border-transparent hover:border-mughal-400 focus:border-mughal-400 outline-none py-0.5">' +
+        '<input value="' + m.desc.replace(/"/g,'&quot;') + '" onchange="editDish(\'' + m.id + '\',\'desc\',this.value)" class="w-full bg-transparent text-karim-400 text-[10px] border-b border-transparent hover:border-mughal-400 focus:border-mughal-400 outline-none py-0.5">' +
+      '</td>' +
+      '<td class="px-3 py-2 text-[11px] text-karim-500 whitespace-nowrap">' + (CAT_EMOJI[m.cat]||'') + ' ' + m.cat + '</td>' +
+      '<td class="px-3 py-2"><input type="number" value="' + (m.half||0) + '" onchange="editDish(\'' + m.id + '\',\'half\',parseInt(this.value)||0)" class="w-16 bg-cream-100 border border-karim-200 rounded px-1.5 py-1 text-xs font-inter outline-none focus:border-mughal-400"></td>' +
+      '<td class="px-3 py-2"><input type="number" value="' + (m.full||0) + '" onchange="editDish(\'' + m.id + '\',\'full\',parseInt(this.value)||0)" class="w-16 bg-cream-100 border border-karim-200 rounded px-1.5 py-1 text-xs font-inter outline-none focus:border-mughal-400"></td>' +
+      '<td class="px-3 py-2"><button onclick="editDish(\'' + m.id + '\',\'veg\', ' + (!m.veg) + ')" class="w-7 h-7 rounded border ' + (m.veg?'bg-green-100 border-green-300':'bg-red-100 border-red-300') + ' text-xs">' + (m.veg?'🟢':'🔴') + '</button></td>' +
+      '<td class="px-3 py-2"><button onclick="editDish(\'' + m.id + '\',\'inStock\', ' + (!m.inStock) + ')" class="px-2 py-1 rounded-full text-[10px] font-bold ' + (m.inStock?'bg-green-100 text-green-700 border border-green-300':'bg-gray-100 text-gray-400 border border-gray-300') + '">' + (m.inStock?'IN STOCK':'OUT') + '</button></td>' +
+      '<td class="px-3 py-2 whitespace-nowrap">' +
+        '<label class="cursor-pointer text-[10px] bg-karim-100 hover:bg-karim-200 text-karim-600 px-2 py-1 rounded border border-karim-200">📷<input type="file" accept="image/*" class="hidden" onchange="editDishImage(\'' + m.id + '\',event)"></label> ' +
+        '<button onclick="deleteDish(\'' + m.id + '\')" class="text-[10px] bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1 rounded border border-red-200">🗑</button>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('adminMenuCount').textContent = 'Showing ' + items.length + ' of ' + state.menu.length + ' dishes • Total in database: ' + DEFAULT_MENU.length + ' original items';
+}
+function editDish(id, field, value) {
+  loadState();
+  const m = state.menu.find(function(x){ return x.id === id; });
+  if (!m) return;
+  m[field] = value;
+  saveState();
+  toast('"' + m.name + '" updated.', 'success');
+  renderAdminMenu();
+}
+function editDishImage(id, e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    loadState();
+    const m = state.menu.find(function(x){ return x.id === id; });
+    if (!m) return;
+    m.customImg = ev.target.result;
+    saveState();
+    toast('Image updated for "' + m.name + '".', 'success');
+    renderAdminMenu();
+  };
+  reader.readAsDataURL(file);
+}
+function deleteDish(id) {
+  loadState();
+  const m = state.menu.find(function(x){ return x.id === id; });
+  if (!m) return;
+  if (!confirm('Delete "' + m.name + '" from the menu?')) return;
+  state.menu = state.menu.filter(function(x){ return x.id !== id; });
+  saveState();
+  toast('Dish deleted.', 'error');
+  renderAdminMenu();
+}
+function resetMenu() {
+  if (!confirm('Reset the entire menu back to the original 118 items? All custom edits will be lost.')) return;
+  state.menu = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  saveState();
+  toast('Menu reset to 118 original dishes.', 'success');
+  renderAdminMenu();
+}
+
+// ============================================================
+// DISH CREATOR
+// ============================================================
+let newDishUpload = '';
+function openDishCreator() {
+  newDishUpload = '';
+  document.getElementById('newDishName').value = '';
+  document.getElementById('newDishDesc').value = '';
+  document.getElementById('newDishHalf').value = '';
+  document.getElementById('newDishFull').value = '';
+  document.getElementById('newDishPreview').classList.add('hidden');
+  const sel = document.getElementById('newDishCat');
+  if (sel.options.length === 0) {
+    CATEGORIES.forEach(function(c){
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = (CAT_EMOJI[c]||'') + ' ' + c;
+      sel.appendChild(opt);
+    });
+  }
+  const sel2 = document.getElementById('newDishImg');
+  document.getElementById('dishCreatorModal').classList.remove('hidden');
+  document.getElementById('dishCreatorModal').classList.add('flex');
+}
+function closeDishCreator() { document.getElementById('dishCreatorModal').classList.add('hidden'); document.getElementById('dishCreatorModal').classList.remove('flex'); }
+function handleNewDishUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    newDishUpload = ev.target.result;
+    const img = document.getElementById('newDishPreview');
+    img.src = newDishUpload;
+    img.classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+}
+function createDish() {
+  const name = document.getElementById('newDishName').value.trim();
+  const cat = document.getElementById('newDishCat').value;
+  const desc = document.getElementById('newDishDesc').value.trim();
+  const half = parseInt(document.getElementById('newDishHalf').value) || 0;
+  const full = parseInt(document.getElementById('newDishFull').value) || 0;
+  const veg = document.getElementById('newDishVeg').value === 'true';
+  const imgKey = document.getElementById('newDishImg').value || (CAT_IMG_KEY[cat] || 'curry');
+  const badge = document.getElementById('newDishBadge').value;
+  if (!name) { toast('Dish name is required.', 'error'); return; }
+  if (!full && !half) { toast('Set at least a half or full price.', 'error'); return; }
+  loadState();
+  _mid = Math.max(_mid, state.menu.length + 1000);
+  const nd = d(name, cat, half, full, veg, desc || 'A royal delicacy crafted in the Karim\'s kitchen.', badge);
+  nd.imgKey = imgKey;
+  if (newDishUpload) nd.customImg = newDishUpload;
+  state.menu.unshift(nd);
+  saveState();
+  closeDishCreator();
+  toast('"' + name + '" added to the menu!', 'success');
+  renderAdminMenu();
+}
+function handleAdminUpload(e) { /* reserved for future bulk upload */ }
+
+// ============================================================
+// QR STANDEES (Tables 1–12)
+// ============================================================
+function standeeHTML(t) {
+  return '<div class="standee-print border-2 border-karim-700 rounded-xl p-4 text-center bg-white" style="page-break-inside:avoid;break-inside:avoid">' +
+    '<div class="flex items-center justify-center gap-2 mb-2">' +
+      '<div class="w-8 h-8 rounded-full gold-gradient flex items-center justify-center"><span class="text-sm">👑</span></div>' +
+      '<div class="text-left"><p class="font-cinzel font-bold text-karim-700 text-xs leading-none">KARIM\'S</p><p class="text-karim-400 text-[7px] font-inter tracking-widest">ESTD 1913 • ROYAL MUGHLAI</p></div>' +
+    '</div>' +
+    '<div class="bg-karim-700 text-mughal-400 font-cinzel font-bold py-1.5 rounded-lg mb-3 text-sm">TABLE ' + t + '</div>' +
+    '<div class="standee-qr mx-auto mb-3" data-qr-table="' + t + '"></div>' +
+    '<p class="font-playfair italic text-karim-600 text-[10px] leading-tight mb-1">"Scan to view the menu & order</p>' +
+    '<p class="font-playfair italic text-karim-600 text-[10px] leading-tight">directly from your table"</p>' +
+    '<div class="border-t border-karim-200 mt-2 pt-2 text-[8px] font-inter text-karim-400">Point your camera at the QR code<br>Secret of Good Mood • Taste of Karim\'s Food</div>' +
+  '</div>';
+}
+function renderStandees() {
+  const grid = document.getElementById('standeeGrid');
+  let html = '';
+  for (let t = 1; t <= 12; t++) {
+    html += '<div class="bg-cream-50 rounded-xl border border-karim-200 p-3 text-center">' +
+      '<div class="standee-qr mx-auto mb-2" data-qr-table="' + t + '"></div>' +
+      '<p class="font-cinzel font-bold text-karim-700 text-xs mb-1">TABLE ' + t + '</p>' +
+      '<button onclick="previewStandee(' + t + ')" class="text-[10px] font-inter bg-karim-700 text-mughal-400 px-3 py-1.5 rounded-lg hover:bg-karim-800 transition w-full">👁 Preview</button>' +
+    '</div>';
+  }
+  grid.innerHTML = html;
+  // Build QR codes
+  grid.querySelectorAll('.standee-qr').forEach(function(el) {
+    const t = el.getAttribute('data-qr-table');
+    el.innerHTML = '';
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(el, {
+        text: 'https://karims.imphal/order?table=' + t,
+        width: 110, height: 110,
+        colorDark: '#2A0408', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+  });
+}
+function previewStandee(t) {
+  document.getElementById('standeeModalTitle').textContent = 'TABLE ' + t + ' STANDEE';
+  const el = document.getElementById('standeePreview');
+  el.innerHTML = standeeHTML(t);
+  const qr = el.querySelector('.standee-qr');
+  qr.innerHTML = '';
+  if (typeof QRCode !== 'undefined') {
+    new QRCode(qr, {
+      text: 'https://karims.imphal/order?table=' + t,
+      width: 160, height: 160,
+      colorDark: '#2A0408', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+  document.getElementById('standeeModal').classList.remove('hidden');
+  document.getElementById('standeeModal').classList.add('flex');
+}
+function closeStandee() { document.getElementById('standeeModal').classList.add('hidden'); document.getElementById('standeeModal').classList.remove('flex'); }
+function printStandees() {
+  // Build a hidden print-only container with all 12 standees
+  const container = document.getElementById('standeePrintArea');
+  container.classList.remove('hidden');
+  let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8mm;padding:8mm;">';
+  for (let t = 1; t <= 12; t++) html += standeeHTML(t);
+  html += '</div>';
+  container.innerHTML = html;
+  container.querySelectorAll('.standee-qr').forEach(function(el) {
+    const t = el.getAttribute('data-qr-table');
+    el.innerHTML = '';
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(el, { text:'https://karims.imphal/order?table=' + t, width:130, height:130, colorDark:'#2A0408', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H });
+    }
+  });
+  // Allow QRs to render then print
+  setTimeout(function(){
+    // Temporarily allow printing of the standee container
+    const style = document.createElement('style');
+    style.id = 'standeePrintStyle';
+    style.textContent = '@media print { body * { visibility:hidden !important; } #standeePrintArea, #standeePrintArea * { visibility:visible !important; } #standeePrintArea { position:fixed !important; left:0 !important; top:0 !important; display:block !important; background:#fff !important; z-index:99999 !important; } .standee-print { border:1.5px solid #4A080F !important; } }';
+    document.head.appendChild(style);
+    window.print();
+    setTimeout(function(){
+      const s = document.getElementById('standeePrintStyle');
+      if (s) s.remove();
+      container.classList.add('hidden');
+      container.innerHTML = '';
+    }, 500);
+  }, 400);
+}
+
+// ============================================================
+// GLOBAL TICKERS (clocks + live urgency)
+// ============================================================
+setInterval(function() {
+  const clock = document.getElementById('kdsClock');
+  if (clock) clock.textContent = new Date().toLocaleTimeString();
+}, 1000);
+
+setInterval(function() {
+  loadState();
+  const kdsView = document.getElementById('view-kds');
+  if (kdsView && kdsView.classList.contains('active')) renderKDS();
+  const mgrView = document.getElementById('view-manager');
+  if (mgrView && mgrView.classList.contains('active')) {
+    if (state.displayFlip === 2) renderKDSMirror();
+    else renderManager();
+  }
+}, 15000); // refresh urgency colors every 15s
+
+// Cross-tab sync
+window.addEventListener('storage', function(e) {
+  if (e.key === 'karim_orders_data' || e.key === 'karim_menu_data') {
+    loadState();
+    const active = document.querySelector('.view.active');
+    if (!active) return;
+    if (active.id === 'view-kds') renderKDS();
+    if (active.id === 'view-manager') { if (state.displayFlip === 2) renderKDSMirror(); else renderManager(); }
+    if (active.id === 'view-customer') renderMenu();
+    if (active.id === 'view-admin') renderAdminMenu();
+    updateCartBadge();
+  }
+});
+
+// ============================================================
+// BOOTSTRAP
+// ============================================================
+(function init() {
+  loadState();
+  if (state.menu.length === 0) { state.menu = JSON.parse(JSON.stringify(DEFAULT_MENU)); saveState(); }
+  updateTablePill();
+  updateCartBadge();
+  renderMenu();
+  route();
+  // KDS clock immediately
+  const clock = document.getElementById('kdsClock');
+  if (clock) clock.textContent = new Date().toLocaleTimeString();
+  console.log('%c👑 Karim\'s Restaurant OS loaded — ' + state.menu.length + ' dishes', 'color:#D4AF37;font-weight:bold;font-size:14px');
+})();
+</script>
+</body>
+</html>
+

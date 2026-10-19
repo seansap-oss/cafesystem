@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's POS</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  body { background: #F2ECE1; }
+  .pos-layout { display: grid; grid-template-columns: 1fr 400px; gap: 18px; padding: 18px; max-width: 1500px; margin: 0 auto; }
+  .pos-cats { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 10px; }
+  .pos-cats .cat-chip { white-space: nowrap; border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; color: var(--maroon-800); cursor: pointer; }
+  .pos-cats .cat-chip.active { background: var(--maroon-700); color: var(--gold-300); border-color: var(--maroon-700); }
+  .pos-search { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; }
+  .pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .pos-item {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px;
+    cursor: pointer; transition: .12s; text-align: left; min-height: 96px;
+  }
+  .pos-item:hover { border-color: var(--gold-500); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .pos-item .nm { font-weight: 800; font-size: 13.5px; color: var(--maroon-800); line-height: 1.25; }
+  .pos-item .pr { color: var(--muted); font-size: 12px; margin-top: 6px; }
+  .pos-item.oos { opacity: .45; pointer-events: none; }
+  .bill { position: sticky; top: 14px; background: #fff; border-radius: var(--radius); border: 1px solid var(--line); box-shadow: var(--shadow); display: flex; flex-direction: column; max-height: calc(100vh - 28px); }
+  .bill-head { background: linear-gradient(135deg, var(--maroon-900), var(--maroon-700)); color: #fff; padding: 14px 18px; border-radius: var(--radius) var(--radius) 0 0; }
+  .bill-head h3 { color: var(--gold-300); }
+  .bill-body { padding: 8px 16px; overflow-y: auto; flex: 1; }
+  .bl { display: flex; gap: 8px; padding: 9px 0; border-bottom: 1px dashed var(--line); align-items: center; }
+  .bl .nm { flex: 1; font-size: 13px; font-weight: 700; }
+  .bl .sub { font-size: 11px; color: var(--muted); font-weight: 400; }
+  .bill-foot { border-top: 2px solid var(--line); padding: 14px 18px; }
+  .quick-tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+  .quick-tabs .opt { flex: 1; padding: 9px 6px; font-size: 12.5px; }
+  .pending-list { max-height: 220px; overflow-y: auto; }
+  .pend { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 10px; border: 1.5px solid var(--amber); background: var(--amber-bg); border-radius: 10px; margin-bottom: 7px; }
+  .pend .id { font-weight: 800; font-size: 13px; }
+  .pend .meta { font-size: 11px; color: #6B4A00; }
+  .tabbar { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tabbar button { flex: 1; border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 10px; font-weight: 800; font-size: 13px; color: var(--maroon-700); }
+  .tabbar button.active { background: var(--maroon-700); color: #fff; border-color: var(--maroon-700); }
+  @media (max-width: 900px) { .pos-layout { grid-template-columns: 1fr; } .bill { position: static; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">KARIM'S<small>POS TERMINAL</small></div>
+  <a class="nav-pill" href="/pos">POS</a>
+  <a class="nav-pill" href="/kitchen">Kitchen</a>
+  <a class="nav-pill" href="/manager">Manager</a>
+  <a class="nav-pill" href="/admin">Admin</a>
+  <div class="spacer"></div>
+  <div class="who">Signed in as <b id="whoami">…</b> <button class="btn btn-sm btn-outline" id="btnLogout" style="color:var(--gold-300);border-color:var(--gold-300)">Logout</button></div>
+</header>
+
+<div class="pos-layout">
+  <div>
+    <div class="tabbar">
+      <button class="active" data-tab="order">New Order</button>
+      <button data-tab="pending">Pending Payments <span class="badge badge-amber" id="pendCount">0</span></button>
+      <button data-tab="live">Live Orders</button>
+    </div>
+
+    <div id="tabOrder">
+      <input class="pos-search" id="search" placeholder="Search dishes… (name or category)">
+      <div class="pos-cats" id="cats"></div>
+      <div class="pos-grid" id="grid" style="margin-top:12px"></div>
+    </div>
+
+    <div id="tabPending" style="display:none">
+      <div class="panel">
+        <h3>Orders awaiting restaurant confirmation</h3>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Online orders waiting for the restaurant to accept. Confirm before (or together with) payment so they can enter the kitchen.</p>
+        <div id="confList"></div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Orders awaiting payment confirmation</h3>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">These orders will <b>not enter the kitchen</b> until you confirm payment (cash collected / UPI verified / card settled).</p>
+        <div class="pending-list" id="pendList"></div>
+      </div>
+    </div>
+
+    <div id="tabLive" style="display:none">
+      <div class="panel">
+        <h3>Live orders today</h3>
+        <table class="grid" id="liveTable">
+          <thead><tr><th>Order</th><th>Type</th><th>Items</th><th>Total</th><th>Payment</th><th>Kitchen</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILL PANEL -->
+  <aside class="bill">
+    <div class="bill-head">
+      <div class="mode" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-300);opacity:.9">Counter order</div>
+      <h3>New Bill</h3>
+    </div>
+    <div class="bill-body">
+      <div id="billItems"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn btn-outline btn-sm btn-block" id="btnDinein">Dine-in</button>
+        <button class="btn btn-outline btn-sm btn-block" id="btnPickup">Pickup</button>
+      </div>
+      <div id="dineinPick" style="display:none;margin-top:10px">
+        <label style="font-size:12px;font-weight:700;color:var(--muted)">TABLE</label>
+        <div id="tableGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px"></div>
+      </div>
+      <div id="custFields" style="display:none;margin-top:10px">
+        <div class="field"><label>Customer name</label><input id="cName"></div>
+        <div class="field"><label>Phone</label><input id="cPhone"></div>
+      </div>
+    </div>
+    <div class="bill-foot">
+      <div class="totals" id="totals"></div>
+      <div class="quick-tabs" id="payTabs" style="margin-top:12px">
+        <div class="opt sel" data-pay="cash">Cash</div>
+        <div class="opt" data-pay="upi">UPI</div>
+        <div class="opt" data-pay="card">Card</div>
+      </div>
+      <button class="btn btn-gold btn-block btn-lg" id="btnPlace">Take Order &amp; Confirm Payment</button>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:8px;text-align:center">Cashier confirms payment here — order goes straight to kitchen.</div>
+      <button class="btn btn-outline btn-block btn-sm" id="btnClear" style="margin-top:8px">Clear bill</button>
+    </div>
+  </aside>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  if (!K.requireRole(['admin','manager','cashier'], '/pos')) return;
+  $('#whoami').textContent = K.user.name + ' (' + K.user.role + ')';
+  $('#btnLogout').onclick = async () => { await K.logout(); location.href = '/pos'; };
+
+  let settings = null, dishes = [], categories = [], tables = [];
+  let orderType = 'pickup', table = null, payMethod = 'cash';
+  let bill = [];
+
+  async function init() {
+    settings = await K.api('/api/settings/public');
+    tables = settings.tables || [];
+    const m = await K.api('/api/menu');
+    dishes = m.dishes; categories = m.categories;
+    renderCats(); renderGrid(); renderBill(); renderTables();
+    loadPending(); loadLive();
+    K.connect(['pos', 'all']);
+    K.socket.on('order:new', () => { loadPending(); loadLive(); });
+    K.socket.on('order:updated', () => { loadPending(); loadLive(); });
+    setInterval(loadLive, 15000);
+  }
+
+  // ---- tabs ----
+  $$('.tabbar button').forEach(b => b.onclick = () => {
+    $$('.tabbar button').forEach(x => x.classList.toggle('active', x === b));
+    $('#tabOrder').style.display = b.dataset.tab === 'order' ? '' : 'none';
+    $('#tabPending').style.display = b.dataset.tab === 'pending' ? '' : 'none';
+    $('#tabLive').style.display = b.dataset.tab === 'live' ? '' : 'none';
+  });
+
+  // ---- menu grid ----
+  let activeCat = 'all', search = '';
+  function renderCats() {
+    $('#cats').innerHTML = '<button class="cat-chip active" data-c="all">All</button>' +
+      categories.map(c => '<button class="cat-chip" data-c="' + K.esc(c) + '">' + K.esc(c) + '</button>').join('');
+    $('#cats').onclick = e => {
+      const b = e.target.closest('.cat-chip'); if (!b) return;
+      $$('#cats .cat-chip').forEach(x => x.classList.remove('active'));
+      b.classList.add('active'); activeCat = b.dataset.c; renderGrid();
+    };
+  }
+  function renderGrid() {
+    let list = activeCat === 'all' ? dishes : dishes.filter(d => d.cat === activeCat);
+    if (search) list = list.filter(d => d.name.toLowerCase().includes(search) || d.cat.toLowerCase().includes(search));
+    $('#grid').innerHTML = list.map(d => {
+      const pr = d.full ? '₹' + d.full + (d.half ? ' / ₹' + d.half + '½' : '') : '₹' + d.half;
+      return '<button class="pos-item' + (d.inStock ? '' : ' oos') + '" data-id="' + d.id + '">' +
+        '<div class="nm">' + K.esc(d.name) + '</div><div class="pr">' + pr + '</div></button>';
+    }).join('');
+  }
+  $('#search').oninput = e => { search = e.target.value.toLowerCase().trim(); renderGrid(); };
+  $('#grid').onclick = e => {
+    const b = e.target.closest('[data-id]'); if (!b) return;
+    const d = dishes.find(x => x.id === b.dataset.id); if (!d) return;
+    // quick-add full portion by default; shift-click for half
+    const portion = (d.half && d.full) ? 'full' : (d.half ? 'half' : 'full');
+    addToBill(d, portion);
+  };
+
+  // ---- bill ----
+  function addToBill(dish, portion) {
+    const key = dish.id + '|' + portion;
+    const found = bill.find(b => b.key === key);
+    if (found) found.qty++;
+    else bill.push({ key, menuId: dish.id, name: dish.name, portion, qty: 1 });
+    renderBill();
+  }
+  function billTotals() {
+    const sub = bill.reduce((s, b) => {
+      const d = dishes.find(x => x.id === b.menuId); if (!d) return s;
+      return s + (b.portion === 'half' ? d.half : d.full) * b.qty;
+    }, 0);
+    const gst = Math.round(sub * (settings ? settings.gstRate : 5) / 100);
+    return { sub, gst, total: sub + gst };
+  }
+  function renderBill() {
+    const box = $('#billItems');
+    if (!bill.length) box.innerHTML = '<div class="empty" style="padding:30px 10px"><div class="big">Empty bill</div><div>Tap dishes to add</div></div>';
+    else box.innerHTML = bill.map((b, i) =>
+      '<div class="bl"><div class="nm">' + K.esc(b.name) + '<div class="sub">' + (b.portion === 'half' ? 'Half' : 'Full') + '</div>' +
+      '<div class="qtybox" style="margin-top:4px"><button data-dec="' + i + '">−</button><span>' + b.qty + '</span><button data-inc="' + i + '">+</button></div></div></div>'
+    ).join('');
+    const t = billTotals();
+    $('#totals').innerHTML =
+      '<div class="trow"><span>Subtotal</span><span>' + K.money(t.sub) + '</span></div>' +
+      '<div class="trow"><span>GST</span><span>' + K.money(t.gst) + '</span></div>' +
+      '<div class="trow grand"><span>Total</span><span>' + K.money(t.total) + '</span></div>';
+    $('#btnPlace').disabled = !bill.length;
+  }
+  $('#billItems').onclick = e => {
+    const inc = e.target.closest('[data-inc]'), dec = e.target.closest('[data-dec]');
+    if (inc) { bill[+inc.dataset.inc].qty++; renderBill(); }
+    if (dec) { const i = +dec.dataset.dec; bill[i].qty--; if (bill[i].qty <= 0) bill.splice(i, 1); renderBill(); }
+  };
+  $('#btnClear').onclick = () => { bill = []; renderBill(); };
+
+  // ---- order type ----
+  function setType(t) {
+    orderType = t;
+    $('#btnDinein').className = 'btn btn-sm btn-block ' + (t === 'dinein' ? '' : 'btn-outline');
+    $('#btnPickup').className = 'btn btn-sm btn-block ' + (t === 'pickup' ? '' : 'btn-outline');
+    $('#dineinPick').style.display = t === 'dinein' ? '' : 'none';
+    $('#custFields').style.display = t === 'pickup' ? 'block' : 'none';
+  }
+  $('#btnDinein').onclick = () => setType('dinein');
+  $('#btnPickup').onclick = () => setType('pickup');
+  function renderTables() {
+    $('#tableGrid').innerHTML = tables.map(t =>
+      '<button class="btn btn-sm ' + (table === t.num ? 'btn-gold' : 'btn-outline') + '" data-t="' + t.num + '">' + t.num + '</button>').join('');
+    $('#tableGrid').onclick = e => {
+      const b = e.target.closest('[data-t]'); if (!b) return;
+      table = +b.dataset.t; renderTables();
+    };
+  }
+
+  $('#payTabs').onclick = e => {
+    const o = e.target.closest('[data-pay]'); if (!o) return;
+    payMethod = o.dataset.pay;
+    $$('#payTabs .opt').forEach(x => x.classList.toggle('sel', x === o));
+  };
+
+  // ---- place + confirm (cashier = payment gate) ----
+  $('#btnPlace').onclick = async () => {
+    if (orderType === 'dinein' && !table) return K.toast('Pick a table first', 'err');
+    if (orderType === 'pickup' && !$('#cName').value.trim()) return K.toast('Customer name required for pickup', 'err');
+    const btn = $('#btnPlace'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
+    try {
+      const res = await K.api('/api/orders/pos', {
+        method: 'POST',
+        body: {
+          type: orderType,
+          table: orderType === 'dinein' ? table : null,
+          paymentMethod: payMethod,
+          items: bill.map(b => ({ menuId: b.menuId, qty: b.qty, portion: b.portion })),
+          customer: { name: $('#cName').value.trim(), phone: $('#cPhone').value.trim() }
+        }
+      });
+      // cashier immediately confirms — this IS the payment gate
+      await K.api('/api/orders/' + res.order.id + '/confirm-payment', { method: 'POST', body: { method: payMethod, note: 'POS counter' } });
+      K.toast('Order ' + res.order.id + ' paid & sent to kitchen ✓', 'ok');
+      K.sound();
+      bill = []; table = null; renderBill(); renderTables(); $('#cName').value = ''; $('#cPhone').value = '';
+      loadLive();
+    } catch (err) {
+      K.toast(err.message, 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Take Order & Confirm Payment';
+    }
+  };
+
+  // ---- pending confirmations + payments (online orders) ----
+  async function loadPending() {
+    try {
+      const orders = await K.api('/api/orders?limit=200');
+      const conf = orders.filter(o => o.payment.status !== 'cancelled' && o.kitchenStatus !== 'cancelled' && (o.payment.status === 'awaiting_verification' || o.payment.status === 'pending') && (o.confirmationStatus === 'pending_confirmation'));
+      // orders needing confirmation (any payment state)
+      const confAll = orders.filter(o => o.kitchenStatus !== 'cancelled' && o.confirmationStatus === 'pending_confirmation');
+      $('#pendCount').textContent = confAll.length + orders.filter(o => o.payment.status === 'awaiting_verification').length;
+      $('#confList').innerHTML = confAll.length ? confAll.map(o =>
+        '<div class="pend"><div>' +
+        '<div class="id">' + K.esc(o.id) + ' <span class="badge badge-grey">' + K.esc(K.TYPE_LABEL[o.type]) + (o.table ? ' T' + o.table : '') + '</span> <span class="badge badge-amber">Awaiting confirmation</span></div>' +
+        '<div class="meta">' + K.esc(o.payment.method.toUpperCase()) + ' · ' + K.money(o.total) + ' · ' + o.items.reduce((s, i) => s + i.qty, 0) + ' items · ' + K.ago(o.createdAt) + ' ago · ' + K.esc(o.customer.name || 'Walk-in') + (o.customer.phone ? ' · ' + K.esc(o.customer.phone) : '') + '</div>' +
+        '</div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">' +
+        '<button class="btn btn-sm btn-green" data-conf="' + o.id + '">Confirm order</button>' +
+        (o.payment.status !== 'paid' ? '<button class="btn btn-sm btn-blue" data-pay="' + o.id + '" data-m="' + o.payment.method + '">Confirm + Pay</button>' : '') +
+        '<button class="btn btn-sm btn-outline" data-contacted="' + o.id + '">Contacted</button>' +
+        '<button class="btn btn-sm btn-red" data-reject="' + o.id + '">Reject</button>' +
+        '</div></div>'
+      ).join('') : '<div class="empty" style="padding:16px"><div class="big">All clear</div><div>No orders waiting for confirmation</div></div>';
+      const pend = orders.filter(o => o.payment.status === 'awaiting_verification');
+      $('#pendList').innerHTML = pend.length ? pend.map(o =>
+        '<div class="pend"><div>' +
+        '<div class="id">' + K.esc(o.id) + ' <span class="badge badge-grey">' + K.esc(K.TYPE_LABEL[o.type]) + (o.table ? ' T' + o.table : '') + '</span></div>' +
+        '<div class="meta">' + K.esc(o.payment.method.toUpperCase()) + ' · ' + K.money(o.total) + ' · ' + o.items.reduce((s, i) => s + i.qty, 0) + ' items · ' + K.ago(o.createdAt) + ' ago · ' + K.esc(o.customer.name || 'Walk-in') + '</div>' +
+        '</div><div style="display:flex;gap:6px">' +
+        '<button class="btn btn-sm btn-green" data-pay="' + o.id + '" data-m="' + o.payment.method + '">Mark ' + K.esc(o.payment.method.toUpperCase()) + ' Received</button>' +
+        '<button class="btn btn-sm btn-red" data-rej="' + o.id + '">Cancel</button>' +
+        '</div></div>'
+      ).join('') : '<div class="empty"><div class="big">All clear</div><div>No orders waiting for payment</div></div>';
+    } catch (e) { console.error(e); }
+  }
+  $('#confList').onclick = async e => {
+    const cf = e.target.closest('[data-conf]'), pay = e.target.closest('[data-pay]'), rj = e.target.closest('[data-reject]'), ct = e.target.closest('[data-contacted]');
+    try {
+      if (cf) {
+        await K.api('/api/orders/' + cf.dataset.conf + '/confirm', { method: 'POST', body: { notes: 'Confirmed at POS' } });
+        K.toast(cf.dataset.conf + ' confirmed', 'ok');
+        loadPending(); loadLive();
+      }
+      if (pay) {
+        // confirm order first (if still pending), then payment — both gates clear
+        try { await K.api('/api/orders/' + pay.dataset.pay + '/confirm', { method: 'POST', body: { notes: 'Confirmed at POS' } }); } catch (e2) { /* may already be confirmed */ }
+        await K.api('/api/orders/' + pay.dataset.pay + '/confirm-payment', { method: 'POST', body: { method: pay.dataset.m, note: 'Verified at POS' } });
+        K.toast(pay.dataset.pay + ' confirmed & paid — kitchen notified', 'ok'); K.sound();
+        loadPending(); loadLive();
+      }
+      if (rj) {
+        if (!confirm('Reject order ' + rj.dataset.reject + '? The customer will see it as rejected.')) return;
+        await K.api('/api/orders/' + rj.dataset.reject + '/reject', { method: 'POST', body: { reason: 'Rejected at POS' } });
+        K.toast('Rejected', 'ok'); loadPending(); loadLive();
+      }
+      if (ct) {
+        await K.api('/api/orders/' + ct.dataset.contacted + '/contacted', { method: 'POST', body: {} });
+        K.toast('Marked as contacted', 'ok'); loadPending();
+      }
+    } catch (err) { K.toast(err.message, 'err'); }
+  };
+  $('#pendList').onclick = async e => {
+    const pay = e.target.closest('[data-pay]'), rej = e.target.closest('[data-rej]');
+    if (pay) {
+      if (!confirm('Confirm ' + pay.dataset.m.toUpperCase() + ' payment received for ' + pay.dataset.pay + '? This releases it to the kitchen.')) return;
+      try {
+        await K.api('/api/orders/' + pay.dataset.pay + '/confirm-payment', { method: 'POST', body: { method: pay.dataset.m, note: 'Verified at POS' } });
+        K.toast(pay.dataset.pay + ' paid — kitchen notified', 'ok'); K.sound();
+        loadPending(); loadLive();
+      } catch (err) { K.toast(err.message, 'err'); }
+    }
+    if (rej) {
+      if (!confirm('Cancel order ' + rej.dataset.rej + '?')) return;
+      try {
+        await K.api('/api/orders/' + rej.dataset.rej + '/cancel', { method: 'POST', body: { reason: 'Cancelled at POS' } });
+        K.toast('Cancelled', 'ok'); loadPending(); loadLive();
+      } catch (err) { K.toast(err.message, 'err'); }
+    }
+  };
+
+  // ---- live orders ----
+  async function loadLive() {
+    try {
+      const orders = await K.api('/api/orders?limit=40');
+      $('#liveTable').querySelector('tbody').innerHTML = orders.map(o => {
+        const payBadge = o.payment.status === 'paid' ? 'badge-green' : (o.payment.status === 'awaiting_verification' ? 'badge-amber' : 'badge-grey');
+        const kBadge = { pending: 'badge-grey', received: 'badge-blue', in_progress: 'badge-amber', completed: 'badge-green', cancelled: 'badge-red' }[o.kitchenStatus] || 'badge-grey';
+        return '<tr><td><b>' + K.esc(o.id) + '</b><div class="sub" style="font-size:11px;color:var(--muted)">' + K.esc(o.customer.name || (o.table ? 'Table ' + o.table : '—')) + ' · ' + K.time(o.createdAt) + '</div></td>' +
+          '<td>' + K.esc(K.TYPE_LABEL[o.type]) + (o.table ? ' T' + o.table : '') + '</td>' +
+          '<td>' + o.items.reduce((s, i) => s + i.qty, 0) + '</td>' +
+          '<td><b>' + K.money(o.total) + '</b></td>' +
+          '<td><span class="badge ' + payBadge + '">' + K.esc(K.PAY_LABEL[o.payment.status] || o.payment.status) + '</span></td>' +
+          '<td><span class="badge ' + kBadge + '">' + K.esc(K.KITCHEN_LABEL[o.kitchenStatus] || o.kitchenStatus) + '</span></td>' +
+          '<td>' + actionsHtml(o) + '</td></tr>';
+      }).join('');
+    } catch (e) { console.error(e); }
+  }
+  function actionsHtml(o) {
+    let h = '';
+    if (o.payment.status === 'awaiting_verification')
+      h += '<button class="btn btn-sm btn-green" data-pay2="' + o.id + '" data-m="' + o.payment.method + '">Confirm ₹</button> ';
+    if (o.kitchenStatus === 'completed' && !['served','collected','delivered'].includes(o.fulfillmentStatus))
+      h += '<button class="btn btn-sm btn-blue" data-fulfil="' + o.id + '">' + (o.type === 'dinein' ? 'Mark served' : 'Mark collected') + '</button> ';
+    if (!['delivered','served','collected','cancelled'].includes(o.fulfillmentStatus))
+      h += '<button class="btn btn-sm btn-outline" data-cancel="' + o.id + '">Cancel</button>';
+    return h || '—';
+  }
+  $('#liveTable').onclick = async e => {
+    const pay = e.target.closest('[data-pay2]'), ful = e.target.closest('[data-fulfil]'), can = e.target.closest('[data-cancel]');
+    try {
+      if (pay) {
+        if (!confirm('Confirm payment for ' + pay.dataset.pay2 + '?')) return;
+        await K.api('/api/orders/' + pay.dataset.pay2 + '/confirm-payment', { method: 'POST', body: { method: pay.dataset.m, note: 'POS' } });
+        K.toast('Payment confirmed', 'ok'); K.sound();
+      }
+      if (ful) {
+        await K.api('/api/orders/' + ful.dataset.fulfil + '/fulfil', { method: 'POST', body: {} });
+        K.toast('Marked complete', 'ok');
+      }
+      if (can) {
+        if (!confirm('Cancel ' + can.dataset.cancel + '?')) return;
+        await K.api('/api/orders/' + can.dataset.cancel + '/cancel', { method: 'POST', body: { reason: 'Cancelled at POS' } });
+        K.toast('Cancelled', 'ok');
+      }
+      loadPending(); loadLive();
+    } catch (err) { K.toast(err.message, 'err'); }
+  };
+
+  setType('pickup');
+  init().catch(e => { K.toast(e.message, 'err'); console.error(e); });
+})();
+</script>
+</body>
+</html>

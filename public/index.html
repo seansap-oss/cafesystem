@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's Royal Mughlai — The Royal Food For The Common Man</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  /* ---------- top info bar ---------- */
+  .infobar {
+    background: var(--maroon-900); color: var(--gold-300); font-size: 11.5px;
+    letter-spacing: .06em; padding: 6px 20px; display: flex; justify-content: center; gap: 26px; flex-wrap: wrap;
+  }
+  .infobar span { display: inline-flex; align-items: center; gap: 6px; }
+  .infobar .dotsep { opacity: .5; }
+
+  /* ---------- heritage header ---------- */
+  .site-header {
+    background: var(--cream); border-bottom: 3px solid var(--gold-500);
+    position: sticky; top: 0; z-index: 60; box-shadow: var(--shadow-sm);
+  }
+  .site-header .inner {
+    max-width: 1320px; margin: 0 auto; padding: 12px 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand-block { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .brand-block .crest { width: 58px; height: 58px; flex: none; }
+  .brand-block .crest img { width: 100%; height: 100%; object-fit: contain; }
+  .brand-block .wordmark .name { font-family: var(--font); font-size: 27px; letter-spacing: .18em; color: var(--maroon-800); line-height: 1; }
+  .brand-block .wordmark .estd { font-size: 9.5px; font-weight: 800; letter-spacing: .34em; color: var(--gold-700); margin-top: 3px; }
+  .brand-block .wordmark .tag { font-size: 11px; font-weight: 700; letter-spacing: .18em; color: var(--muted); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 14px; }
+  .table-indicator {
+    font-size: 12px; font-weight: 700; color: var(--maroon-800); background: var(--cream-2);
+    border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 16px;
+  }
+  .table-indicator b { color: var(--maroon-600); }
+  .cart-btn {
+    display: inline-flex; align-items: center; gap: 9px; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-700)); color: var(--maroon-900);
+    font-weight: 800; font-size: 14px; border-radius: 999px; padding: 10px 20px; box-shadow: var(--shadow-sm);
+  }
+  .cart-btn .cnt {
+    background: var(--maroon-900); color: var(--gold-300); border-radius: 999px;
+    min-width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative; overflow: hidden; color: #fff;
+    background: linear-gradient(160deg, var(--maroon-900), var(--maroon-800) 55%, var(--maroon-700));
+  }
+  .hero .bgimg {
+    position: absolute; inset: 0; background-size: cover; background-position: center;
+    opacity: .22; filter: saturate(1.1);
+  }
+  .hero .veil {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(800px 420px at 82% -10%, rgba(203,175,77,.30), transparent 60%),
+      linear-gradient(160deg, rgba(48,9,12,.88), rgba(74,16,19,.78));
+  }
+  .hero .inner {
+    position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 64px 22px 58px;
+    display: grid; grid-template-columns: 1.4fr .8fr; gap: 40px; align-items: center;
+  }
+  .hero .badge-estd {
+    display: inline-block; border: 1.5px solid var(--gold-500); color: var(--gold-500);
+    font-size: 10.5px; font-weight: 800; letter-spacing: .3em; border-radius: 999px; padding: 7px 18px;
+  }
+  .hero h1 {
+    font-family: var(--font); color: #fff; font-size: clamp(34px, 5vw, 60px);
+    line-height: 1.08; margin: 18px 0 12px; letter-spacing: .02em;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold-500); }
+  .hero .lede { font-size: 15px; line-height: 1.65; color: rgba(255,255,255,.88); max-width: 560px; }
+  .hero .herald { font-size: 12px; letter-spacing: .14em; color: var(--gold-300); font-weight: 700; margin-top: 14px; }
+  .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  .hero-badges .hb {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(203,175,77,.45); color: var(--gold-300);
+    border-radius: 999px; padding: 8px 16px; font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  }
+  .table-card {
+    background: rgba(248,246,241,.97); color: var(--ink); border-radius: 16px; padding: 26px;
+    box-shadow: var(--shadow); border-top: 5px solid var(--gold-500); text-align: center;
+  }
+  .table-card .tc-k { font-size: 10.5px; font-weight: 800; letter-spacing: .28em; color: var(--gold-700); }
+  .table-card .tc-v { font-family: var(--font); font-size: 42px; color: var(--maroon-800); line-height: 1.1; margin: 4px 0; }
+  .table-card .tc-s { font-size: 12.5px; color: var(--muted); }
+  .table-card .divider { margin: 14px 0; }
+  .table-card .addr { font-size: 12.5px; line-height: 1.6; }
+
+  /* ---------- menu strip ---------- */
+  .menu-strip {
+    background: var(--cream); border-bottom: 1px solid var(--line);
+    position: sticky; top: 86px; z-index: 50;
+  }
+  .menu-strip .inner {
+    max-width: 1320px; margin: 0 auto; padding: 14px 22px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .search-box {
+    flex: 1; min-width: 200px; max-width: 340px; display: flex; align-items: center; gap: 8px;
+    background: #fff; border: 1.5px solid var(--line); border-radius: 999px; padding: 9px 16px;
+  }
+  .search-box input { border: none; outline: none; flex: 1; font-size: 14px; background: transparent; }
+  .diet-toggle { display: flex; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; background: #fff; }
+  .diet-toggle button { border: none; background: none; padding: 9px 16px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .diet-toggle button.active { background: var(--maroon-700); color: var(--gold-300); }
+  .cats-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 2px; scrollbar-width: thin; }
+  .cat-chip {
+    white-space: nowrap; border: 1.5px solid var(--line); background: #fff; color: var(--maroon-800);
+    border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .cat-chip.active { background: var(--maroon-800); color: var(--gold-300); border-color: var(--maroon-800); }
+
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 0 22px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 30px 0 18px; flex-wrap: wrap; }
+  .section-head h2 { font-size: clamp(24px, 3vw, 34px); letter-spacing: .01em; }
+  .section-head .count { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  /* ---------- 4-col food cards ---------- */
+  .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding-bottom: 130px; }
+  .dish {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: .15s;
+  }
+  .dish:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .dish-img { position: relative; aspect-ratio: 4/3; overflow: hidden; background: var(--cream-2); }
+  .dish-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .dish:hover .dish-img img { transform: scale(1.05); }
+  .dish-img .best { position: absolute; top: 10px; left: 10px; }
+  .dish-img .vnm { position: absolute; top: 10px; right: 10px; background: #fff; border-radius: 5px; padding: 3px; box-shadow: var(--shadow-sm); }
+  .dish-body { padding: 13px 15px 15px; display: flex; flex-direction: column; flex: 1; }
+  .dish-body .cat { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-700); }
+  .dish-body h4 { font-family: var(--font); font-size: 17px; color: var(--maroon-800); line-height: 1.25; margin-top: 3px; }
+  .dish-body .desc { font-size: 12.5px; color: var(--muted); margin: 5px 0 10px; flex: 1; line-height: 1.45; }
+  .price-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .prices { font-family: var(--font); color: var(--maroon-700); font-size: 16px; }
+  .prices small { color: var(--muted); font-size: 12px; font-family: var(--font-ui); }
+  .btn-add {
+    background: linear-gradient(135deg, var(--gold-500), var(--gold-700)); color: var(--maroon-900);
+    border: none; border-radius: 999px; padding: 8px 18px; font-weight: 800; font-size: 13px;
+  }
+  .btn-add:hover { filter: brightness(1.06); }
+  .oos { opacity: .55; }
+  .oos .dish-img img { filter: grayscale(.7); }
+
+  /* ---------- cart panel ---------- */
+  .cart {
+    position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 94vw; z-index: 150;
+    background: #fff; border-left: 1px solid var(--line); box-shadow: -12px 0 40px rgba(48,9,12,.18);
+    display: none; flex-direction: column;
+  }
+  .cart.open { display: flex; }
+  .cart-head { background: linear-gradient(135deg, var(--maroon-900), var(--maroon-700)); color: #fff; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .cart-head h3 { color: var(--gold-300); font-size: 19px; }
+  .cart-head .mode { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-300); opacity: .9; }
+  .cart-head .x { background: none; border: none; color: var(--gold-300); font-size: 24px; line-height: 1; cursor: pointer; }
+  .cart-items { overflow-y: auto; padding: 6px 18px; flex: 1; min-height: 80px; }
+  .ci { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px dashed var(--line); align-items: flex-start; }
+  .ci .nm { flex: 1; font-weight: 700; font-size: 13.5px; }
+  .ci .sub { font-size: 11.5px; color: var(--muted); font-weight: 400; }
+  .ci .pr { font-weight: 800; color: var(--maroon-700); font-size: 13.5px; white-space: nowrap; }
+  .qtybox { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 8px; overflow: hidden; margin-top: 6px; }
+  .qtybox button { border: none; background: var(--cream-2); width: 28px; height: 28px; font-weight: 800; color: var(--maroon-700); }
+  .qtybox span { min-width: 30px; text-align: center; font-weight: 800; font-size: 13px; }
+  .cart-foot { border-top: 2px solid var(--line); padding: 14px 18px; }
+  .totals .trow { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; color: var(--muted); }
+  .totals .trow.grand { font-size: 17px; font-weight: 800; color: var(--maroon-800); border-top: 1px solid var(--line); margin-top: 6px; padding-top: 8px; font-family: var(--font); }
+
+  .step { display: none; }
+  .step.on { display: block; }
+  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .opt {
+    border: 2px solid var(--line); border-radius: var(--radius-sm); padding: 12px; text-align: center;
+    background: #fff; font-weight: 700; font-size: 13.5px; color: var(--maroon-800); cursor: pointer;
+  }
+  .opt small { display: block; font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .opt.sel { border-color: var(--gold-500); background: #FFFBEF; }
+  .qr-box { text-align: center; padding: 12px; }
+  .qr-box img { max-width: 220px; margin: 0 auto; border-radius: 10px; border: 1px solid var(--line); }
+  .upi-id { font-weight: 800; background: var(--cream-2); border-radius: 8px; padding: 8px 12px; display: inline-block; margin: 8px 0; letter-spacing: .03em; }
+  .confirm-note { background: var(--amber-bg); border: 1px solid #E8C86A; color: #6B4A00; border-radius: 10px; padding: 12px; font-size: 12.5px; line-height: 1.5; }
+  .success { text-align: center; padding: 30px 20px; }
+  .success .tick { width: 74px; height: 74px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: flex; align-items: center; justify-content: center; font-size: 38px; margin: 0 auto 14px; }
+  .track-steps { display: flex; justify-content: space-between; margin: 26px 0 10px; position: relative; }
+  .track-steps::before { content: ''; position: absolute; top: 15px; left: 8%; right: 8%; height: 3px; background: var(--line); z-index: 0; }
+  .tstep { position: relative; z-index: 1; text-align: center; flex: 1; }
+  .tstep .bub { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 3px solid var(--line); margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .tstep.done .bub { background: var(--green); border-color: var(--green); color: #fff; }
+  .tstep.now .bub { background: var(--gold-500); border-color: var(--gold-500); color: var(--maroon-900); box-shadow: 0 0 0 5px rgba(203,175,77,.3); }
+  .tstep small { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; color: var(--muted); }
+  .tstep.done small, .tstep.now small { color: var(--maroon-800); }
+
+  .mobile-cart-bar {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+    background: var(--maroon-800); color: #fff; padding: 14px 18px; align-items: center; justify-content: space-between;
+    box-shadow: 0 -6px 24px rgba(0,0,0,.25);
+  }
+  .mobile-cart-bar .n { font-size: 12.5px; opacity: .9; }
+  .mobile-cart-bar .t { font-family: var(--font); font-size: 20px; color: var(--gold-300); }
+
+  footer.site { background: var(--maroon-900); color: var(--gold-300); text-align: center; padding: 34px 20px; font-size: 13px; }
+  footer.site .flogo { width: 64px; height: 64px; margin: 0 auto 10px; }
+  footer.site .fname { font-family: var(--font); font-size: 26px; letter-spacing: .2em; color: var(--gold-500); }
+  footer.site .heritage { margin-top: 8px; opacity: .85; font-size: 12px; letter-spacing: .08em; }
+
+  @media (max-width: 1280px) { .menu-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 980px) {
+    .menu-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero .inner { grid-template-columns: 1fr; padding: 44px 20px 40px; }
+    .menu-strip { top: 76px; }
+  }
+  @media (max-width: 640px) {
+    .menu-grid { grid-template-columns: 1fr; }
+    .brand-block .wordmark .tag { display: none; }
+    .brand-block .crest { width: 46px; height: 46px; }
+    .brand-block .wordmark .name { font-size: 20px; }
+    .infobar { display: none; }
+    .menu-strip { top: 70px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="infobar" id="infobar">
+  <span id="ibHeritage">Original from Jama Masjid (1913) · Imphal Outlet</span>
+  <span class="dotsep">◆</span>
+  <span id="ibHours">11:00 AM – 11:00 PM</span>
+  <span class="dotsep">◆</span>
+  <span id="ibPhone">+91 98765 43210</span>
+</div>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand-block" href="/">
+      <span class="crest"><img id="brandLogo" src="/img/logo.svg" alt="Karim's crest"></span>
+      <span class="wordmark">
+        <span class="name" id="brandName">KARIM'S</span>
+        <span class="estd">ESTD 1913</span>
+        <span class="tag" id="brandTag">MUGHLAI ZAIQA · ROYAL CUISINE</span>
+      </span>
+    </a>
+    <div class="header-right">
+      <span class="table-indicator" id="tableIndicator" style="display:none"></span>
+      <button class="cart-btn" id="cartBtnOpen">
+        My Cart <span class="cnt" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="bgimg" id="heroBg"></div>
+  <div class="veil"></div>
+  <div class="inner">
+    <div>
+      <span class="badge-estd" id="heroEstd">ESTD 1913 · ROYAL MUGHLAI</span>
+      <h1 id="heroHeadline">The Royal Food For <em>The Common Man</em></h1>
+      <p class="lede" id="heroDesc">Crafted with authentic handi recipes from the Mughal Court. Rich Mughlai flavours, traditional spices, and freshly prepared favourites, served at your table.</p>
+      <div class="herald" id="heroHerald">Original from Jama Masjid (1913) · Imphal Outlet</div>
+      <div class="hero-badges" id="heroBadges"></div>
+    </div>
+    <div class="table-card" id="tableCard">
+      <div class="tc-k" id="tcK">DINE-IN</div>
+      <div class="tc-v" id="tcV">Scan &amp; Order</div>
+      <div class="tc-s" id="tcS">Pick your favourites — served to your table</div>
+      <div class="divider"></div>
+      <div class="addr" id="tcAddr">Imphal, Manipur<br>11:00 AM – 11:00 PM</div>
+    </div>
+  </div>
+</section>
+
+<div class="menu-strip">
+  <div class="inner">
+    <div class="search-box">
+      <span style="color:var(--muted)">⌕</span>
+      <input type="search" id="searchInput" placeholder="Search dishes…">
+    </div>
+    <div class="diet-toggle" id="dietToggle">
+      <button data-d="all" class="active">All</button>
+      <button data-d="veg">Veg</button>
+      <button data-d="nonveg">Non-Veg</button>
+    </div>
+    <div class="cats-scroll" id="cats"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="modes" id="modes" style="display:flex;gap:10px;justify-content:center;padding:22px 0 0;flex-wrap:wrap">
+    <button class="mode-btn active" data-mode="dinein" style="border:2px solid var(--line);background:#fff;border-radius:var(--radius);padding:14px 26px;font-size:15px;font-weight:700;color:var(--maroon-800);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:140px;box-shadow:var(--shadow-sm)">Dine-in<small style="font-size:11px;font-weight:600;color:var(--muted)">Order to your table</small></button>
+    <button class="mode-btn" data-mode="pickup" style="border:2px solid var(--line);background:#fff;border-radius:var(--radius);padding:14px 26px;font-size:15px;font-weight:700;color:var(--maroon-800);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:140px;box-shadow:var(--shadow-sm)">Pickup<small style="font-size:11px;font-weight:600;color:var(--muted)">Collect from counter</small></button>
+    <button class="mode-btn" data-mode="delivery" style="border:2px solid var(--line);background:#fff;border-radius:var(--radius);padding:14px 26px;font-size:15px;font-weight:700;color:var(--maroon-800);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:140px;box-shadow:var(--shadow-sm)">Delivery<small style="font-size:11px;font-weight:600;color:var(--muted)">To your doorstep</small></button>
+  </div>
+
+  <div class="section-head">
+    <h2>All Mughlai Specialities</h2>
+    <span class="count" id="dishCount"></span>
+  </div>
+  <div class="menu-grid" id="menuGrid"></div>
+</div>
+
+<!-- CART / CHECKOUT DRAWER -->
+<aside class="cart" id="cartPanel">
+  <div class="cart-head">
+    <div>
+      <div class="mode" id="cartModeLabel">Dine-in order</div>
+      <h3 id="cartTitle">Your Feast</h3>
+    </div>
+    <button class="x" id="cartClose">×</button>
+  </div>
+
+  <div class="step on" id="stepCart">
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot">
+      <div class="totals" id="totals"></div>
+      <button class="btn btn-gold btn-block btn-lg" id="btnCheckout" style="margin-top:12px">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <div class="step" id="stepDetails">
+    <div class="cart-items" style="overflow:auto">
+      <button class="btn btn-outline btn-sm" id="btnBackToCart">← Back</button>
+      <div id="detailsFields" style="margin-top:12px"></div>
+    </div>
+    <div class="cart-foot">
+      <div class="totals" id="totals2"></div>
+      <button class="btn btn-gold btn-block btn-lg" id="btnToPayment" style="margin-top:12px">Continue to Payment</button>
+    </div>
+  </div>
+
+  <div class="step" id="stepPayment">
+    <div class="cart-items" style="overflow:auto">
+      <button class="btn btn-outline btn-sm" id="btnBackToDetails">← Back</button>
+      <h4 style="margin:14px 0 4px; font-family:var(--font); color:var(--maroon-800)">Payment method</h4>
+      <div class="opt-grid" id="payOpts">
+        <div class="opt" data-pay="upi">UPI<small>GPay · PhonePe · Paytm</small></div>
+        <div class="opt" data-pay="cash">Cash<small>Pay at counter / on delivery</small></div>
+        <div class="opt" data-pay="card">Card<small>Pay at counter</small></div>
+      </div>
+      <div id="payDetail"></div>
+    </div>
+    <div class="cart-foot">
+      <div class="totals" id="totals3"></div>
+      <button class="btn btn-gold btn-block btn-lg" id="btnPlace" style="margin-top:12px">Place Order</button>
+      <div class="confirm-note" id="payNote" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <div class="step" id="stepSuccess">
+    <div class="success" id="successBox"></div>
+  </div>
+</aside>
+
+<div class="mobile-cart-bar" id="mobileBar">
+  <div>
+    <div class="n" id="mbCount">0 items</div>
+    <div class="t" id="mbTotal">₹0</div>
+  </div>
+  <button class="btn btn-gold" id="mbOpen">View Cart →</button>
+</div>
+
+<footer class="site">
+  <div class="flogo"><img src="/img/logo.svg" alt="" style="width:100%;height:100%"></div>
+  <div class="fname" id="footName">KARIM'S</div>
+  <div style="margin-top:6px" id="footTag">MUGHLAI ZAIQA · ROYAL CUISINE</div>
+  <div class="heritage" id="footHeritage">Original from Jama Masjid (1913) · Imphal Outlet</div>
+</footer>
+
+<!-- dish options modal -->
+<div class="modal-backdrop" id="dishModal" style="display:none">
+  <div class="modal">
+    <button class="close" onclick="document.getElementById('dishModal').style.display='none'">×</button>
+    <h3 id="dmName"></h3>
+    <div id="dmDesc" style="color:var(--muted); font-size:13.5px; margin-bottom:12px"></div>
+    <div class="portion-tabs" id="dmPortions" style="display:flex;gap:8px;margin-bottom:12px"></div>
+    <div class="field" id="dmSpiceWrap">
+      <label>Spice level</label>
+      <div class="opt-grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="opt" data-spice="mild">Mild</div>
+        <div class="opt sel" data-spice="medium">Medium</div>
+        <div class="opt" data-spice="hot">Hot</div>
+      </div>
+    </div>
+    <div class="field" id="dmButterWrap" style="display:none">
+      <label>Butter / ghee</label>
+      <div class="opt-grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="opt" data-butter="low">Low</div>
+        <div class="opt sel" data-butter="regular">Regular</div>
+        <div class="opt" data-butter="extra">Extra</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Special instructions</label>
+      <input id="dmNote" placeholder="e.g. no onion, extra chutney…">
+    </div>
+    <div class="row" style="align-items:center">
+      <div>
+        <label style="font-size:12px;font-weight:700;color:var(--muted)">QTY</label>
+        <div class="qtybox" style="margin-top:4px">
+          <button type="button" id="dmMinus">−</button><span id="dmQty">1</span><button type="button" id="dmPlus">+</button>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="prices" id="dmPrice" style="font-size:22px"></div>
+      </div>
+    </div>
+    <button class="btn btn-gold btn-block btn-lg" id="dmAdd" style="margin-top:16px">Add to Feast</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  let settings = null, dishes = [], categories = [];
+  let mode = 'dinein';
+  let table = parseInt(K.qs('table')) || null;
+  let cart = JSON.parse(localStorage.getItem('karim_cart') || '[]');
+  let payMethod = 'upi';
+  let lastOrder = null;
+  let trackTimer = null;
+  let activeCat = 'all', activeDiet = 'all', searchTerm = '';
+
+  async function init() {
+    settings = await K.api('/api/settings/public');
+    // branding
+    if (settings.logoImage) $('#brandLogo').src = settings.logoImage;
+    if (settings.faviconImage) { const l = document.querySelector('link[rel="icon"]'); if (l) l.href = settings.faviconImage; }
+    $('#brandName').textContent = settings.name || "KARIM'S";
+    $('#footName').textContent = settings.name || "KARIM'S";
+    const tag = (settings.tagline || 'MUGHLAI ZAIQA · ROYAL CUISINE').toUpperCase();
+    $('#brandTag').textContent = tag;
+    $('#footTag').textContent = tag;
+    const heritage = settings.heritageLine || 'Original from Jama Masjid (1913) · Imphal Outlet';
+    $('#ibHeritage').textContent = heritage;
+    $('#heroHerald').textContent = heritage;
+    $('#footHeritage').textContent = heritage;
+    $('#ibHours').textContent = settings.hours || '';
+    $('#ibPhone').textContent = settings.phone || '';
+    if (settings.heroImage) $('#heroBg').style.backgroundImage = 'url(' + settings.heroImage + ')';
+    if (settings.heroHeadline) {
+      // split last two words for gold emphasis when possible
+      const words = settings.heroHeadline.trim().split(/\s+/);
+      if (words.length >= 2) {
+        const tail = words.slice(-2).join(' ');
+        $('#heroHeadline').innerHTML = K.esc(words.slice(0, -2).join(' ')) + ' <em>' + K.esc(tail) + '</em>';
+      } else $('#heroHeadline').textContent = settings.heroHeadline;
+    }
+    $('#heroDesc').textContent = settings.heroDesc || '';
+    const badges = [settings.heroBadge1, settings.heroBadge2, settings.heroBadge3].filter(Boolean);
+    $('#heroBadges').innerHTML = badges.map(b => '<span class="hb">' + K.esc(b) + '</span>').join('');
+    $('#tcAddr').innerHTML = K.esc(settings.address || '') + '<br>' + K.esc(settings.hours || '');
+
+    if (table) {
+      mode = 'dinein';
+      $$('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'dinein'));
+      $('#tableIndicator').style.display = '';
+      $('#tableIndicator').innerHTML = 'You are ordering for <b>Table ' + table + '</b>';
+      $('#tcK').textContent = 'YOUR TABLE';
+      $('#tcV').textContent = 'Table ' + table;
+      $('#tcS').textContent = 'Items go straight to the kitchen for this table';
+    }
+    if (!settings.acceptOnlineDelivery) {
+      const d = $('#modes [data-mode="delivery"]');
+      if (d) { d.disabled = true; d.style.opacity = .4; d.title = 'Delivery currently unavailable'; }
+    }
+    const m = await K.api('/api/menu');
+    dishes = m.dishes; categories = m.categories;
+    renderCats();
+    renderMenu();
+    renderCart();
+    K.connect(['all']);
+    K.socket.on('order:updated', onLiveUpdate);
+    if (lastOrder) startTracking(lastOrder);
+  }
+
+  function renderCats() {
+    const el = $('#cats');
+    el.innerHTML = '<button class="cat-chip active" data-c="all">All</button>' +
+      categories.map(c => '<button class="cat-chip" data-c="' + K.esc(c) + '">' + K.esc(c) + '</button>').join('');
+    el.onclick = e => {
+      const b = e.target.closest('.cat-chip'); if (!b) return;
+      $$('.cat-chip').forEach(x => x.classList.remove('active'));
+      b.classList.add('active'); activeCat = b.dataset.c; renderMenu();
+    };
+  }
+
+  $('#searchInput').addEventListener('input', e => { searchTerm = e.target.value.trim().toLowerCase(); renderMenu(); });
+  $('#dietToggle').onclick = e => {
+    const b = e.target.closest('[data-d]'); if (!b) return;
+    $$('#dietToggle button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); activeDiet = b.dataset.d; renderMenu();
+  };
+
+  function filteredList() {
+    let list = dishes;
+    if (activeCat !== 'all') list = list.filter(d => d.cat === activeCat);
+    if (activeDiet === 'veg') list = list.filter(d => d.veg);
+    if (activeDiet === 'nonveg') list = list.filter(d => !d.veg);
+    if (searchTerm) list = list.filter(d => (d.name + ' ' + d.desc + ' ' + d.cat).toLowerCase().includes(searchTerm));
+    return list;
+  }
+
+  function renderMenu() {
+    const grid = $('#menuGrid');
+    const list = filteredList();
+    $('#dishCount').textContent = list.length + ' dish' + (list.length === 1 ? '' : 'es') + ' available';
+    if (!list.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="big">No dishes match</div><div>Try another category or search</div></div>'; return; }
+    grid.innerHTML = list.map(d => {
+      const img = d.image || d.img || '/img/menu/curry_bowl.jpg';
+      const prices = d.half && d.full
+        ? '<small>Half</small> ₹' + d.half + ' &nbsp;·&nbsp; <small>Full</small> ₹' + d.full
+        : (d.full ? '₹' + d.full : '₹' + d.half);
+      return '<article class="dish' + (d.inStock ? '' : ' oos') + '">' +
+        '<div class="dish-img"><img loading="lazy" src="' + K.esc(img) + '" alt="' + K.esc(d.name) + '" onerror="this.src=\'/img/menu/curry_bowl.jpg\'">' +
+        (d.badge ? '<span class="badge badge-gold best">' + K.esc(d.badge) + '</span>' : '') +
+        '<span class="vnm" title="' + (d.veg ? 'Vegetarian' : 'Non-vegetarian') + '"><span class="' + (d.veg ? 'badge-veg' : 'badge-nonveg') + '"></span></span>' +
+        '</div>' +
+        '<div class="dish-body"><div class="cat">' + K.esc(d.cat) + '</div><h4>' + K.esc(d.name) + '</h4>' +
+        '<div class="desc">' + K.esc(d.desc || '') + '</div>' +
+        '<div class="price-row"><div class="prices">' + prices + '</div>' +
+        (d.inStock
+          ? '<button class="btn-add" data-add="' + d.id + '">ADD +</button>'
+          : '<span class="badge badge-grey">Unavailable</span>') +
+        '</div></div></article>';
+    }).join('');
+    grid.onclick = e => {
+      const b = e.target.closest('[data-add]'); if (!b) return;
+      openDishModal(b.dataset.add);
+    };
+  }
+
+  // ---- dish options modal ----
+  let dmDish = null, dmPortion = 'full', dmQty = 1, dmSpice = 'medium', dmButter = 'regular';
+  function openDishModal(id) {
+    dmDish = dishes.find(d => d.id === id); if (!dmDish) return;
+    dmQty = 1; dmSpice = 'medium'; dmButter = 'regular';
+    dmPortion = dmDish.half && dmDish.full ? 'full' : (dmDish.half ? 'half' : 'full');
+    $('#dmName').textContent = dmDish.name;
+    $('#dmDesc').textContent = dmDish.desc || '';
+    $('#dmNote').value = '';
+    $('#dmQty').textContent = '1';
+    $$('#dishModal [data-spice]').forEach(x => x.classList.toggle('sel', x.dataset.spice === 'medium'));
+    $$('#dishModal [data-butter]').forEach(x => x.classList.toggle('sel', x.dataset.butter === 'regular'));
+    const pt = $('#dmPortions');
+    if (dmDish.half && dmDish.full) {
+      pt.innerHTML = '<div class="opt" data-portion="half">Half<small>₹' + dmDish.half + '</small></div>' +
+        '<div class="opt sel" data-portion="full">Full<small>₹' + dmDish.full + '</small></div>';
+    } else {
+      const only = dmDish.full ? 'full' : 'half';
+      pt.innerHTML = '<div class="opt sel" data-portion="' + only + '">' + (only === 'full' ? 'Full' : 'Single') + '<small>₹' + (only === 'full' ? dmDish.full : dmDish.half) + '</small></div>';
+    }
+    updateDmPrice();
+    $('#dishModal').style.display = 'flex';
+  }
+  function updateDmPrice() {
+    if (!dmDish) return;
+    const unit = dmPortion === 'half' ? dmDish.half : dmDish.full;
+    $('#dmPrice').textContent = '₹' + (unit * dmQty);
+  }
+  $('#dmPortions').onclick = e => {
+    const o = e.target.closest('[data-portion]'); if (!o) return;
+    dmPortion = o.dataset.portion;
+    $$('#dmPortions .opt').forEach(x => x.classList.remove('sel')); o.classList.add('sel');
+    updateDmPrice();
+  };
+  $('#dishModal').addEventListener('click', e => {
+    const sp = e.target.closest('[data-spice]');
+    if (sp) { dmSpice = sp.dataset.spice; $$('#dishModal [data-spice]').forEach(x => x.classList.toggle('sel', x === sp)); }
+    const bt = e.target.closest('[data-butter]');
+    if (bt) { dmButter = bt.dataset.butter; $$('#dishModal [data-butter]').forEach(x => x.classList.toggle('sel', x === bt)); }
+  });
+  $('#dmPlus').onclick = () => { dmQty = Math.min(50, dmQty + 1); $('#dmQty').textContent = dmQty; updateDmPrice(); };
+  $('#dmMinus').onclick = () => { dmQty = Math.max(1, dmQty - 1); $('#dmQty').textContent = dmQty; updateDmPrice(); };
+  $('#dmAdd').onclick = () => {
+    const key = dmDish.id + '|' + dmPortion + '|' + dmSpice + '|' + dmButter;
+    const existing = cart.find(c => c.key === key);
+    if (existing) existing.qty = Math.min(50, existing.qty + dmQty);
+    else cart.push({ key, menuId: dmDish.id, name: dmDish.name, portion: dmPortion, spice: dmSpice, butter: dmButter, note: $('#dmNote').value, qty: dmQty });
+    saveCart(); $('#dishModal').style.display = 'none';
+    K.toast(dmDish.name + ' added to your feast', 'ok');
+  };
+
+  // ---- cart ----
+  function saveCart() { localStorage.setItem('karim_cart', JSON.stringify(cart)); renderCart(); }
+  function cartSubtotal() {
+    return cart.reduce((s, c) => {
+      const d = dishes.find(x => x.id === c.menuId); if (!d) return s;
+      return s + (c.portion === 'half' ? d.half : d.full) * c.qty;
+    }, 0);
+  }
+  function cartTotals() {
+    const sub = cartSubtotal();
+    const gst = Math.round(sub * (settings ? settings.gstRate : 5) / 100);
+    let fee = 0;
+    if (mode === 'delivery' && settings) fee = sub >= settings.freeDeliveryAbove ? 0 : settings.deliveryFee;
+    return { sub, gst, fee, total: sub + gst + fee };
+  }
+  function renderCart() {
+    const box = $('#cartItems');
+    if (!cart.length) {
+      box.innerHTML = '<div class="empty"><div class="big">Your feast awaits</div><div>Pick something royal from the menu</div></div>';
+    } else {
+      box.innerHTML = cart.map((c, i) => {
+        const d = dishes.find(x => x.id === c.menuId); if (!d) return '';
+        const unit = c.portion === 'half' ? d.half : d.full;
+        return '<div class="ci"><div class="nm">' + K.esc(c.name) +
+          '<div class="sub">' + (c.portion === 'half' ? 'Half' : 'Full') + ' · ' + c.spice + ' spice' + (c.butter !== 'regular' ? ' · ' + c.butter + ' butter' : '') + (c.note ? ' · “' + K.esc(c.note) + '”' : '') + '</div>' +
+          '<div class="qtybox"><button data-dec="' + i + '">−</button><span>' + c.qty + '</span><button data-inc="' + i + '">+</button></div>' +
+          '</div><div class="pr">' + K.money(unit * c.qty) + '</div></div>';
+      }).join('');
+    }
+    const t = cartTotals();
+    const totalsHtml =
+      '<div class="trow"><span>Subtotal</span><span>' + K.money(t.sub) + '</span></div>' +
+      '<div class="trow"><span>GST (' + (settings ? settings.gstRate : 5) + '%)</span><span>' + K.money(t.gst) + '</span></div>' +
+      (mode === 'delivery' ? '<div class="trow"><span>Delivery' + (t.fee === 0 ? ' (free above ' + K.money(settings.freeDeliveryAbove) + ')' : '') + '</span><span>' + (t.fee ? K.money(t.fee) : 'FREE') + '</span></div>' : '') +
+      '<div class="trow grand"><span>Total</span><span>' + K.money(t.total) + '</span></div>';
+    $('#totals').innerHTML = totalsHtml;
+    $('#totals2').innerHTML = totalsHtml;
+    $('#totals3').innerHTML = totalsHtml;
+    $('#mbCount').textContent = cart.reduce((s, c) => s + c.qty, 0) + ' items';
+    $('#mbTotal').textContent = K.money(t.total);
+    $('#cartCount').textContent = cart.reduce((s, c) => s + c.qty, 0);
+    $('#btnCheckout').disabled = !cart.length;
+    $('#cartModeLabel').textContent = (K.TYPE_LABEL[mode] || mode) + (mode === 'dinein' && table ? ' · Table ' + table : '') + ' order';
+  }
+  $('#cartItems').onclick = e => {
+    const inc = e.target.closest('[data-inc]'), dec = e.target.closest('[data-dec]');
+    if (inc) { cart[+inc.dataset.inc].qty++; saveCart(); }
+    if (dec) { const i = +dec.dataset.dec; cart[i].qty--; if (cart[i].qty <= 0) cart.splice(i, 1); saveCart(); }
+  };
+  function openCart() { $('#cartPanel').classList.add('open'); }
+  function closeCart() { $('#cartPanel').classList.remove('open'); }
+  $('#cartBtnOpen').onclick = openCart;
+  $('#mbOpen').onclick = openCart;
+  $('#cartClose').onclick = closeCart;
+
+  // ---- mode switching ----
+  $('#modes').onclick = e => {
+    const b = e.target.closest('.mode-btn'); if (!b || b.disabled) return;
+    mode = b.dataset.mode;
+    $$('.mode-btn').forEach(x => {
+      x.classList.toggle('active', x === b);
+      x.style.borderColor = x === b ? 'var(--gold-500)' : 'var(--line)';
+      x.style.background = x === b ? 'linear-gradient(180deg,#FFFDF4,var(--gold-300))' : '#fff';
+    });
+    renderCart();
+  };
+
+  // ---- steps ----
+  function showStep(id) {
+    $$('.step').forEach(s => s.classList.remove('on'));
+    $(id).classList.add('on');
+    $('#cartTitle').textContent = id === '#stepSuccess' ? 'Order Placed' : (id === '#stepPayment' ? 'Payment' : (id === '#stepDetails' ? 'Your Details' : 'Your Feast'));
+  }
+  $('#btnCheckout').onclick = () => { renderDetails(); showStep('#stepDetails'); openCart(); };
+  $('#btnBackToCart').onclick = () => showStep('#stepCart');
+  $('#btnBackToDetails').onclick = () => showStep('#stepDetails');
+
+  function renderDetails() {
+    const box = $('#detailsFields');
+    let html = '';
+    if (mode === 'dinein') {
+      if (!table) {
+        html += '<div class="field"><label>Your table number</label><select id="fTable">' +
+          (settings.tables || []).map(t => '<option value="' + t.num + '">' + K.esc(t.name) + '</option>').join('') +
+          '</select><div class="hint">Ask your server if unsure — it prints on your bill.</div></div>';
+      } else {
+        html += '<div class="confirm-note" style="background:var(--green-bg);border-color:#9CCFB6;color:#14523A"><b>Table ' + table + '</b> — your order goes straight to the kitchen for this table.</div>';
+      }
+      html += '<div class="field"><label>Your name (optional)</label><input id="fName" placeholder="Walk-in guest"></div>';
+      if (settings.orderPolicy && settings.orderPolicy.dineInRequireContact) {
+        html += '<div class="field"><label>Phone *</label><input id="fPhone" placeholder="10-digit mobile" required></div>';
+      }
+    } else {
+      html += '<div class="field"><label>Full name *</label><input id="fName" placeholder="e.g. Priya Sharma" required></div>' +
+        '<div class="field"><label>Phone *</label><input id="fPhone" placeholder="10-digit mobile (required)" required>' +
+        '<div class="hint">We may call this number to confirm your order.</div></div>';
+      if (mode === 'delivery') {
+        html += '<div class="field"><label>Delivery address *</label><textarea id="fAddr" placeholder="House / flat, street, landmark, zone"></textarea></div>' +
+          '<div class="field"><label>Zone</label><select id="fZone">' +
+          (settings.deliveryZones || []).map(z => '<option>' + K.esc(z) + '</option>').join('') + '</select></div>';
+      }
+    }
+    html += '<div class="field"><label>Order notes</label><input id="fNotes" placeholder="Anything else for the kitchen…"></div>';
+    box.innerHTML = html;
+  }
+
+  function validPhone(p) { return /^[6-9]\d{9}$/.test(String(p || '').replace(/\D/g, '').slice(-10)); }
+
+  $('#btnToPayment').onclick = () => {
+    if (mode === 'dinein' && !table) {
+      table = parseInt(($('#fTable') || {}).value) || 1;
+    }
+    if (mode !== 'dinein') {
+      const nm = (($('#fName') || {}).value || '').trim();
+      const ph = (($('#fPhone') || {}).value || '').trim();
+      if (!nm) return K.toast('Name is required', 'err');
+      if (!ph) return K.toast('Phone number is required — we may call to confirm your order', 'err');
+      if (!validPhone(ph)) return K.toast('Please enter a valid 10-digit mobile number (starting 6-9)', 'err');
+      if (mode === 'delivery' && !((($('#fAddr') || {}).value || '').trim())) return K.toast('Delivery address is required', 'err');
+    }
+    renderPayDetail(); showStep('#stepPayment');
+  };
+
+  $('#payOpts').onclick = e => {
+    const o = e.target.closest('[data-pay]'); if (!o) return;
+    const m = o.dataset.pay;
+    if (m === 'upi' && !settings.acceptUPI) return K.toast('UPI currently unavailable', 'err');
+    if (m === 'cash' && !settings.acceptCash) return K.toast('Cash currently unavailable', 'err');
+    if (m === 'card' && !settings.acceptCard) return K.toast('Card currently unavailable', 'err');
+    payMethod = m; renderPayDetail();
+  };
+
+  function renderPayDetail() {
+    $$('#payOpts .opt').forEach(x => x.classList.toggle('sel', x.dataset.pay === payMethod));
+    const box = $('#payDetail');
+    const phone = settings.phone || '';
+    if (payMethod === 'upi') {
+      box.innerHTML = '<div class="qr-box">' +
+        (settings.upiQRImage
+          ? '<img src="' + K.esc(settings.upiQRImage) + '" alt="UPI QR">'
+          : '<div style="padding:26px 12px;border:2px dashed var(--line);border-radius:12px;color:var(--muted)">QR code shown at counter — or pay to the UPI ID below</div>') +
+        '<div class="upi-id">' + K.esc(settings.upiId) + '</div>' +
+        '<div style="font-size:12.5px;color:var(--muted)">' + K.esc(settings.upiName) + '</div></div>';
+      $('#payNote').innerHTML = '<b>After paying, your order needs restaurant confirmation.</b> ' + K.esc(settings.checkoutInstructions || settings.paymentInstructions || '') +
+        (phone ? ' Contact us at <b>' + K.esc(phone) + '</b>.' : '');
+    } else if (payMethod === 'cash') {
+      box.innerHTML = '<div class="confirm-note">Pay in cash at the counter (dine-in / pickup) or to your driver (delivery). ' +
+        (phone ? 'Questions? Call us at <b>' + K.esc(phone) + '</b>.' : '') + '</div>';
+      $('#payNote').innerHTML = '<b>Pay at the Counter — restaurant confirmation required.</b> ' +
+        K.esc(settings.checkoutInstructions || 'Your order will not enter the kitchen until our staff confirms it.') +
+        (phone ? ' Call <b>' + K.esc(phone) + '</b> to speed things up.' : '');
+    } else {
+      box.innerHTML = '<div class="confirm-note">Tap or insert your card at the counter terminal, then tell our staff your order number.' +
+        (phone ? ' Call us at <b>' + K.esc(phone) + '</b> if you need help.' : '') + '</div>';
+      $('#payNote').innerHTML = '<b>Card payment is verified at the counter</b> before the kitchen receives your order.';
+    }
+  }
+
+  // ---- place order ----
+  $('#btnPlace').onclick = async () => {
+    const btn = $('#btnPlace');
+    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Sending…';
+    try {
+      const payload = {
+        type: mode,
+        table: mode === 'dinein' ? table : null,
+        paymentMethod: payMethod,
+        idempotencyKey: 'web_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+        items: cart.map(c => ({ menuId: c.menuId, qty: c.qty, portion: c.portion, spice: c.spice, butter: c.butter, note: c.note })),
+        customer: {
+          name: (($('#fName') || {}).value || '').trim(),
+          phone: (($('#fPhone') || {}).value || '').trim(),
+          address: mode === 'delivery' ? (($('#fAddr') || {}).value || '').trim() : '',
+          instructions: (($('#fNotes') || {}).value || '').trim()
+        },
+        notes: (($('#fNotes') || {}).value || '').trim()
+      };
+      const res = await K.api('/api/orders', { method: 'POST', body: payload });
+      lastOrder = res.order;
+      cart = []; saveCart();
+      renderSuccess(res.order, res);
+      showStep('#stepSuccess');
+      startTracking(res.order);
+    } catch (err) {
+      K.toast(err.message, 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Place Order';
+    }
+  };
+
+  function renderSuccess(o, res) {
+    const needsConf = o.confirmationStatus === 'pending_confirmation';
+    const phone = settings.phone || '';
+    $('#successBox').innerHTML =
+      '<div class="tick">✓</div>' +
+      '<h2>Order ' + K.esc(o.id) + ' placed</h2>' +
+      '<div style="color:var(--muted)">' + K.money(o.total) + ' · ' + (K.TYPE_LABEL[o.type] || o.type) +
+      (o.table ? ' · Table ' + o.table : '') + '</div>' +
+      '<div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">' +
+      '<span class="badge ' + (o.paymentStatus === 'paid' ? 'badge-green' : 'badge-amber') + '">' +
+      K.esc(K.PAY_LABEL[o.paymentStatus] || o.paymentStatus) + '</span>' +
+      '<span class="badge ' + (needsConf ? 'badge-amber' : 'badge-green') + '">' +
+      (needsConf ? 'Awaiting restaurant confirmation' : 'Confirmed') + '</span></div>' +
+      (needsConf
+        ? '<div class="confirm-note" style="text-align:left;margin-top:16px">' +
+          K.esc(res && res.checkoutInstructions ? res.checkoutInstructions : 'Your order requires confirmation from our restaurant before preparation begins.') +
+          (phone ? '<br><br>To avoid delays, please call us at <b>' + K.esc(phone) + '</b> or wait for our call.' : '') + '</div>'
+        : (o.paymentStatus === 'awaiting_verification'
+          ? '<div class="confirm-note" style="text-align:left;margin-top:16px"><b>Waiting for payment confirmation.</b> Our staff will verify your ' +
+            K.esc(o.paymentMethod.toUpperCase()) + ' payment and release your order to the kitchen.</div>'
+          : '<div class="confirm-note" style="text-align:left;margin-top:16px;background:var(--green-bg);border-color:#9CCFB6;color:#14523A">Confirmed — the kitchen is on it.</div>')) +
+      '<div class="track-steps" id="liveTrack"></div>' +
+      '<div id="liveStatus" style="font-size:13px;color:var(--muted)"></div>' +
+      '<a class="btn btn-outline btn-block" style="margin-top:14px" href="/track?id=' + encodeURIComponent(o.id) + '&token=" id="trackLink">Open full tracker</a>' +
+      '<button class="btn btn-outline btn-block btn-sm" style="margin-top:8px" onclick="location.reload()">Order more</button>';
+    K.api('/api/orders/' + o.id).then(full => {
+      const a = $('#trackLink');
+      if (a) a.href = '/track?id=' + encodeURIComponent(full.id) + '&token=' + encodeURIComponent(full.trackToken);
+    }).catch(() => {});
+    renderTrack(o);
+  }
+
+  function renderTrack(o) {
+    const el = $('#liveTrack'); if (!el) return;
+    let stage = 0;
+    const needsConf = o.confirmationStatus === 'pending_confirmation';
+    if (!needsConf && o.paymentStatus === 'paid') stage = 1;
+    if (['received','in_progress'].includes(o.kitchenStatus)) stage = 2;
+    if (o.kitchenStatus === 'completed') stage = 3;
+    const steps = [
+      ['✓', 'Order placed'], ['☎', 'Confirmed'], ['🔥', 'Cooking'], ['🍽', 'Ready']
+    ];
+    el.innerHTML = steps.map((s, i) =>
+      '<div class="tstep ' + (i < stage ? 'done' : (i === stage ? 'now' : '')) + '"><div class="bub">' + s[0] + '</div><small>' + s[1] + '</small></div>'
+    ).join('');
+    const st = $('#liveStatus');
+    if (st) {
+      let txt = needsConf ? 'Waiting for restaurant confirmation' : 'Kitchen: ' + (K.KITCHEN_LABEL[o.kitchenStatus] || o.kitchenStatus);
+      if (o.driverName) txt += ' · Rider: ' + o.driverName;
+      st.textContent = txt + ' · updated ' + K.time(o.updatedAt || Date.now());
+    }
+  }
+
+  function startTracking(o) {
+    if (trackTimer) clearInterval(trackTimer);
+    trackTimer = setInterval(async () => {
+      try {
+        const full = await K.api('/api/orders/' + o.id);
+        if ($('#stepSuccess').classList.contains('on')) renderTrack(full);
+      } catch (e) {}
+    }, 5000);
+  }
+  function onLiveUpdate(o) {
+    if (lastOrder && o.id === lastOrder.id && $('#stepSuccess').classList.contains('on')) {
+      renderTrack(o);
+      if (o.paymentStatus === 'paid' && !lastOrder._paidShown) {
+        lastOrder._paidShown = true;
+        K.sound(); K.toast('Payment confirmed for ' + o.id + ' — kitchen has started!', 'ok');
+      }
+    }
+  }
+
+  // active mode button styling on load
+  $$('.mode-btn').forEach(b => {
+    if (b.classList.contains('active')) {
+      b.style.borderColor = 'var(--gold-500)';
+      b.style.background = 'linear-gradient(180deg,#FFFDF4,var(--gold-300))';
+    }
+  });
+
+  init().catch(e => { K.toast('Failed to load menu: ' + e.message, 'err'); console.error(e); });
+})();
+</script>
+</body>
+</html>

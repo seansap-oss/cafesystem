@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 80px; }
+  .job { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-sm); margin-bottom: 14px; overflow: hidden; }
+  .job-head { padding: 12px 16px; background: linear-gradient(135deg, var(--maroon-800), var(--maroon-600)); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+  .job-head .id { font-weight: 800; font-size: 16px; }
+  .job-head .amt { font-family: var(--font); color: var(--gold-300); font-size: 19px; }
+  .job-body { padding: 14px 16px; }
+  .kv { display: flex; gap: 10px; padding: 5px 0; font-size: 13.5px; }
+  .kv .k { color: var(--muted); min-width: 80px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding-top: 2px; }
+  .kv .v { flex: 1; font-weight: 600; }
+  .job-foot { padding: 0 16px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-btn { display: inline-flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">KARIM'S<small>DELIVERY</small></div>
+  <div class="spacer"></div>
+  <div class="who"><b id="whoami">…</b> <button class="btn btn-sm btn-outline" id="btnLogout" style="color:var(--gold-300);border-color:var(--gold-300)">Logout</button></div>
+</header>
+
+<div class="wrap">
+  <div id="loginView" class="login-wrap" style="min-height:60vh;background:none;padding:0">
+    <div class="panel" style="width:100%;max-width:400px">
+      <h3>Driver sign-in</h3>
+      <div class="field"><label>Driver</label><select id="drvSel"></select></div>
+      <div class="field"><label>PIN</label><input id="drvPin" type="password" inputmode="numeric" placeholder="4-digit PIN"></div>
+      <button class="btn btn-gold btn-block" id="btnLogin">Start shift</button>
+      <div class="hint" style="margin-top:10px;color:var(--muted);font-size:12.5px">Demo PINs: 1111 (Rohan), 2222 (James)</div>
+    </div>
+  </div>
+
+  <div id="appView" style="display:none">
+    <div class="kpi gold" style="margin-bottom:14px">
+      <div class="lbl">Active run</div>
+      <div class="val" id="activeCount">0</div>
+    </div>
+    <h2 style="margin:18px 0 10px">My deliveries</h2>
+    <div id="myJobs"></div>
+    <h2 style="margin:24px 0 10px">Available runs</h2>
+    <div id="poolJobs"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  let myOrders = [], pool = [];
+
+  async function boot() {
+    // restore session
+    if (K.token && K.user && K.user.role === 'driver') {
+      return enterApp();
+    }
+    // load public driver list
+    const drvs = await K.api('/api/drivers/list-public');
+    $('#drvSel').innerHTML = drvs.map(d => '<option value="' + d.id + '">' + K.esc(d.name) + '</option>').join('');
+    $('#loginView').style.display = 'flex';
+  }
+
+  $('#btnLogin').onclick = async () => {
+    try {
+      const data = await K.api('/api/auth/driver-login', { method: 'POST', body: { driverId: $('#drvSel').value, pin: $('#drvPin').value } });
+      K.setAuth(data.token, { id: data.driver.id, name: data.driver.name, role: 'driver' });
+      enterApp();
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+
+  function enterApp() {
+    $('#loginView').style.display = 'none';
+    $('#appView').style.display = '';
+    $('#whoami').textContent = K.user.name;
+    K.connect(['driver_' + K.user.id, 'all']);
+    K.socket.on('delivery:assigned', o => { K.sound(); K.toast('New delivery assigned: ' + o.id, 'ok'); load(); });
+    K.socket.on('order:updated', () => load());
+    load();
+    setInterval(load, 15000);
+  }
+
+  $('#btnLogout').onclick = async () => { await K.logout(); location.reload(); };
+
+  async function load() {
+    try {
+      myOrders = await K.api('/api/orders?limit=50');
+      myOrders = myOrders.filter(o => o.type === 'delivery' && o.delivery && o.delivery.driverId === K.user.id
+        && !['delivered','cancelled'].includes(o.fulfillmentStatus));
+      pool = await K.api('/api/deliveries/available');
+      $('#activeCount').textContent = myOrders.length;
+      renderMy(); renderPool();
+    } catch (e) { console.error(e); }
+  }
+
+  function jobCard(o, mine) {
+    let foot = '';
+    if (mine) {
+      if (o.fulfillmentStatus === 'assigned')
+        foot = '<button class="btn btn-green" data-st="picked_up" data-id="' + o.id + '">✓ Picked up from kitchen</button>';
+      else if (o.fulfillmentStatus === 'picked_up')
+        foot = '<button class="btn btn-amber" data-st="out_for_delivery" data-id="' + o.id + '">🛵 Out for delivery</button>';
+      else if (o.fulfillmentStatus === 'out_for_delivery')
+        foot = '<button class="btn btn-green" data-st="delivered" data-id="' + o.id + '">📍 Mark delivered</button>';
+      foot += ' <button class="btn btn-outline btn-sm" data-st="failed" data-id="' + o.id + '">Failed / return</button>';
+    } else {
+      foot = '<div style="font-size:12.5px;color:var(--muted)">Waiting for manager to assign you, or take via manager.</div>';
+    }
+    const payBadge = o.payment.status === 'paid' ? '<span class="badge badge-green">PAID</span>' : '<span class="badge badge-amber">COLLECT ₹' + o.total + '</span>';
+    return '<div class="job">' +
+      '<div class="job-head"><div><div class="id">' + K.esc(o.id) + '</div><div style="font-size:11.5px;opacity:.9">' + K.ago(o.createdAt) + ' ago · ' + o.items.reduce((s, i) => s + i.qty, 0) + ' items</div></div>' +
+      '<div class="amt">' + K.money(o.total) + '</div></div>' +
+      '<div class="job-body">' +
+      '<div style="margin-bottom:8px">' + payBadge + '</div>' +
+      '<div class="kv"><div class="k">Customer</div><div class="v">' + K.esc(o.customer.name) + ' · ' + K.esc(o.customer.phone) + '</div></div>' +
+      '<div class="kv"><div class="k">Address</div><div class="v">' + K.esc(o.customer.address) + '</div></div>' +
+      (o.customer.instructions ? '<div class="kv"><div class="k">Notes</div><div class="v">' + K.esc(o.customer.instructions) + '</div></div>' : '') +
+      '<div class="kv"><div class="k">Kitchen</div><div class="v"><span class="badge ' + (o.kitchenStatus === 'completed' ? 'badge-green' : 'badge-amber') + '">' + K.esc(K.KITCHEN_LABEL[o.kitchenStatus]) + '</span></div></div>' +
+      '<div class="kv"><div class="k">Status</div><div class="v">' + K.esc(K.FUL_LABEL[o.fulfillmentStatus] || o.fulfillmentStatus) + '</div></div>' +
+      '</div>' +
+      '<div class="job-foot">' + foot +
+      '<a class="btn btn-outline btn-sm nav-btn" target="_blank" href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(o.customer.address) + '">🗺 Navigate</a>' +
+      '<a class="btn btn-outline btn-sm nav-btn" href="tel:' + K.esc(o.customer.phone) + '">📞 Call</a>' +
+      '</div></div>';
+  }
+
+  function renderMy() {
+    $('#myJobs').innerHTML = myOrders.length ? myOrders.map(o => jobCard(o, true)).join('')
+      : '<div class="empty panel"><div class="big">No active runs</div><div>You\'ll see deliveries here when assigned</div></div>';
+  }
+  function renderPool() {
+    $('#poolJobs').innerHTML = pool.length ? pool.map(o => jobCard(o, false)).join('')
+      : '<div class="empty panel"><div class="big">Pool empty</div><div>All deliveries are assigned</div></div>';
+  }
+
+  document.body.addEventListener('click', async e => {
+    const b = e.target.closest('[data-st]'); if (!b) return;
+    try {
+      await K.api('/api/orders/' + b.dataset.id + '/driver-status', { method: 'POST', body: { status: b.dataset.st } });
+      K.toast(b.dataset.id + ' → ' + b.dataset.st.replace('_', ' '), 'ok');
+      load();
+    } catch (err) { K.toast(err.message, 'err'); }
+  });
+
+  boot().catch(e => K.toast(e.message, 'err'));
+})();
+</script>
+</body>
+</html>

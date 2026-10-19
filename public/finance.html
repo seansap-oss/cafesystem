@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's — Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 22px 20px 60px; }
+  .sec { margin-top: 26px; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .sec-head h2 { font-size: 23px; }
+  .period-bar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .period-bar button { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 7px 14px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .period-bar button.active { background: var(--maroon-700); color: #fff; border-color: var(--maroon-700); }
+  .grid-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; align-items: start; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; align-items: start; }
+  .bar-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+  .bar-row .bar { height: 20px; background: linear-gradient(90deg, var(--maroon-700), var(--gold-500)); border-radius: 5px; min-width: 6px; }
+  .bar-row .nm { flex: 1; font-weight: 700; font-size: 13px; }
+  .bar-row .qty { font-family: var(--font); color: var(--maroon-700); font-size: 15px; min-width: 36px; text-align: right; }
+  .hour-chart { display: flex; align-items: flex-end; gap: 3px; height: 120px; padding-top: 10px; }
+  .hour-chart .h { flex: 1; background: var(--maroon-600); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+  .hour-chart .h:hover { background: var(--gold-500); }
+  .hour-labels { display: flex; gap: 3px; font-size: 9px; color: var(--muted); margin-top: 4px; }
+  .hour-labels span { flex: 1; text-align: center; }
+  .export-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  table.grid td .sub { font-size: 11px; color: var(--muted); }
+  .variance-pos { color: var(--green); font-weight: 800; }
+  .variance-neg { color: var(--red); font-weight: 800; }
+  @media (max-width: 960px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">KARIM'S<small>FINANCE</small></div>
+  <a class="nav-pill" href="/pos">POS</a>
+  <a class="nav-pill" href="/kitchen">Kitchen</a>
+  <a class="nav-pill" href="/manager">Manager</a>
+  <a class="nav-pill active" href="/finance">Finance</a>
+  <a class="nav-pill" href="/admin">Admin</a>
+  <div class="spacer"></div>
+  <div class="who"><b id="whoami">…</b> <button class="btn btn-sm btn-outline" id="btnLogout" style="color:var(--gold-300);border-color:var(--gold-300)">Logout</button></div>
+</header>
+
+<div class="wrap">
+  <div class="sec-head">
+    <h2>Finance dashboard</h2>
+    <div class="period-bar" id="periodBar">
+      <button data-p="today" class="active">Today</button>
+      <button data-p="yesterday">Yesterday</button>
+      <button data-p="week">This week</button>
+      <button data-p="prevweek">Prev week</button>
+      <button data-p="month">This month</button>
+      <button data-p="prevmonth">Prev month</button>
+      <button data-p="custom">Custom</button>
+    </div>
+  </div>
+  <div id="customRange" style="display:none;margin-bottom:12px" class="row">
+    <div class="field"><label>From</label><input type="date" id="dFrom"></div>
+    <div class="field"><label>To</label><input type="date" id="dTo"></div>
+    <div class="field" style="align-self:end"><button class="btn" id="btnApplyRange">Apply</button></div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="sec grid-2">
+    <div class="panel">
+      <div class="sec-head"><h2>Item-wise sales</h2><span class="badge badge-grey" id="itemCount"></span></div>
+      <table class="grid" id="itemsTable">
+        <thead><tr><th>#</th><th>Item</th><th>Portion</th><th style="text-align:right">Qty</th><th style="text-align:right">Net sales</th><th style="text-align:right">%</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div>
+      <div class="panel">
+        <h3>Bestsellers</h3>
+        <div id="best" style="margin-top:8px"></div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Hourly sales</h3>
+        <div class="hour-chart" id="hourChart"></div>
+        <div class="hour-labels" id="hourLabels"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec grid-2">
+    <div class="panel">
+      <h2>Payment reconciliation</h2>
+      <table class="grid" id="reconTable" style="margin-top:8px">
+        <thead><tr><th>Method</th><th style="text-align:right">Received</th><th style="text-align:right">Pending</th><th style="text-align:right">Refunded</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="divider"></div>
+      <h3>Cash drawer</h3>
+      <div id="cashBox" style="margin-top:6px;font-size:13.5px"></div>
+      <div class="export-row" style="margin-top:12px">
+        <button class="btn btn-sm" id="btnDeposit">+ Deposit</button>
+        <button class="btn btn-sm btn-amber" id="btnWithdraw">− Withdrawal</button>
+        <button class="btn btn-sm btn-red" id="btnExpense">Expense</button>
+        <button class="btn btn-sm btn-green" id="btnCloseDay">Close day</button>
+        <button class="btn btn-sm btn-outline" id="btnReopenDay">Reopen last</button>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <h3>Order channels</h3>
+        <table class="grid" id="chanTable" style="margin-top:6px">
+          <thead><tr><th>Channel</th><th style="text-align:right">Orders</th><th style="text-align:right">Sales</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Operational</h3>
+        <div id="opsBox" style="margin-top:6px;font-size:13.5px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec panel">
+    <div class="sec-head"><h2>Exports &amp; delivery</h2></div>
+    <div class="export-row">
+      <a class="btn" id="lnkPdf" href="#">Download PDF</a>
+      <a class="btn btn-outline" id="lnkMd" href="#">Download Markdown</a>
+      <a class="btn btn-outline" id="lnkCsvItems" href="#">CSV — items</a>
+      <a class="btn btn-outline" id="lnkCsvOrders" href="#">CSV — orders</a>
+      <button class="btn btn-gold" id="btnEmail">Email report</button>
+      <button class="btn btn-green" id="btnWa">Share on WhatsApp</button>
+    </div>
+    <div id="shareStatus" style="margin-top:10px;font-size:13px;color:var(--muted)"></div>
+    <div class="divider"></div>
+    <h3>Recent refunds</h3>
+    <table class="grid" id="refundsTable">
+      <thead><tr><th>Order</th><th>Method</th><th style="text-align:right">Amount</th><th>Reason</th><th>By</th><th>When</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="divider"></div>
+    <h3>Recent orders in period</h3>
+    <table class="grid" id="ordersTable">
+      <thead><tr><th>Order</th><th>Type</th><th style="text-align:right">Total</th><th style="text-align:right">Paid</th><th>Method</th><th>Payment</th><th>Kitchen</th><th>When</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal" style="display:none">
+  <div class="modal">
+    <button class="close" onclick="document.getElementById('modal').style.display='none'">×</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  if (!K.requireRole(['admin','manager','cashier'], '/pos')) return;
+  if (K.user.role === 'cashier' && location.pathname !== '/finance') { /* cashier allowed read-only */ }
+  $('#whoami').textContent = K.user.name;
+  $('#btnLogout').onclick = async () => { await K.logout(); location.href = '/pos'; };
+
+  let period = 'today', customFrom = '', customTo = '', data = null;
+
+  function qs() {
+    let u = '/api/finance/report?period=' + encodeURIComponent(period);
+    if (period === 'custom' && customFrom) u += '&from=' + customFrom + '&to=' + customTo;
+    return u;
+  }
+
+  async function load() {
+    data = await K.api(qs());
+    render();
+  }
+
+  function render() {
+    const s = data.summary, M = K.money;
+    const kpis = [
+      ['Net sales', M(s.netSales), 'gold'],
+      ['Payments received', M(s.paymentsReceived), ''],
+      ['Outstanding', M(s.outstanding), ''],
+      ['Orders', s.orderCount, ''],
+      ['Avg order', M(s.aov), ''],
+      ['Discounts', M(s.discounts), ''],
+      ['Refunds', M(s.refunds), ''],
+      ['Awaiting UPI', M(s.awaitingUpi), ''],
+      ['Taxes', M(s.taxes), '']
+    ];
+    if (s.growthPct != null) kpis.push(['Growth vs prev', (s.growthPct >= 0 ? '+' : '') + s.growthPct + '%', '']);
+    $('#kpis').innerHTML = kpis.map(k => '<div class="kpi ' + k[2] + '"><div class="lbl">' + k[0] + '</div><div class="val">' + k[1] + '</div></div>').join('');
+
+    $('#itemCount').textContent = data.items.length + ' items';
+    $('#itemsTable tbody').innerHTML = data.byQty.slice(0, 50).map((i, n) =>
+      '<tr><td>' + (n + 1) + '</td><td><b>' + K.esc(i.name) + '</b></td><td>' + i.portion + '</td><td style="text-align:right">' + i.qty + '</td><td style="text-align:right">' + M(i.net) + '</td><td style="text-align:right">' + i.pct + '%</td></tr>').join('')
+      || '<tr><td colspan="6" class="empty">No sales in this period</td></tr>';
+
+    const maxQ = data.byQty.length ? data.byQty[0].qty : 1;
+    $('#best').innerHTML = data.byQty.slice(0, 8).map(i =>
+      '<div class="bar-row"><span class="nm">' + K.esc(i.name) + ' <span style="color:var(--muted);font-weight:400">(' + i.portion + ')</span></span><span class="qty">×' + i.qty + '</span><span class="bar" style="width:' + Math.max(8, i.qty / maxQ * 130) + 'px"></span></div>').join('')
+      || '<div class="empty" style="padding:18px">No data</div>';
+
+    const maxH = Math.max(1, ...data.hourly.map(h => h.sales));
+    $('#hourChart').innerHTML = data.hourly.map(h =>
+      '<div class="h" title="' + String(h.hour).padStart(2, '0') + ':00 — ' + M(h.sales) + ' (' + h.orders + ' orders)" style="height:' + (h.sales / maxH * 100) + '%"></div>').join('');
+    $('#hourLabels').innerHTML = data.hourly.map((h, i) => '<span>' + (i % 6 === 0 ? i : '') + '</span>').join('');
+
+    const r = data.reconciliation.byMethod;
+    $('#reconTable tbody').innerHTML = ['cash','upi','card'].map(k =>
+      '<tr><td><b>' + k.toUpperCase() + '</b></td><td style="text-align:right">' + M(r[k].received) + '</td><td style="text-align:right">' + M(r[k].pending) + '</td><td style="text-align:right">' + M(r[k].refunded) + '</td></tr>').join('')
+      + '<tr style="font-weight:800"><td>TOTAL</td><td style="text-align:right">' + M(data.reconciliation.totalReceived) + '</td><td style="text-align:right">' + M(data.reconciliation.awaitingVerification) + '</td><td style="text-align:right">' + M(data.reconciliation.refunds) + '</td></tr>';
+
+    const c = data.cash;
+    $('#cashBox').innerHTML =
+      'Opening float: <b>' + M(c.opening) + '</b><br>' +
+      'Cash received: <b>' + M(c.in) + '</b><br>' +
+      'Withdrawals: <b>' + M(c.withdrawals) + '</b> · Expenses: <b>' + M(c.expenses) + '</b> · Deposits: <b>' + M(c.deposits) + '</b><br>' +
+      'Expected cash: <b style="color:var(--maroon-700)">' + M(c.expected) + '</b><br>' +
+      (c.counted != null
+        ? 'Counted: <b>' + M(c.counted) + '</b> · Variance: <span class="' + (c.variance < 0 ? 'variance-neg' : 'variance-pos') + '">' + M(c.variance) + '</span> · closed by ' + K.esc(c.closedBy || '')
+        : '<span style="color:var(--amber)">Day not closed yet</span>');
+
+    $('#chanTable tbody').innerHTML = Object.entries(data.channels).map(([k, v]) =>
+      '<tr><td>' + k + '</td><td style="text-align:right">' + v.orders + '</td><td style="text-align:right">' + M(v.sales) + '</td></tr>').join('');
+
+    const o = data.operational;
+    $('#opsBox').innerHTML =
+      'Awaiting confirmation: <b>' + o.awaitingConfirm + '</b><br>' +
+      'In kitchen: <b>' + o.awaitingKitchen + '</b><br>' +
+      'Completed: <b>' + o.completedOrders + '</b> · Deliveries done: <b>' + o.deliveryDone + '</b><br>' +
+      'Cancelled: <b>' + o.cancelledOrders + '</b> · Refunds: <b>' + o.refundCount + '</b> (' + M(o.refundTotal) + ')<br>' +
+      'Cancelled financial impact: <b>' + M(s.cancelledImpact) + '</b>';
+
+    $('#refundsTable tbody').innerHTML = data.refundsList.slice(0, 10).map(rf =>
+      '<tr><td class="mono">' + rf.orderId + '</td><td>' + (rf.method || '') + '</td><td style="text-align:right">' + M(rf.amount) + '</td><td>' + K.esc(rf.reason || '') + '</td><td>' + K.esc(rf.by || '') + '</td><td>' + K.time(rf.at) + '</td></tr>').join('')
+      || '<tr><td colspan="6" class="empty" style="padding:14px">No refunds</td></tr>';
+
+    $('#ordersTable tbody').innerHTML = data.recentOrders.map(o2 =>
+      '<tr><td class="mono">' + o2.id + '</td><td>' + o2.type + '</td><td style="text-align:right">' + M(o2.total) + '</td><td style="text-align:right">' + M(o2.paid) + '</td><td>' + o2.method + '</td><td>' + K.PAY_LABEL[o2.status] + '</td><td>' + K.KITCHEN_LABEL[o2.kitchen] + '</td><td>' + K.time(o2.at) + '</td></tr>').join('')
+      || '<tr><td colspan="8" class="empty" style="padding:14px">No orders</td></tr>';
+
+    const suffix = '&auth=' + encodeURIComponent(K.token);
+    $('#lnkPdf').href = '/api/finance/report.pdf?period=' + period + (period === 'custom' ? '&from=' + customFrom + '&to=' + customTo : '') + '&_=' + Date.now();
+    $('#lnkMd').href = '/api/finance/report.md?period=' + period + (period === 'custom' ? '&from=' + customFrom + '&to=' + customTo : '');
+    $('#lnkCsvItems').href = '/api/finance/export.csv?kind=items&period=' + period;
+    $('#lnkCsvOrders').href = '/api/finance/export.csv?kind=orders&period=' + period;
+  }
+
+  // PDF/MD/CSV links go through fetch+auth then blob download
+  async function authedDownload(url, filename) {
+    try {
+      const res = await fetch(url, { headers: { 'x-auth': K.token } });
+      if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'HTTP ' + res.status); }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch (e) { K.toast(e.message, 'err'); }
+  }
+  ['lnkPdf','lnkMd','lnkCsvItems','lnkCsvOrders'].forEach(id => {
+    $('#' + id).addEventListener('click', function (ev) {
+      ev.preventDefault();
+      const names = { lnkPdf: 'karims-finance.pdf', lnkMd: 'karims-finance.md', lnkCsvItems: 'karims-items.csv', lnkCsvOrders: 'karims-orders.csv' };
+      authedDownload(this.getAttribute('href'), names[id]);
+    });
+  });
+
+  $$('#periodBar button').forEach(b => b.onclick = () => {
+    $$('#periodBar button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    period = b.dataset.p;
+    $('#customRange').style.display = period === 'custom' ? 'flex' : 'none';
+    if (period !== 'custom') load();
+  });
+  $('#btnApplyRange').onclick = () => { customFrom = $('#dFrom').value; customTo = $('#dTo').value; load(); };
+
+  function openModal(title, bodyHtml) {
+    $('#modalTitle').textContent = title;
+    $('#modalBody').innerHTML = bodyHtml;
+    $('#modal').style.display = 'flex';
+  }
+
+  $('#btnDeposit').onclick = () => promptMovement('deposit');
+  $('#btnWithdraw').onclick = () => promptMovement('withdrawal');
+  $('#btnExpense').onclick = () => promptMovement('expense');
+  function promptMovement(type) {
+    openModal(type.charAt(0).toUpperCase() + type.slice(1),
+      '<div class="field"><label>Amount (₹)</label><input type="number" id="mvAmt" min="1" step="1"></div>' +
+      '<div class="field"><label>Note</label><input type="text" id="mvNote" maxlength="120"></div>' +
+      '<button class="btn btn-block" id="mvSave">Save</button>');
+    $('#mvSave').onclick = async () => {
+      try {
+        await K.api('/api/finance/cash-movement', { method: 'POST', body: { type, amount: Number($('#mvAmt').value), note: $('#mvNote').value } });
+        $('#modal').style.display = 'none';
+        K.toast(type + ' recorded', 'ok');
+        load();
+      } catch (e) { K.toast(e.message, 'err'); }
+    };
+  }
+
+  $('#btnCloseDay').onclick = () => {
+    openModal('Close today — counted cash',
+      '<p style="font-size:13.5px;margin-bottom:10px">Expected cash: <b>' + K.money(data.cash.expected) + '</b>. Enter the counted drawer amount.</p>' +
+      '<div class="field"><label>Counted cash (₹)</label><input type="number" id="cdAmt" min="0" step="1"></div>' +
+      '<div class="field"><label>Note (optional)</label><input type="text" id="cdNote" maxlength="200"></div>' +
+      '<button class="btn btn-green btn-block" id="cdSave">Close day</button>');
+    $('#cdSave').onclick = async () => {
+      try {
+        const r = await K.api('/api/finance/day-close', { method: 'POST', body: { countedCash: Number($('#cdAmt').value), note: $('#cdNote').value } });
+        $('#modal').style.display = 'none';
+        K.toast('Day closed. Variance ' + K.money(r.variance), r.variance === 0 ? 'ok' : 'err');
+        load();
+      } catch (e) { K.toast(e.message, 'err'); }
+    };
+  };
+  $('#btnReopenDay').onclick = async () => {
+    try {
+      const closes = await K.api('/api/finance/day-closes');
+      if (!closes.length) return K.toast('No day closes yet', 'err');
+      if (!confirm('Reopen day ' + closes[0].businessDate + '?')) return;
+      await K.api('/api/finance/day-reopen', { method: 'POST', body: { businessDate: closes[0].businessDate } });
+      K.toast('Reopened', 'ok');
+      load();
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+
+  $('#btnEmail').onclick = async () => {
+    openModal('Email report',
+      '<div class="field"><label>To (comma-separated, blank = settings recipients)</label><input type="text" id="emTo"></div>' +
+      '<p style="font-size:12.5px;color:var(--muted)">The server sends real email via the SMTP settings in Admin → Finance. If SMTP is not configured you will see an honest error.</p>' +
+      '<button class="btn btn-block" id="emSend">Send</button>');
+    $('#emSend').onclick = async () => {
+      try {
+        const r = await K.api('/api/finance/share', { method: 'POST', body: { channel: 'email', period, from: customFrom, to: customTo, to2: undefined, to: $('#emTo').value } });
+        $('#shareStatus').textContent = 'Email: ' + r.status + ' — ' + r.detail;
+        $('#modal').style.display = 'none';
+        K.toast(r.ok ? 'Email sent' : r.status, r.ok ? 'ok' : 'err');
+      } catch (e) { $('#shareStatus').textContent = 'Email failed: ' + e.message; K.toast(e.message, 'err'); }
+    };
+  };
+  $('#btnWa').onclick = async () => {
+    openModal('Share on WhatsApp',
+      '<div class="field"><label>WhatsApp number (10-digit)</label><input type="text" id="waNum" maxlength="12"></div>' +
+      '<p style="font-size:12.5px;color:var(--muted)">Opens WhatsApp with a pre-filled summary. Attach the downloaded PDF manually — browsers cannot attach files automatically.</p>' +
+      '<button class="btn btn-green btn-block" id="waGo">Open WhatsApp</button>');
+    $('#waGo').onclick = async () => {
+      try {
+        const r = await K.api('/api/finance/share', { method: 'POST', body: { channel: 'whatsapp', period, number: $('#waNum').value } });
+        $('#shareStatus').textContent = 'WhatsApp: ' + r.status + ' — ' + r.detail;
+        $('#modal').style.display = 'none';
+        if (r.url) window.open(r.url, '_blank');
+      } catch (e) { K.toast(e.message, 'err'); }
+    };
+  };
+
+  load().catch(e => K.toast(e.message, 'err'));
+  const sock = K.connect([]);
+  sock.on('order:updated', () => load().catch(() => {}));
+  sock.on('order:new', () => load().catch(() => {}));
+  setInterval(load, 15000);
+})();
+</script>
+</body>
+</html>

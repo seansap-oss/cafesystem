@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karim's — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Hanken+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/karims.css">
+<style>
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 22px 20px 60px; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .tabs button { border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 9px 18px; font-weight: 700; font-size: 13px; color: var(--maroon-800); }
+  .tabs button.active { background: var(--maroon-700); color: #fff; border-color: var(--maroon-700); }
+  .pane { display: none; }
+  .pane.on { display: block; }
+  .dish-row { display: grid; grid-template-columns: 74px 1fr auto; gap: 12px; align-items: center; padding: 10px; border-bottom: 1px solid var(--line); }
+  .dish-row img { width: 74px; height: 56px; object-fit: cover; border-radius: 8px; background: var(--cream-2); }
+  .dish-row .nm { font-weight: 800; font-size: 14px; color: var(--maroon-800); }
+  .dish-row .meta { font-size: 11.5px; color: var(--muted); }
+  .dish-row .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .upload-drop {
+    border: 2px dashed var(--gold-500); border-radius: var(--radius); padding: 30px; text-align: center;
+    background: #FFFDF4; color: var(--maroon-800); cursor: pointer; transition: .15s;
+  }
+  .upload-drop:hover, .upload-drop.drag { background: var(--gold-300); }
+  .upload-drop .big { font-family: var(--font); font-size: 20px; }
+  .menu-list { max-height: 65vh; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+  .searchbar { width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; }
+  .color-row { display: flex; gap: 10px; align-items: center; }
+  .color-row input[type=color] { width: 46px; height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 2px; background: #fff; }
+  .qr-preview { max-width: 180px; border-radius: 10px; border: 1px solid var(--line); margin-top: 8px; }
+  .audit-line { font-size: 12.5px; padding: 7px 0; border-bottom: 1px dashed var(--line); display: flex; gap: 10px; }
+  .audit-line .t { color: var(--muted); min-width: 70px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">KARIM'S<small>ADMIN</small></div>
+  <a class="nav-pill" href="/pos">POS</a>
+  <a class="nav-pill" href="/kitchen">Kitchen</a>
+  <a class="nav-pill" href="/manager">Manager</a>
+  <a class="nav-pill active" href="/admin">Admin</a>
+  <div class="spacer"></div>
+  <div class="who"><b id="whoami">…</b> <button class="btn btn-sm btn-outline" id="btnLogout" style="color:var(--gold-300);border-color:var(--gold-300)">Logout</button></div>
+</header>
+
+<div class="wrap">
+  <!-- LOGIN -->
+  <div id="loginBox" class="login-wrap" style="min-height:60vh;background:none;padding:0">
+    <div class="panel" style="width:100%;max-width:420px">
+      <div class="crown" style="text-align:center;margin-bottom:16px">
+        <div class="name serif" style="font-size:30px;letter-spacing:.16em;color:var(--maroon-800)">KARIM'S</div>
+        <div class="kicker">ADMINISTRATION</div>
+      </div>
+      <div class="field"><label>Username</label><input id="lUser" value="admin"></div>
+      <div class="field"><label>Password</label><input id="lPass" type="password" placeholder="••••••••"></div>
+      <button class="btn btn-gold btn-block btn-lg" id="btnLogin">Sign in</button>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px">Default: admin / admin@135 — change it after first login.</div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appBox" style="display:none">
+    <div class="tabs" id="tabs">
+      <button class="active" data-tab="menu">Menu &amp; Images</button>
+      <button data-tab="branding">Branding</button>
+      <button data-tab="settings">Restaurant Settings</button>
+      <button data-tab="payments">Payments &amp; UPI</button>
+      <button data-tab="policy">Order Policy</button>
+      <button data-tab="finance">Finance &amp; Reports</button>
+      <button data-tab="tables">Tables &amp; QR</button>
+      <button data-tab="drivers">Drivers</button>
+      <button data-tab="users">Staff Accounts</button>
+      <button data-tab="backup">Backup &amp; Audit</button>
+      <button data-tab="portals">Portals</button>
+    </div>
+
+    <!-- MENU -->
+    <div class="pane on" id="pane-menu">
+      <div class="two-col" style="display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start">
+        <div class="panel">
+          <div style="display:flex;gap:10px;margin-bottom:10px">
+            <input class="searchbar" id="menuSearch" placeholder="Search dishes…" style="margin:0">
+            <button class="btn" id="btnNewDish">+ New dish</button>
+          </div>
+          <div class="menu-list" id="dishList"></div>
+        </div>
+        <div class="panel" id="editPanel">
+          <h3 id="editTitle">Dish editor</h3>
+          <div id="editBody"><div class="empty">Select a dish to edit</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BRANDING -->
+    <div class="pane" id="pane-branding">
+      <div class="two-col" style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
+        <div class="panel" style="max-width:720px">
+          <h3>Customer site branding</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Controls the crest/logo, hero and tagline on the public menu at <b>/</b>. The site has no internal staff navigation by design — staff use the portals below or direct URLs.</p>
+          <div class="row">
+            <div class="field"><label>Restaurant name</label><input id="bName"></div>
+            <div class="field"><label>Tagline (under logo)</label><input id="bTagline" placeholder="MUGHLAI ZAIQA · ROYAL CUISINE"></div>
+          </div>
+          <div class="field"><label>Heritage line (top bar &amp; footer)</label><input id="bHeritage" placeholder="Original from Jama Masjid (1913) · Imphal Outlet"></div>
+          <div class="divider"></div>
+          <div class="field"><label>Hero headline</label><input id="bHeroHeadline" placeholder="The Royal Food For The Common Man"></div>
+          <div class="field"><label>Hero description paragraph</label><textarea id="bHeroDesc" rows="3"></textarea></div>
+          <div class="row">
+            <div class="field"><label>Badge 1</label><input id="bBadge1"></div>
+            <div class="field"><label>Badge 2</label><input id="bBadge2"></div>
+            <div class="field"><label>Badge 3</label><input id="bBadge3"></div>
+          </div>
+          <div class="field"><label>Hero background image path</label><input id="bHeroImage" placeholder="/img/menu/kebab_platter.jpg"><div class="hint">Any /img/… or /uploads/… path on this server.</div></div>
+          <button class="btn btn-gold" id="btnSaveBranding">Save branding</button>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Crest / logo</h3>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Shown in the site header and footer. The default is the gold-K maroon crest (also used as favicon).</p>
+            <div style="text-align:center;background:var(--cream-2);border-radius:12px;padding:18px"><img id="bLogoPrev" src="/img/logo.svg" style="width:110px;height:110px;margin:0 auto"></div>
+            <div class="upload-drop" id="bLogoDrop" style="margin-top:12px;padding:18px">
+              <div class="big">Upload logo</div><div style="font-size:12px;color:var(--muted)">SVG/PNG · square works best</div>
+            </div>
+            <input type="file" id="bLogoFile" accept="image/*" style="display:none">
+            <div class="row" style="margin-top:10px">
+              <button class="btn btn-sm btn-outline" id="bLogoClear">Restore default crest</button>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:16px">
+            <h3>Favicon</h3>
+            <div style="display:flex;gap:12px;align-items:center">
+              <img id="bFavPrev" src="/favicon.svg" style="width:34px;height:34px">
+              <div style="flex:1;font-size:12px;color:var(--muted)">Small icon shown in the browser tab.</div>
+            </div>
+            <div class="upload-drop" id="bFavDrop" style="margin-top:10px;padding:14px">
+              <div class="big" style="font-size:16px">Upload favicon</div>
+            </div>
+            <input type="file" id="bFavFile" accept="image/*" style="display:none">
+            <button class="btn btn-sm btn-outline" id="bFavClear" style="margin-top:8px">Restore default</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="pane" id="pane-settings">
+      <div class="panel" style="max-width:720px">
+        <h3>Restaurant profile</h3>
+        <div class="row"><div class="field"><label>Name</label><input id="sName"></div><div class="field"><label>Tagline</label><input id="sTagline"></div></div>
+        <div class="field"><label>Slogan (hero)</label><input id="sSlogan"></div>
+        <div class="row"><div class="field"><label>Address</label><input id="sAddress"></div><div class="field"><label>Phone</label><input id="sPhone"></div></div>
+        <div class="row"><div class="field"><label>GSTIN</label><input id="sGstin"></div><div class="field"><label>Opening hours</label><input id="sHours"></div></div>
+        <div class="row">
+          <div class="field"><label>GST rate %</label><input id="sGst" type="number" min="0" max="28"></div>
+          <div class="field"><label>Service charge %</label><input id="sSvc" type="number" min="0" max="20"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Delivery fee ₹</label><input id="sFee" type="number" min="0"></div>
+          <div class="field"><label>Free delivery above ₹</label><input id="sFree" type="number" min="0"></div>
+          <div class="field"><label>Min delivery order ₹</label><input id="sMin" type="number" min="0"></div>
+        </div>
+        <div class="field"><label>Delivery zones (comma separated)</label><input id="sZones"></div>
+        <div class="row">
+          <div class="field color-row"><label>Primary</label><input type="color" id="sPrimary"><input id="sPrimaryHex" style="width:110px"></div>
+          <div class="field color-row"><label>Accent</label><input type="color" id="sAccent"><input id="sAccentHex" style="width:110px"></div>
+          <div class="field color-row"><label>Background</label><input type="color" id="sTheme"><input id="sThemeHex" style="width:110px"></div>
+        </div>
+        <button class="btn btn-gold" id="btnSaveSettings">Save settings</button>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="pane" id="pane-payments">
+      <div class="panel" style="max-width:720px">
+        <h3>Payment methods</h3>
+        <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="pUPI"> Accept UPI</label>
+        <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="pCash"> Accept cash</label>
+        <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="pCard"> Accept card</label>
+        <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="pDel"> Accept online delivery orders</label>
+        <div class="divider"></div>
+        <div class="row"><div class="field"><label>UPI ID</label><input id="pUpiId"></div><div class="field"><label>UPI payee name</label><input id="pUpiName"></div></div>
+        <div class="field"><label>Payment instructions (shown to customer)</label><textarea id="pInstr"></textarea></div>
+        <div class="field">
+          <label>UPI QR code image</label>
+          <div class="upload-drop" id="qrDrop">
+            <div class="big">Upload your UPI QR</div>
+            <div style="font-size:12.5px;color:var(--muted)">PNG/JPG up to 8 MB — drag or click</div>
+          </div>
+          <img class="qr-preview" id="qrPrev" style="display:none">
+          <input type="file" id="qrFile" accept="image/*" style="display:none">
+          <button class="btn btn-sm btn-outline" id="qrClear" style="margin-top:8px">Remove QR</button>
+        </div>
+        <button class="btn btn-gold" id="btnSavePay">Save payment settings</button>
+      </div>
+    </div>
+
+    <!-- ORDER POLICY -->
+    <div class="pane" id="pane-policy">
+      <div class="panel" style="max-width:720px">
+        <h3>Order confirmation &amp; kitchen release policy</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">These rules are enforced by the <b>server</b>, not the browser — the kitchen cannot receive an order that violates them.</p>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="polCounter" style="margin-top:4px"> <span><b>Pay at Counter / cash orders require restaurant confirmation</b><br><span style="font-size:12.5px;color:var(--muted)">Recommended. Customer sees a confirmation notice with your phone number at checkout.</span></span></label>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="polUpi" style="margin-top:4px"> <span><b>UPI orders require confirmation</b><br><span style="font-size:12.5px;color:var(--muted)">Needed because the QR is static — staff verifies payment received before kitchen release.</span></span></label>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="polPayGate" style="margin-top:4px"> <span><b>Payment must be fully received before kitchen release</b><br><span style="font-size:12.5px;color:var(--muted)">Blocks kitchen transitions on unpaid orders. Keep enabled for normal operation.</span></span></label>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="polAutoPos" style="margin-top:4px"> <span><b>Auto-confirm staff POS orders</b><br><span style="font-size:12.5px;color:var(--muted)">Orders taken by a cashier at the counter skip the confirmation queue (recommended).</span></span></label>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="polOnline" style="margin-top:4px"> <span><b>Accept online orders (pickup &amp; delivery)</b><br><span style="font-size:12.5px;color:var(--muted)">Turn off to freeze the customer site to browse-only during rush hours.</span></span></label>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin:10px 0"><input type="checkbox" id="polDineContact" style="margin-top:4px"> <span><b>Dine-in orders require a phone number</b><br><span style="font-size:12.5px;color:var(--muted)">Off by default — walk-in guests can order without giving contact details.</span></span></label>
+        <div class="divider"></div>
+        <div class="field"><label>Checkout confirmation instructions (shown to customers)</label><textarea id="polInstr" rows="4"></textarea></div>
+        <button class="btn btn-gold" id="btnSavePolicy">Save policy</button>
+        <a class="btn btn-outline" href="/manager" style="margin-left:8px">Open confirmation queue →</a>
+      </div>
+    </div>
+
+    <!-- FINANCE SETTINGS -->
+    <div class="pane" id="pane-finance">
+      <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
+        <div class="panel">
+          <h3>Finance basics</h3>
+          <div class="row">
+            <div class="field"><label>Timezone</label><input id="fTz" placeholder="Asia/Kolkata"></div>
+            <div class="field"><label>UTC offset (minutes)</label><input id="fTzOff" type="number" step="30" value="330"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Opening cash float ₹</label><input id="fFloat" type="number" min="0"></div>
+            <div class="field"><label>Dashboard refresh (sec)</label><input id="fRefresh" type="number" min="5" max="120"></div>
+          </div>
+          <button class="btn btn-gold" id="btnSaveFinBasics">Save</button>
+          <div class="divider"></div>
+          <h3>Email reports (real SMTP)</h3>
+          <div class="row">
+            <div class="field"><label>SMTP host</label><input id="emHost"></div>
+            <div class="field"><label>Port</label><input id="emPort" type="number" value="587"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Username</label><input id="emUser"></div>
+            <div class="field"><label>Password</label><input id="emPass" type="password"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>From address</label><input id="emFrom" placeholder="reports@yourdomain.com"></div>
+            <div class="field"><label>Default recipients (comma-separated)</label><input id="emRecip"></div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Emails are sent by the server via SMTP. If not configured, the finance dashboard shows an honest “not configured” status — nothing is faked.</p>
+          <button class="btn" id="btnSaveEmail">Save email settings</button>
+        </div>
+        <div>
+          <div class="panel">
+            <h3>Report schedules</h3>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">Server-side timers (not browser tabs). Each period is delivered at most once.</p>
+            <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="schEod"> End-of-day at <input type="time" id="schEodTime" value="23:30" style="margin-left:8px"></label>
+            <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="schHourly"> Hourly summary at minute <input type="number" id="schHourlyMin" min="0" max="59" value="0" style="width:70px;margin-left:8px"></label>
+            <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="schWeekly"> Weekly on <select id="schWeeklyDay" style="margin-left:8px"><option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option><option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option></select> at <input type="time" id="schWeeklyTime" value="22:00" style="margin-left:8px"></label>
+            <label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input type="checkbox" id="schMonthly"> Monthly on day <input type="number" id="schMonthlyDay" min="1" max="28" value="1" style="width:64px;margin-left:8px"> at <input type="time" id="schMonthlyTime" value="09:00" style="margin-left:8px"></label>
+            <button class="btn btn-gold" id="btnSaveSchedules" style="margin-top:10px">Save schedules</button>
+          </div>
+          <div class="panel" style="margin-top:16px">
+            <h3>WhatsApp sharing</h3>
+            <div class="row">
+              <div class="field"><label>Default number</label><input id="waNum" placeholder="9876543210"></div>
+            </div>
+            <button class="btn" id="btnSaveWa">Save</button>
+            <p style="font-size:12px;color:var(--muted);margin-top:10px">Sharing opens WhatsApp with a pre-filled summary (manual link). WhatsApp Business API credentials can be stored here, but automated sending is not enabled in this build — you will see that stated honestly when you try.</p>
+          </div>
+          <div class="panel" style="margin-top:16px">
+            <h3>Finance dashboard</h3>
+            <a class="btn btn-gold" href="/finance">Open Finance →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLES -->
+    <div class="pane" id="pane-tables">
+      <div class="panel" style="max-width:720px">
+        <h3>Dining tables &amp; QR codes</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Each table has a QR code that opens the customer menu pre-set to that table. Print and place on tables.</p>
+        <button class="btn" id="btnAddTable" style="margin-bottom:12px">+ Add table</button>
+        <div id="tableList"></div>
+      </div>
+    </div>
+
+    <!-- DRIVERS -->
+    <div class="pane" id="pane-drivers">
+      <div class="panel" style="max-width:720px">
+        <h3>Delivery drivers</h3>
+        <div class="row" style="margin-bottom:12px">
+          <div class="field"><label>Name</label><input id="dName"></div>
+          <div class="field"><label>Phone</label><input id="dPhone"></div>
+          <div class="field"><label>PIN</label><input id="dPin" maxlength="8"></div>
+        </div>
+        <button class="btn" id="btnAddDriver" style="margin-bottom:14px">+ Add driver</button>
+        <div id="driverList"></div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="pane" id="pane-users">
+      <div class="panel" style="max-width:720px">
+        <h3>Staff accounts</h3>
+        <div class="row" style="margin-bottom:12px">
+          <div class="field"><label>Username</label><input id="uName"></div>
+          <div class="field"><label>Display name</label><input id="uDisp"></div>
+          <div class="field"><label>Password</label><input id="uPass" type="password"></div>
+          <div class="field"><label>Role</label><select id="uRole">
+            <option value="admin">Admin</option><option value="manager">Manager</option>
+            <option value="cashier">Cashier (POS)</option><option value="kitchen">Kitchen</option>
+          </select></div>
+        </div>
+        <button class="btn" id="btnAddUser" style="margin-bottom:14px">+ Add staff</button>
+        <table class="grid" id="userTable"><thead><tr><th>User</th><th>Name</th><th>Role</th><th>Status</th><th></th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+
+    <!-- PORTALS -->
+    <div class="pane" id="pane-portals">
+      <div class="panel" style="max-width:720px">
+        <h3>Staff portals</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">The customer site intentionally has no staff navigation. Use these links (or bookmark the URLs directly).</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+          <a class="btn btn-outline" href="/" style="padding:18px;flex-direction:column;gap:4px">Customer menu<b style="font-size:11px;font-weight:600;opacity:.7">/</b></a>
+          <a class="btn btn-outline" href="/pos" style="padding:18px;flex-direction:column;gap:4px">POS / Cashier<b style="font-size:11px;font-weight:600;opacity:.7">/pos</b></a>
+          <a class="btn btn-outline" href="/kitchen" style="padding:18px;flex-direction:column;gap:4px">Kitchen display<b style="font-size:11px;font-weight:600;opacity:.7">/kitchen</b></a>
+          <a class="btn btn-outline" href="/manager" style="padding:18px;flex-direction:column;gap:4px">Manager &amp; confirmations<b style="font-size:11px;font-weight:600;opacity:.7">/manager</b></a>
+          <a class="btn btn-outline" href="/finance" style="padding:18px;flex-direction:column;gap:4px">Finance dashboard<b style="font-size:11px;font-weight:600;opacity:.7">/finance</b></a>
+          <a class="btn btn-outline" href="/delivery" style="padding:18px;flex-direction:column;gap:4px">Delivery driver<b style="font-size:11px;font-weight:600;opacity:.7">/delivery</b></a>
+          <a class="btn btn-outline" href="/track" style="padding:18px;flex-direction:column;gap:4px">Order tracker<b style="font-size:11px;font-weight:600;opacity:.7">/track</b></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class="pane" id="pane-backup">
+      <div class="two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="panel">
+          <h3>Backup</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Download a snapshot of the database (orders, menu, settings) as a JSON file.</p>
+          <button class="btn btn-gold" id="btnBackup">Create backup now</button>
+          <div id="backupList" style="margin-top:14px"></div>
+        </div>
+        <div class="panel">
+          <h3>Audit log</h3>
+          <div id="auditList" style="max-height:400px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  let settings = null, dishes = [], editing = null;
+
+  // ---- auth ----
+  async function trySession() {
+    if (!K.token) return false;
+    try { const me = await K.api('/api/auth/me'); K.user = me.user; return ['admin'].includes(me.user.role); }
+    catch (e) { return false; }
+  }
+  async function boot() {
+    if (await trySession()) return enter();
+    $('#loginBox').style.display = 'flex';
+  }
+  $('#btnLogin').onclick = async () => {
+    try {
+      const u = await K.login($('#lUser').value.trim(), $('#lPass').value);
+      if (u.role !== 'admin') { K.toast('This panel is for admin accounts', 'err'); K.clearAuth(); return; }
+      enter();
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  $('#lPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('#btnLogin').click(); });
+
+  async function enter() {
+    $('#loginBox').style.display = 'none';
+    $('#appBox').style.display = '';
+    $('#whoami').textContent = K.user.name;
+    await loadAll();
+  }
+  $('#btnLogout').onclick = async () => { await K.logout(); location.reload(); };
+
+  async function loadAll() {
+    [settings, dishes] = await Promise.all([K.api('/api/settings'), K.api('/api/menu')]);
+    renderDishes(); fillSettings(); fillPayments(); fillBranding(); fillPolicy(); fillFinance(); renderTables(); renderDrivers(); renderUsers(); loadBackups(); loadAudit();
+  }
+
+  // ---- tabs ----
+  $('#tabs').onclick = e => {
+    const b = e.target.closest('[data-tab]'); if (!b) return;
+    $$('#tabs button').forEach(x => x.classList.toggle('active', x === b));
+    $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + b.dataset.tab));
+  };
+
+  // ---- menu list ----
+  let msearch = '';
+  function renderDishes() {
+    const list = dishes.filter(d => !msearch || d.name.toLowerCase().includes(msearch) || d.cat.toLowerCase().includes(msearch));
+    $('#dishList').innerHTML = list.map(d =>
+      '<div class="dish-row" data-id="' + d.id + '">' +
+      '<img src="' + K.esc(d.image || d.img) + '" alt="" onerror="this.src=\'/img/menu/curry_bowl.jpg\'">' +
+      '<div><div class="nm">' + (d.veg ? '<span class="badge-veg"></span> ' : '<span class="badge-nonveg"></span> ') + K.esc(d.name) +
+      (d.badge ? ' <span class="badge badge-gold">' + K.esc(d.badge) + '</span>' : '') + '</div>' +
+      '<div class="meta">' + K.esc(d.cat) + ' · ' + (d.half ? '₹' + d.half + '½ ' : '') + '₹' + (d.full || d.half) + ' · ' + (d.inStock ? '<span class="badge badge-green">In stock</span>' : '<span class="badge badge-red">86\'d</span>') + '</div></div>' +
+      '<div class="acts">' +
+      '<button class="btn btn-sm" data-edit="' + d.id + '">Edit</button>' +
+      '<button class="btn btn-sm ' + (d.inStock ? 'btn-outline' : 'btn-green') + '" data-stock="' + d.id + '">' + (d.inStock ? '86' : 'Restore') + '</button>' +
+      '<button class="btn btn-sm btn-red" data-del="' + d.id + '">Delete</button>' +
+      '</div></div>').join('');
+  }
+  $('#menuSearch').oninput = e => { msearch = e.target.value.toLowerCase().trim(); renderDishes(); };
+
+  $('#dishList').onclick = async e => {
+    const ed = e.target.closest('[data-edit]'), st = e.target.closest('[data-stock]'), del = e.target.closest('[data-del]'), row = e.target.closest('[data-id]');
+    try {
+      if (ed) { openEditor(ed.dataset.edit); return; }
+      if (st) {
+        const d = dishes.find(x => x.id === st.dataset.stock);
+        await K.api('/api/menu/' + d.id, { method: 'PUT', body: { inStock: !d.inStock } });
+        dishes = (await K.api('/api/menu')).dishes; renderDishes();
+      }
+      if (del) {
+        const d = dishes.find(x => x.id === del.dataset.del);
+        if (!confirm('Delete "' + d.name + '" permanently?')) return;
+        await K.api('/api/menu/' + d.id, { method: 'DELETE' });
+        dishes = (await K.api('/api/menu')).dishes; renderDishes();
+        K.toast('Deleted ' + d.name, 'ok');
+      }
+      if (row && !ed && !st && !del) openEditor(row.dataset.id);
+    } catch (err) { K.toast(err.message, 'err'); }
+  };
+
+  function openEditor(id) {
+    editing = dishes.find(d => d.id === id);
+    if (!editing) { editing = { id: null, name: '', cat: dishes[0] ? dishes[0].cat : '', half: 0, full: 0, veg: false, desc: '', badge: '', image: '/img/menu/curry_bowl.jpg', customImg: '', inStock: true }; }
+    const d = editing;
+    $('#editTitle').textContent = d.id ? 'Edit: ' + d.name : 'New dish';
+    $('#editBody').innerHTML =
+      '<img id="edPrev" src="' + K.esc(d.image || d.img || '/img/menu/curry_bowl.jpg') + '" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;margin-bottom:12px">' +
+      '<div class="upload-drop" id="edDrop"><div class="big">Upload new photo</div><div style="font-size:12px;color:var(--muted)">JPG/PNG/WebP · the photo customers &amp; kitchen see</div></div>' +
+      '<input type="file" id="edFile" accept="image/*" style="display:none">' +
+      '<div class="field" style="margin-top:12px"><label>…or image URL (/img/… or https://…)</label><input id="edUrl" placeholder="/img/menu/xxx.jpg" value="' + K.esc(d.customImg || '') + '"></div>' +
+      (d.customImg ? '<button class="btn btn-sm btn-outline" id="edClearImg">Reset to library photo</button>' : '') +
+      '<div class="field" style="margin-top:10px"><label>Name</label><input id="edName" value="' + K.esc(d.name) + '"></div>' +
+      '<div class="row"><div class="field"><label>Category</label><select id="edCat">' +
+      (settings.categories || dishes.map(x => x.cat).filter((v, i, a) => a.indexOf(v) === i) || []).map
+        ? Array.from(new Set(dishes.map(x => x.cat))).concat(['Shaan e Tandoor','Shahi Dastarkhwan','Biryani','Rolls','Roti & Naan','Rice','Sides & Add-Ons','Meetha / Dessert','Drinks & Mocktails']).filter((v, i, a) => a.indexOf(v) === i)
+          .map(c => '<option ' + (c === d.cat ? 'selected' : '') + '>' + K.esc(c) + '</option>').join('')
+        : '') +
+      '</select></div>' +
+      '<div class="field"><label>Badge</label><select id="edBadge">' +
+      ['', 'bestseller', 'chef-special', 'spicy', 'new'].map(b => '<option ' + (b === d.badge ? 'selected' : '') + '>' + (b || '—') + '</option>').join('') +
+      '</select></div></div>' +
+      '<div class="row"><div class="field"><label>Half ₹</label><input id="edHalf" type="number" min="0" value="' + (d.half || 0) + '"></div>' +
+      '<div class="field"><label>Full ₹</label><input id="edFull" type="number" min="0" value="' + (d.full || 0) + '"></div></div>' +
+      '<label style="display:flex;gap:8px;align-items:center;margin:6px 0 12px"><input type="checkbox" id="edVeg" ' + (d.veg ? 'checked' : '') + '> Vegetarian</label>' +
+      '<div class="field"><label>Description</label><textarea id="edDesc">' + K.esc(d.desc || '') + '</textarea></div>' +
+      '<button class="btn btn-gold btn-block" id="edSave">' + (d.id ? 'Save changes' : 'Create dish') + '</button>';
+
+    // upload handlers
+    const drop = $('#edDrop'), file = $('#edFile');
+    drop.onclick = () => file.click();
+    drop.ondragover = e => { e.preventDefault(); drop.classList.add('drag'); };
+    drop.ondragleave = () => drop.classList.remove('drag');
+    drop.ondrop = e => { e.preventDefault(); drop.classList.remove('drag'); if (e.dataTransfer.files[0]) uploadDishImage(e.dataTransfer.files[0]); };
+    file.onchange = () => { if (file.files[0]) uploadDishImage(file.files[0]); };
+    const clr = $('#edClearImg');
+    if (clr) clr.onclick = async () => {
+      if (!editing.id) return;
+      await K.api('/api/menu/' + editing.id + '/image-clear', { method: 'POST', body: {} });
+      dishes = (await K.api('/api/menu')).dishes;
+      openEditor(editing.id); renderDishes(); K.toast('Reset to library photo', 'ok');
+    };
+    $('#edSave').onclick = saveEditor;
+  }
+
+  async function uploadDishImage(fileObj) {
+    try {
+      const fd = new FormData();
+      fd.append('image', fileObj);
+      let targetId = editing.id;
+      if (!targetId) {
+        // create draft dish first so we can attach
+        const created = await K.api('/api/menu', { method: 'POST', body: { name: $('#edName').value || 'New dish', cat: $('#edCat').value, half: +$('#edHalf').value || 0, full: +$('#edFull').value || 0, veg: $('#edVeg').checked, desc: $('#edDesc').value, badge: $('#edBadge').value } });
+        targetId = created.id;
+        dishes = (await K.api('/api/menu')).dishes;
+      }
+      const res = await fetch('/api/menu/' + targetId + '/image', { method: 'POST', headers: { 'x-auth': K.token }, body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      $('#edPrev').src = data.image;
+      editing = data;
+      dishes = (await K.api('/api/menu')).dishes;
+      renderDishes();
+      K.toast('Photo updated ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  }
+
+  async function saveEditor() {
+    try {
+      const body = {
+        name: $('#edName').value.trim(), cat: $('#edCat').value,
+        half: +$('#edHalf').value || 0, full: +$('#edFull').value || 0,
+        veg: $('#edVeg').checked, desc: $('#edDesc').value, badge: $('#edBadge').value,
+        inStock: editing.inStock !== false
+      };
+      if (!body.name) return K.toast('Name required', 'err');
+      const url = ($('#edUrl').value || '').trim();
+      if (url) body.customImg = url;
+      if (editing.id) await K.api('/api/menu/' + editing.id, { method: 'PUT', body });
+      else await K.api('/api/menu', { method: 'POST', body });
+      dishes = (await K.api('/api/menu')).dishes;
+      renderDishes(); K.toast('Saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  }
+
+  $('#btnNewDish').onclick = () => openEditor(null);
+
+  // ---- settings ----
+  function fillSettings() {
+    $('#sName').value = settings.name; $('#sTagline').value = settings.tagline; $('#sSlogan').value = settings.slogan;
+    $('#sAddress').value = settings.address; $('#sPhone').value = settings.phone; $('#sGstin').value = settings.gstin || '';
+    $('#sHours').value = settings.hours; $('#sGst').value = settings.gstRate; $('#sSvc').value = settings.serviceCharge;
+    $('#sFee').value = settings.deliveryFee; $('#sFree').value = settings.freeDeliveryAbove; $('#sMin').value = settings.minDeliveryOrder;
+    $('#sZones').value = (settings.deliveryZones || []).join(', ');
+    $('#sPrimary').value = $('#sPrimaryHex').value = settings.primaryColor;
+    $('#sAccent').value = $('#sAccentHex').value = settings.accentColor;
+    $('#sTheme').value = $('#sThemeHex').value = settings.themeColor;
+  }
+  ['Primary','Accent','Theme'].forEach(n => {
+    $('#s' + n).addEventListener('input', e => { $('#s' + n + 'Hex').value = e.target.value; });
+    $('#s' + n + 'Hex').addEventListener('input', e => { if (/^#[0-9a-f]{6}$/i.test(e.target.value)) $('#s' + n).value = e.target.value; });
+  });
+  $('#btnSaveSettings').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: {
+        name: $('#sName').value, tagline: $('#sTagline').value, slogan: $('#sSlogan').value,
+        address: $('#sAddress').value, phone: $('#sPhone').value, gstin: $('#sGstin').value, hours: $('#sHours').value,
+        gstRate: +$('#sGst').value, serviceCharge: +$('#sSvc').value,
+        deliveryFee: +$('#sFee').value, freeDeliveryAbove: +$('#sFree').value, minDeliveryOrder: +$('#sMin').value,
+        deliveryZones: $('#sZones').value.split(',').map(s => s.trim()).filter(Boolean),
+        primaryColor: $('#sPrimary').value, accentColor: $('#sAccent').value, themeColor: $('#sTheme').value
+      }});
+      settings = await K.api('/api/settings');
+      K.toast('Settings saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+
+  // ---- payments ----
+  function fillPayments() {
+    $('#pUPI').checked = settings.acceptUPI; $('#pCash').checked = settings.acceptCash;
+    $('#pCard').checked = settings.acceptCard; $('#pDel').checked = settings.acceptOnlineDelivery;
+    $('#pUpiId').value = settings.upiId || ''; $('#pUpiName').value = settings.upiName || '';
+    $('#pInstr').value = settings.paymentInstructions || '';
+    if (settings.upiQRImage) { $('#qrPrev').src = settings.upiQRImage; $('#qrPrev').style.display = 'block'; }
+    else $('#qrPrev').style.display = 'none';
+  }
+  const qrDrop = $('#qrDrop'), qrFile = $('#qrFile');
+  qrDrop.onclick = () => qrFile.click();
+  qrDrop.ondragover = e => { e.preventDefault(); qrDrop.classList.add('drag'); };
+  qrDrop.ondragleave = () => qrDrop.classList.remove('drag');
+  qrDrop.ondrop = e => { e.preventDefault(); qrDrop.classList.remove('drag'); if (e.dataTransfer.files[0]) uploadQr(e.dataTransfer.files[0]); };
+  qrFile.onchange = () => { if (qrFile.files[0]) uploadQr(qrFile.files[0]); };
+  async function uploadQr(fileObj) {
+    try {
+      const fd = new FormData(); fd.append('image', fileObj);
+      const res = await fetch('/api/upload', { method: 'POST', headers: { 'x-auth': K.token }, body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      await K.api('/api/settings', { method: 'PUT', body: { upiQRImage: data.path } });
+      settings.upiQRImage = data.path;
+      $('#qrPrev').src = data.path; $('#qrPrev').style.display = 'block';
+      K.toast('QR uploaded ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  }
+  $('#qrClear').onclick = async () => {
+    await K.api('/api/settings', { method: 'PUT', body: { upiQRImage: '' } });
+    settings.upiQRImage = ''; $('#qrPrev').style.display = 'none';
+  };
+  $('#btnSavePay').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: {
+        acceptUPI: $('#pUPI').checked, acceptCash: $('#pCash').checked, acceptCard: $('#pCard').checked,
+        acceptOnlineDelivery: $('#pDel').checked, upiId: $('#pUpiId').value, upiName: $('#pUpiName').value,
+        paymentInstructions: $('#pInstr').value
+      }});
+      settings = await K.api('/api/settings');
+      K.toast('Payment settings saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+
+  // ---- branding ----
+  function fillBranding() {
+    $('#bName').value = settings.name || '';
+    $('#bTagline').value = settings.tagline || '';
+    $('#bHeritage').value = settings.heritageLine || '';
+    $('#bHeroHeadline').value = settings.heroHeadline || '';
+    $('#bHeroDesc').value = settings.heroDesc || '';
+    $('#bBadge1').value = settings.heroBadge1 || '';
+    $('#bBadge2').value = settings.heroBadge2 || '';
+    $('#bBadge3').value = settings.heroBadge3 || '';
+    $('#bHeroImage').value = settings.heroImage || '';
+    $('#bLogoPrev').src = settings.logoImage || '/img/logo.svg';
+    $('#bFavPrev').src = settings.faviconImage || '/favicon.svg';
+  }
+  $('#btnSaveBranding').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: {
+        name: $('#bName').value.trim() || "KARIM'S",
+        tagline: $('#bTagline').value.trim(),
+        heritageLine: $('#bHeritage').value.trim(),
+        heroHeadline: $('#bHeroHeadline').value.trim(),
+        heroDesc: $('#bHeroDesc').value.trim(),
+        heroBadge1: $('#bBadge1').value.trim(),
+        heroBadge2: $('#bBadge2').value.trim(),
+        heroBadge3: $('#bBadge3').value.trim(),
+        heroImage: $('#bHeroImage').value.trim()
+      }});
+      settings = await K.api('/api/settings');
+      fillBranding(); fillSettings();
+      K.toast('Branding saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  async function uploadBrandingImage(fileObj, key, prevEl, defaultSrc) {
+    try {
+      const fd = new FormData(); fd.append('image', fileObj);
+      const res = await fetch('/api/upload', { method: 'POST', headers: { 'x-auth': K.token }, body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      await K.api('/api/settings', { method: 'PUT', body: { [key]: data.path } });
+      settings[key] = data.path;
+      prevEl.src = data.path;
+      K.toast('Uploaded ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  }
+  const bLogoDrop = $('#bLogoDrop'), bLogoFile = $('#bLogoFile');
+  bLogoDrop.onclick = () => bLogoFile.click();
+  bLogoDrop.ondragover = e => { e.preventDefault(); bLogoDrop.classList.add('drag'); };
+  bLogoDrop.ondragleave = () => bLogoDrop.classList.remove('drag');
+  bLogoDrop.ondrop = e => { e.preventDefault(); bLogoDrop.classList.remove('drag'); if (e.dataTransfer.files[0]) uploadBrandingImage(e.dataTransfer.files[0], 'logoImage', $('#bLogoPrev')); };
+  bLogoFile.onchange = () => { if (bLogoFile.files[0]) uploadBrandingImage(bLogoFile.files[0], 'logoImage', $('#bLogoPrev')); };
+  $('#bLogoClear').onclick = async () => {
+    await K.api('/api/settings', { method: 'PUT', body: { logoImage: '' } });
+    settings.logoImage = ''; $('#bLogoPrev').src = '/img/logo.svg'; K.toast('Default crest restored', 'ok');
+  };
+  const bFavDrop = $('#bFavDrop'), bFavFile = $('#bFavFile');
+  bFavDrop.onclick = () => bFavFile.click();
+  bFavDrop.ondragover = e => { e.preventDefault(); bFavDrop.classList.add('drag'); };
+  bFavDrop.ondragleave = () => bFavDrop.classList.remove('drag');
+  bFavDrop.ondrop = e => { e.preventDefault(); bFavDrop.classList.remove('drag'); if (e.dataTransfer.files[0]) uploadBrandingImage(e.dataTransfer.files[0], 'faviconImage', $('#bFavPrev')); };
+  bFavFile.onchange = () => { if (bFavFile.files[0]) uploadBrandingImage(bFavFile.files[0], 'faviconImage', $('#bFavPrev')); };
+  $('#bFavClear').onclick = async () => {
+    await K.api('/api/settings', { method: 'PUT', body: { faviconImage: '' } });
+    settings.faviconImage = ''; $('#bFavPrev').src = '/favicon.svg';
+  };
+
+  // ---- order policy ----
+  function fillPolicy() {
+    const p = settings.orderPolicy || {};
+    $('#polCounter').checked = p.counterPayRequiresConfirm !== false;
+    $('#polUpi').checked = p.upiRequiresConfirm !== false;
+    $('#polPayGate').checked = p.paymentRequiredBeforeKitchen !== false;
+    $('#polAutoPos').checked = p.autoConfirmPosOrders !== false;
+    $('#polOnline').checked = p.onlineOrderingEnabled !== false;
+    $('#polDineContact').checked = !!p.dineInRequireContact;
+    $('#polInstr').value = settings.checkoutInstructions || '';
+  }
+  $('#btnSavePolicy').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: {
+        orderPolicy: {
+          counterPayRequiresConfirm: $('#polCounter').checked,
+          upiRequiresConfirm: $('#polUpi').checked,
+          paymentRequiredBeforeKitchen: $('#polPayGate').checked,
+          autoConfirmPosOrders: $('#polAutoPos').checked,
+          onlineOrderingEnabled: $('#polOnline').checked,
+          dineInRequireContact: $('#polDineContact').checked
+        },
+        checkoutInstructions: $('#polInstr').value.trim()
+      }});
+      settings = await K.api('/api/settings');
+      fillPolicy();
+      K.toast('Order policy saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+
+  // ---- finance settings ----
+  function fillFinance() {
+    $('#fTz').value = settings.timezone || 'Asia/Kolkata';
+    $('#fTzOff').value = settings.tzOffsetMinutes != null ? settings.tzOffsetMinutes : 330;
+    $('#fFloat').value = settings.openingFloat != null ? settings.openingFloat : 2000;
+    $('#fRefresh').value = settings.financeRefreshSeconds || 10;
+    const em = settings.email || {};
+    $('#emHost').value = em.host || ''; $('#emPort').value = em.port || 587;
+    $('#emUser').value = em.user || ''; $('#emPass').value = em.pass || '';
+    $('#emFrom').value = em.from || ''; $('#emRecip').value = (em.recipients || []).join(', ');
+    const sch = settings.schedules || {};
+    const eod = sch.eod || {}, hr = sch.hourly || {}, wk = sch.weekly || {}, mo = sch.monthly || {};
+    $('#schEod').checked = !!eod.enabled;
+    $('#schEodTime').value = String(eod.hour != null ? eod.hour : 23).padStart(2, '0') + ':' + String(eod.minute != null ? eod.minute : 30).padStart(2, '0');
+    $('#schHourly').checked = !!hr.enabled; $('#schHourlyMin').value = hr.minute != null ? hr.minute : 0;
+    $('#schWeekly').checked = !!wk.enabled; $('#schWeeklyDay').value = wk.weekday != null ? wk.weekday : 0;
+    $('#schWeeklyTime').value = String(wk.hour != null ? wk.hour : 22).padStart(2, '0') + ':00';
+    $('#schMonthly').checked = !!mo.enabled; $('#schMonthlyDay').value = mo.day != null ? mo.day : 1;
+    $('#schMonthlyTime').value = String(mo.hour != null ? mo.hour : 9).padStart(2, '0') + ':00';
+    $('#waNum').value = (settings.whatsapp && settings.whatsapp.defaultNumber) || '';
+  }
+  $('#btnSaveFinBasics').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: {
+        timezone: $('#fTz').value.trim() || 'Asia/Kolkata',
+        tzOffsetMinutes: +$('#fTzOff').value || 330,
+        openingFloat: +$('#fFloat').value || 0,
+        financeRefreshSeconds: +$('#fRefresh').value || 10
+      }});
+      settings = await K.api('/api/settings'); K.toast('Finance settings saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  $('#btnSaveEmail').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: {
+        email: {
+          host: $('#emHost').value.trim(), port: +$('#emPort').value || 587,
+          user: $('#emUser').value.trim(), pass: $('#emPass').value,
+          from: $('#emFrom').value.trim(),
+          recipients: $('#emRecip').value.split(',').map(s => s.trim()).filter(Boolean)
+        }
+      }});
+      settings = await K.api('/api/settings'); K.toast('Email settings saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  $('#btnSaveSchedules').onclick = async () => {
+    try {
+      const [eh, em2] = ($('#schEodTime').value || '23:30').split(':').map(Number);
+      const [wh] = ($('#schWeeklyTime').value || '22:00').split(':').map(Number);
+      const [mh] = ($('#schMonthlyTime').value || '09:00').split(':').map(Number);
+      await K.api('/api/settings', { method: 'PUT', body: {
+        schedules: {
+          eod: { enabled: $('#schEod').checked, hour: eh, minute: em2 },
+          hourly: { enabled: $('#schHourly').checked, minute: +$('#schHourlyMin').value || 0 },
+          weekly: { enabled: $('#schWeekly').checked, weekday: +$('#schWeeklyDay').value, hour: wh },
+          monthly: { enabled: $('#schMonthly').checked, day: +$('#schMonthlyDay').value, hour: mh }
+        }
+      }});
+      settings = await K.api('/api/settings'); K.toast('Schedules saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  $('#btnSaveWa').onclick = async () => {
+    try {
+      await K.api('/api/settings', { method: 'PUT', body: { whatsapp: { defaultNumber: $('#waNum').value.trim() } } });
+      settings = await K.api('/api/settings'); K.toast('WhatsApp setting saved ✓', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+
+  // ---- tables ----
+  async function renderTables() {
+    const tables = (await K.api('/api/tables').catch(() => settings.tables || []));
+    const list = Array.isArray(tables) ? tables : [];
+    $('#tableList').innerHTML = list.map(t => {
+      const num = t.num !== undefined ? t.num : t;
+      const nm = t.name || ('Table ' + num);
+      const url = location.origin + '/?table=' + num;
+      const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=' + encodeURIComponent(url);
+      return '<div class="drv-card" style="display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center">' +
+        '<div><div class="nm">' + K.esc(nm) + '</div><div class="ph mono">' + K.esc(url) + '</div>' +
+        '<div style="margin-top:6px;display:flex;gap:6px"><a class="btn btn-sm btn-outline" target="_blank" href="' + url + '">Open</a>' +
+        '<button class="btn btn-sm" data-qrtab="' + num + '">Print QR</button>' +
+        (t.active === false ? '<span class="badge badge-red">Inactive</span>' : '') + '</div></div>' +
+        '<img src="' + qr + '" width="110" height="110" style="border-radius:8px;border:1px solid var(--line)">' +
+        '<button class="btn btn-sm ' + (t.active === false ? 'btn-green' : 'btn-outline') + '" data-togtable="' + num + '">' + (t.active === false ? 'Activate' : 'Deactivate') + '</button>' +
+        '</div>';
+    }).join('');
+  }
+  $('#btnAddTable').onclick = async () => {
+    await K.api('/api/tables', { method: 'POST', body: {} });
+    settings = await K.api('/api/settings'); renderTables(); K.toast('Table added', 'ok');
+  };
+  $('#tableList').onclick = async e => {
+    const tog = e.target.closest('[data-togtable]'), qr = e.target.closest('[data-qrtab]');
+    if (tog) {
+      const tables = await K.api('/api/tables');
+      const t = tables.find(x => x.num === +tog.dataset.togtable);
+      await K.api('/api/tables/' + t.num, { method: 'PUT', body: { active: !t.active } });
+      renderTables();
+    }
+    if (qr) {
+      const url = location.origin + '/?table=' + qr.dataset.qrtab;
+      const w = window.open('', '_blank');
+      w.document.write('<html><head><title>Table ' + qr.dataset.qrtab + ' QR</title></head><body style="text-align:center;font-family:sans-serif;padding:40px">' +
+        '<h2>KARIM\'S — Table ' + qr.dataset.qrtab + '</h2><p>Scan to view menu &amp; order</p>' +
+        '<img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=' + encodeURIComponent(url) + '">' +
+        '<p style="font-size:12px;color:#666">' + url + '</p><script>window.print();<\/script></body></html>');
+    }
+  };
+
+  // ---- drivers ----
+  async function renderDrivers() {
+    const drvs = await K.api('/api/drivers').catch(() => []);
+    $('#driverList').innerHTML = drvs.map(d =>
+      '<div class="drv-card"><div><div class="nm">' + (d.active ? '<span class="dot on"></span> ' : '<span class="dot off"></span> ') + K.esc(d.name) + '</div>' +
+      '<div class="ph">' + K.esc(d.phone || '') + ' · PIN ' + '••••' + '</div></div>' +
+      '<div style="display:flex;gap:6px">' +
+      '<button class="btn btn-sm ' + (d.active ? 'btn-outline' : 'btn-green') + '" data-togdrv="' + d.id + '">' + (d.active ? 'Suspend' : 'Activate') + '</button>' +
+      '<button class="btn btn-sm btn-red" data-deldrv="' + d.id + '">Remove</button></div></div>').join('')
+      || '<div class="empty">No drivers yet</div>';
+  }
+  $('#btnAddDriver').onclick = async () => {
+    try {
+      await K.api('/api/drivers', { method: 'POST', body: { name: $('#dName').value.trim(), phone: $('#dPhone').value.trim(), pin: $('#dPin').value.trim() } });
+      $('#dName').value = ''; $('#dPhone').value = ''; $('#dPin').value = '';
+      renderDrivers(); K.toast('Driver added', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  $('#driverList').onclick = async e => {
+    const tog = e.target.closest('[data-togdrv]'), del = e.target.closest('[data-deldrv]');
+    try {
+      if (tog) {
+        const drvs = await K.api('/api/drivers');
+        const d = drvs.find(x => x.id === tog.dataset.togdrv);
+        await K.api('/api/drivers/' + d.id, { method: 'PUT', body: { active: !d.active } });
+        renderDrivers();
+      }
+      if (del) {
+        if (!confirm('Remove this driver?')) return;
+        await K.api('/api/drivers/' + del.dataset.deldrv, { method: 'PUT', body: { active: false } });
+        renderDrivers();
+      }
+    } catch (e2) { K.toast(e2.message, 'err'); }
+  };
+
+  // ---- users ----
+  async function renderUsers() {
+    const users = await K.api('/api/users').catch(() => []);
+    $('#userTable').querySelector('tbody').innerHTML = users.map(u =>
+      '<tr><td><b>' + K.esc(u.username) + '</b></td><td>' + K.esc(u.name) + '</td>' +
+      '<td><span class="badge badge-blue">' + K.esc(u.role) + '</span></td>' +
+      '<td>' + (u.active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-red">Disabled</span>') + '</td>' +
+      '<td>' + (u.username === 'admin' ? '—' :
+        '<button class="btn btn-sm btn-outline" data-togusr="' + u.id + '">' + (u.active ? 'Disable' : 'Enable') + '</button>') + '</td></tr>').join('');
+  }
+  $('#btnAddUser').onclick = async () => {
+    try {
+      await K.api('/api/users', { method: 'POST', body: { username: $('#uName').value.trim(), name: $('#uDisp').value.trim(), password: $('#uPass').value, role: $('#uRole').value } });
+      $('#uName').value = ''; $('#uDisp').value = ''; $('#uPass').value = '';
+      renderUsers(); K.toast('Staff account created', 'ok');
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  $('#userTable').onclick = async e => {
+    const b = e.target.closest('[data-togusr]'); if (!b) return;
+    try {
+      const users = await K.api('/api/users');
+      const u = users.find(x => x.id === b.dataset.togusr);
+      await K.api('/api/users/' + u.id, { method: 'PUT', body: { active: !u.active } });
+      renderUsers();
+    } catch (e2) { K.toast(e2.message, 'err'); }
+  };
+
+  // ---- backup / audit ----
+  $('#btnBackup').onclick = async () => {
+    try {
+      const r = await K.api('/api/backup', { method: 'POST', body: {} });
+      K.toast('Backup created: ' + r.file, 'ok'); loadBackups();
+    } catch (e) { K.toast(e.message, 'err'); }
+  };
+  async function loadBackups() {
+    const list = await K.api('/api/backups').catch(() => []);
+    $('#backupList').innerHTML = list.length ? list.map(f => '<div class="audit-line"><span class="t mono">' + K.esc(f) + '</span></div>').join('') : '<div style="font-size:13px;color:var(--muted)">No backups yet</div>';
+  }
+  async function loadAudit() {
+    const list = await K.api('/api/audit').catch(() => []);
+    $('#auditList').innerHTML = list.length ? list.map(a =>
+      '<div class="audit-line"><span class="t">' + K.time(a.at) + '</span><span><b>' + K.esc(a.actor) + '</b> · ' + K.esc(a.action) + (a.detail ? ' — ' + K.esc(a.detail) : '') + '</span></div>').join('')
+      : '<div style="font-size:13px;color:var(--muted)">No activity yet</div>';
+  }
+
+  boot().catch(e => { K.toast(e.message, 'err'); console.error(e); });
+})();
+</script>
+</body>
+</html>
