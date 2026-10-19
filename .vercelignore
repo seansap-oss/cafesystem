@@ -1,0 +1,7 @@
+node_modules/
+data/
+public/uploads/
+.env
+.git
+*.log
+scripts/acceptance-phase13.js
